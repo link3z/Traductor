@@ -85,8 +85,31 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ComponentFactory.Krypton.Design">
+      <HintPath>..\_DLL\ComponentFactory\Krypton 4.4.0\ComponentFactory.Krypton.Design.dll</HintPath>
+    </Reference>
+    <Reference Include="ComponentFactory.Krypton.Docking">
+      <HintPath>..\_DLL\ComponentFactory\Krypton 4.4.0\ComponentFactory.Krypton.Docking.dll</HintPath>
+    </Reference>
+    <Reference Include="ComponentFactory.Krypton.Navigator">
+      <HintPath>..\_DLL\ComponentFactory\Krypton 4.4.0\ComponentFactory.Krypton.Navigator.dll</HintPath>
+    </Reference>
+    <Reference Include="ComponentFactory.Krypton.Ribbon">
+      <HintPath>..\_DLL\ComponentFactory\Krypton 4.4.0\ComponentFactory.Krypton.Ribbon.dll</HintPath>
+    </Reference>
+    <Reference Include="ComponentFactory.Krypton.Toolkit">
+      <HintPath>..\_DLL\ComponentFactory\Krypton 4.4.0\ComponentFactory.Krypton.Toolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="ComponentFactory.Krypton.Workspace">
+      <HintPath>..\_DLL\ComponentFactory\Krypton 4.4.0\ComponentFactory.Krypton.Workspace.dll</HintPath>
+    </Reference>
+    <Reference Include="Recompila.Helper">
+      <HintPath>..\_DLL\Recompila.Helper\Release\x86\Recompila.Helper.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -103,7 +126,13 @@
     <Import Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.vb" />
+    <Compile Include="Clases\cConfiguracionFTP.vb" />
+    <Compile Include="Clases\cIdioma.vb" />
+    <Compile Include="Clases\cMotorTraduccion.vb" />
+    <Compile Include="Clases\cTraductorPO.vb" />
+    <Compile Include="Enumerados\enmLenguajesCodigos.vb" />
+    <Compile Include="Enumerados\enmLenguajesNombres.vb" />
+    <Compile Include="Modulos\Traductor.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
