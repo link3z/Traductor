@@ -1,4 +1,8 @@
-﻿' ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+﻿Imports Recompila.Helper
+Imports System.IO
+Imports System.Windows.Forms
+
+' ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ''' <summary>
 ''' Clase para trabajo con ficheros PO de traducciones
 ''' </summary>
@@ -106,7 +110,7 @@ Public Class cTraductorPO
                 End If
 
                 If SeCarga Then
-                    Dim RutaFichero As String = Application.StartupPath & "\Languages\" & Criptografia.EncriptarEnMD5(My.Application.Info.AssemblyName) & "\" & value.Codigo & ".po"
+                    Dim RutaFichero As String = Application.StartupPath & "\Languages\" & Criptografia.encriptarEnMD5(My.Application.Info.AssemblyName) & "\" & value.Codigo & ".po"
                     If IO.File.Exists(RutaFichero) Then
                         Dim Lector As New StreamReader(RutaFichero, System.Text.Encoding.UTF8)
                         iContenidoFichero = Lector.ReadToEnd
@@ -187,7 +191,7 @@ Public Class cTraductorPO
                 Next
             End If
         ElseIf iFinalidad = enmFinalidadTraductor.UsarTraducciones Then
-            Dim rutaLenguajes As String = Application.StartupPath & "\Languages\" & Criptografia.EncriptarEnMD5(My.Application.Info.AssemblyName)
+            Dim rutaLenguajes As String = Application.StartupPath & "\Languages\" & Criptografia.encriptarEnMD5(My.Application.Info.AssemblyName)
             If IO.Directory.Exists(rutaLenguajes) Then
                 For Each unLenguaje As String In My.Computer.FileSystem.GetFiles(rutaLenguajes)
                     If IO.File.Exists(unLenguaje) AndAlso unLenguaje.ToLower.EndsWith(".po") Then
@@ -647,7 +651,7 @@ Public Class cTraductorPO
             elEscritor.Close()
 
             escribirMensaje(eMensajes, "Subiendo fichero al FTP...")
-            Dim NombreFicheroServidor As String = Aleatorios.CadenaAleatoria(8, True) & ".html"
+            Dim NombreFicheroServidor As String = Aleatorios.cadenaAleatoria(8, True) & ".html"
             Dim ErrorSubida As Boolean = False
             Dim ContadorIntentos As Integer = 0
             Do
@@ -663,8 +667,7 @@ Public Class cTraductorPO
             Loop While (ContadorIntentos < 10) And ErrorSubida
 
             ' Una vez que se ha subido el fichero al servidor, se recorre cada uno de los lenguaje sde salida
-            ' pora completar los diccionarios con las traducciones que realiza el parseador
-            Dim ww As Web.Parser.HTMLPage = Nothing
+            ' pora completar los diccionarios con las traducciones que realiza el parseador            
             For Each UnIdioma As cIdioma In eLenguajesSalida
                 Dim URI As String = ""
                 escribirMensaje(eMensajes, "Realizando las traducciones del formulario/control " & NombreFormulario & " de " & cIdioma.ObtenerCodigoCorto(eLenguajeEntrada.Id) & " a " & cIdioma.ObtenerCodigoCorto(UnIdioma.Id) & "...")
@@ -673,12 +676,12 @@ Public Class cTraductorPO
                 URI = eMotorTraduccion.obtenerURL(UnIdioma, url_Original)
                 iSleepTime = eMotorTraduccion.SleepTime
 
-                ww = New Web.Parser.HTMLPage()
-                ww.LoadSource(URI)
+                Dim laPagina As New Web.cPaginaHTML(120)
+                laPagina.cargarURL(URI)
 
                 Dim Limpio As String = ""
-                If ww.Body.Length > 0 Then
-                    Dim Lineas() As String = ww.Body.Split(Chr(10))
+                If laPagina.Body.Length > 0 Then
+                    Dim Lineas() As String = laPagina.Body.Split(Chr(10))
 
                     For Each UnaLinea As String In Lineas
                         If eBarraProgreso IsNot Nothing Then WinForms.ProgressBar.AumentarBarra(eBarraProgreso)
@@ -1012,7 +1015,7 @@ Public Class cTraductorPO
         Dim SeTraduce As Boolean = True
         If TypeOf (eObjetos) Is Form Or TypeOf (eObjetos) Is ComponentFactory.Krypton.Toolkit.KryptonForm Then
             If Objetos.tienePropiedad(eObjetos, "translateThis") Then
-                SeTraduce = Objetos.ObtenerValorPropiedad(eObjetos, "translateThis")
+                SeTraduce = Objetos.obtenerValorPropiedad(eObjetos, "translateThis")
             End If
         End If
         If Not SeTraduce Then Exit Sub
@@ -2052,7 +2055,7 @@ Public Class cTraductorPO
                                               ByRef eVersionSiguiente As Object)
 
         Dim RutaProyecto As String = Ficheros.extraerRutaFichero(eRutaProyecto)
-        Dim RutaTraducciones As String = RutaProyecto & "\Languages\" & Criptografia.EncriptarEnMD5(obtenerNombreEnsamblado(eRutaProyecto))
+        Dim RutaTraducciones As String = RutaProyecto & "\Languages\" & Criptografia.encriptarEnMD5(obtenerNombreEnsamblado(eRutaProyecto))
 
         eVersionSiguiente.Text = "1"
 
@@ -2077,7 +2080,7 @@ Public Class cTraductorPO
 
     Public Shared Function obtenerRutaTraducciones(ByVal eRutaProyecto As String) As String
         Dim RutaProyecto As String = Ficheros.extraerRutaFichero(eRutaProyecto)
-        Dim RutaTraducciones As String = RutaProyecto & "\Languages\" & Criptografia.EncriptarEnMD5(obtenerNombreEnsamblado(eRutaProyecto))
+        Dim RutaTraducciones As String = RutaProyecto & "\Languages\" & Criptografia.encriptarEnMD5(obtenerNombreEnsamblado(eRutaProyecto))
 
         Return RutaTraducciones
     End Function
