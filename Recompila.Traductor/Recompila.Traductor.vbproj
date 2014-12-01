@@ -132,13 +132,13 @@
     <Import Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Clases\cConfiguracionFTP.vb" />
-    <Compile Include="Clases\cIdioma.vb" />
-    <Compile Include="Clases\cMotorTraduccion.vb" />
-    <Compile Include="Clases\cTraductorPO.vb" />
-    <Compile Include="Enumerados\enmLenguajesCodigos.vb" />
-    <Compile Include="Enumerados\enmLenguajesNombres.vb" />
-    <Compile Include="Modulos\Traductor.vb" />
+    <Compile Include="2.Base del programa\Clases\cConfiguracionFTP.vb" />
+    <Compile Include="2.Base del programa\Clases\cIdioma.vb" />
+    <Compile Include="2.Base del programa\Clases\cMotorTraduccion.vb" />
+    <Compile Include="2.Base del programa\Clases\cTraductorPO.vb" />
+    <Compile Include="2.Base del programa\Enumerados\enmLenguajesCodigos.vb" />
+    <Compile Include="2.Base del programa\Enumerados\enmLenguajesNombres.vb" />
+    <Compile Include="2.Base del programa\Modulos\Traductor.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>

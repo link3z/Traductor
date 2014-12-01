@@ -5,7 +5,9 @@ VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Recompila.Traductor", "Recompila.Traductor\Recompila.Traductor.vbproj", "{86FAD325-9FA2-4200-A3D8-E66E20A9D0F4}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Recompila.Traductor.UI.vb", "Recompila.Traductor.UI\Recompila.Traductor.UI.vbproj", "{8F236B17-3217-4703-B970-A923A29F78B1}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Recompila.Traductor.UI", "Recompila.Traductor.UI\Recompila.Traductor.UI.vbproj", "{8F236B17-3217-4703-B970-A923A29F78B1}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "traductorAplicaciones", "traductorAplicaciones\traductorAplicaciones.vbproj", "{E0DCDE18-8E4F-4AC5-824B-4A7980571032}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +49,20 @@ Global
 		{8F236B17-3217-4703-B970-A923A29F78B1}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{8F236B17-3217-4703-B970-A923A29F78B1}.Release|x64.ActiveCfg = Release|Any CPU
 		{8F236B17-3217-4703-B970-A923A29F78B1}.Release|x86.ActiveCfg = Release|Any CPU
+		{E0DCDE18-8E4F-4AC5-824B-4A7980571032}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0DCDE18-8E4F-4AC5-824B-4A7980571032}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0DCDE18-8E4F-4AC5-824B-4A7980571032}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{E0DCDE18-8E4F-4AC5-824B-4A7980571032}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{E0DCDE18-8E4F-4AC5-824B-4A7980571032}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E0DCDE18-8E4F-4AC5-824B-4A7980571032}.Debug|x86.ActiveCfg = Debug|x86
+		{E0DCDE18-8E4F-4AC5-824B-4A7980571032}.Debug|x86.Build.0 = Debug|x86
+		{E0DCDE18-8E4F-4AC5-824B-4A7980571032}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0DCDE18-8E4F-4AC5-824B-4A7980571032}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0DCDE18-8E4F-4AC5-824B-4A7980571032}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{E0DCDE18-8E4F-4AC5-824B-4A7980571032}.Release|Mixed Platforms.Build.0 = Release|x86
+		{E0DCDE18-8E4F-4AC5-824B-4A7980571032}.Release|x64.ActiveCfg = Release|Any CPU
+		{E0DCDE18-8E4F-4AC5-824B-4A7980571032}.Release|x86.ActiveCfg = Release|x86
+		{E0DCDE18-8E4F-4AC5-824B-4A7980571032}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
