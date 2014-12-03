@@ -160,10 +160,48 @@
     <Import Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="2.Base del programa\Interfaces\ICBase.vb" />
+    <Compile Include="2.Base del programa\Sistema\Sistema.Configuracion.vb" />
+    <Compile Include="3.Modulos del programa\Wizard\ctrWizard_05.designer.vb">
+      <DependentUpon>ctrWizard_05.vb</DependentUpon>
+    </Compile>
+    <Compile Include="3.Modulos del programa\Wizard\ctrWizard_05.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="3.Modulos del programa\Wizard\ctrWizard_04.designer.vb">
+      <DependentUpon>ctrWizard_04.vb</DependentUpon>
+    </Compile>
+    <Compile Include="3.Modulos del programa\Wizard\ctrWizard_04.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="3.Modulos del programa\Wizard\ctrWizard_03.designer.vb">
+      <DependentUpon>ctrWizard_03.vb</DependentUpon>
+    </Compile>
+    <Compile Include="3.Modulos del programa\Wizard\ctrWizard_03.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="3.Modulos del programa\Wizard\ctrWizard_02.designer.vb">
+      <DependentUpon>ctrWizard_02.vb</DependentUpon>
+    </Compile>
+    <Compile Include="3.Modulos del programa\Wizard\ctrWizard_02.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="3.Modulos del programa\Wizard\ctrWizard_01.designer.vb">
+      <DependentUpon>ctrWizard_01.vb</DependentUpon>
+    </Compile>
+    <Compile Include="3.Modulos del programa\Wizard\ctrWizard_01.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="4.Formularios\frmConfigurarFTP.Designer.vb">
       <DependentUpon>frmConfigurarFTP.vb</DependentUpon>
     </Compile>
     <Compile Include="4.Formularios\frmConfigurarFTP.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="4.Formularios\frmWizard.designer.vb">
+      <DependentUpon>frmWizard.vb</DependentUpon>
+    </Compile>
+    <Compile Include="4.Formularios\frmWizard.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="4.Formularios\frmPrincipal.designer.vb">
@@ -172,6 +210,7 @@
     <Compile Include="4.Formularios\frmPrincipal.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="2.Base del programa\Interfaces\IControlWizard.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -189,9 +228,27 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="3.Modulos del programa\Wizard\ctrWizard_05.resx">
+      <DependentUpon>ctrWizard_05.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="3.Modulos del programa\Wizard\ctrWizard_04.resx">
+      <DependentUpon>ctrWizard_04.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="3.Modulos del programa\Wizard\ctrWizard_03.resx">
+      <DependentUpon>ctrWizard_03.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="3.Modulos del programa\Wizard\ctrWizard_02.resx">
+      <DependentUpon>ctrWizard_02.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="3.Modulos del programa\Wizard\ctrWizard_01.resx">
+      <DependentUpon>ctrWizard_01.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="4.Formularios\frmConfigurarFTP.resx">
       <DependentUpon>frmConfigurarFTP.vb</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="4.Formularios\frmWizard.resx">
+      <DependentUpon>frmWizard.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="4.Formularios\frmPrincipal.resx">
       <DependentUpon>frmPrincipal.vb</DependentUpon>
@@ -251,6 +308,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\close_16.gris.66.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrow.left_16.gris.66.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrow.right_16.gris.66.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

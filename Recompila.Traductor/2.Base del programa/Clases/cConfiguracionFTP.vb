@@ -2,6 +2,7 @@
 ''' <summary>
 ''' Clase para guardar la configuración del acceso al FTP
 ''' </summary>
+<Serializable>
 Public Class cConfiguracionFTP
     Public Servidor As String = ""
     Public Puerto As Integer = 21

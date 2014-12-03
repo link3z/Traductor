@@ -42,24 +42,24 @@ Partial Class frmPrincipal
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.TableLayoutPanel2 = New System.Windows.Forms.TableLayoutPanel()
         Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel()
+        Me.txtRutaProyecto = New Recompila.Controles.rTextOpenFile()
         Me.KryptonLabel6 = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
+        Me.txtNombreEnsamblado = New Recompila.Controles.rTextBox()
         Me.KryptonLabel8 = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
+        Me.txtVersion = New Recompila.Controles.rTextBox()
         Me.KryptonLabel7 = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
+        Me.cmbMotorTraduccion = New Recompila.Controles.rComboBox()
         Me.ToolStrip1 = New System.Windows.Forms.ToolStrip()
         Me.tlsbConfigurarFTP = New System.Windows.Forms.ToolStripButton()
         Me.cmbIdiomaVentana = New Recompila.Controles.rComboIcon()
-        Me.txtRutaProyecto = New Recompila.Controles.rTextOpenFile()
-        Me.txtNombreEnsamblado = New Recompila.Controles.rTextBox()
-        Me.txtVersion = New Recompila.Controles.rTextBox()
-        Me.cmbMotorTraduccion = New Recompila.Controles.rComboBox()
         Me.pConfiguracionExportacion.SuspendLayout()
         Me.tblConfiguracionExportacion.SuspendLayout()
         Me.Panel1.SuspendLayout()
         Me.TableLayoutPanel2.SuspendLayout()
         Me.TableLayoutPanel1.SuspendLayout()
+        CType(Me.cmbMotorTraduccion, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.ToolStrip1.SuspendLayout()
         CType(Me.cmbIdiomaVentana, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.cmbMotorTraduccion, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'btnCrear
@@ -280,6 +280,20 @@ Partial Class frmPrincipal
         Me.TableLayoutPanel1.Size = New System.Drawing.Size(810, 566)
         Me.TableLayoutPanel1.TabIndex = 1048
         '
+        'txtRutaProyecto
+        '
+        Me.txtRutaProyecto.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtRutaProyecto.Apertura = Recompila.Controles.rTextOpenFile.AperturaTipo.OpenFile
+        Me.txtRutaProyecto.BackColor = System.Drawing.Color.Transparent
+        Me.txtRutaProyecto.ExtensionesArchivo = "VB (*.vbproj)|*.vbproj"
+        Me.txtRutaProyecto.Location = New System.Drawing.Point(164, 3)
+        Me.txtRutaProyecto.Name = "txtRutaProyecto"
+        Me.txtRutaProyecto.NombreArchivo = ""
+        Me.txtRutaProyecto.RutaInicial = "C:\rTrabajo\_PROYECTOS\Traductor\pruebasTraductor"
+        Me.txtRutaProyecto.Size = New System.Drawing.Size(321, 24)
+        Me.txtRutaProyecto.TabIndex = 1041
+        '
         'KryptonLabel6
         '
         Me.KryptonLabel6.Dock = System.Windows.Forms.DockStyle.Right
@@ -289,6 +303,18 @@ Partial Class frmPrincipal
         Me.KryptonLabel6.StateCommon.ShortText.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.KryptonLabel6.TabIndex = 1048
         Me.KryptonLabel6.Values.Text = "Ensamblado"
+        '
+        'txtNombreEnsamblado
+        '
+        Me.txtNombreEnsamblado.controlarBotonBorrar = True
+        Me.txtNombreEnsamblado.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.txtNombreEnsamblado.limpiarAlPulsarBoton = True
+        Me.txtNombreEnsamblado.Location = New System.Drawing.Point(595, 3)
+        Me.txtNombreEnsamblado.mostrarSiempreBotonBorrar = False
+        Me.txtNombreEnsamblado.Name = "txtNombreEnsamblado"
+        Me.txtNombreEnsamblado.seleccionarTodo = True
+        Me.txtNombreEnsamblado.Size = New System.Drawing.Size(212, 20)
+        Me.txtNombreEnsamblado.TabIndex = 1049
         '
         'KryptonLabel8
         '
@@ -300,6 +326,18 @@ Partial Class frmPrincipal
         Me.KryptonLabel8.TabIndex = 1048
         Me.KryptonLabel8.Values.Text = "Versión de la traducción"
         '
+        'txtVersion
+        '
+        Me.txtVersion.controlarBotonBorrar = True
+        Me.txtVersion.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.txtVersion.limpiarAlPulsarBoton = True
+        Me.txtVersion.Location = New System.Drawing.Point(164, 33)
+        Me.txtVersion.mostrarSiempreBotonBorrar = False
+        Me.txtVersion.Name = "txtVersion"
+        Me.txtVersion.seleccionarTodo = True
+        Me.txtVersion.Size = New System.Drawing.Size(321, 20)
+        Me.txtVersion.TabIndex = 1049
+        '
         'KryptonLabel7
         '
         Me.KryptonLabel7.Dock = System.Windows.Forms.DockStyle.Right
@@ -309,6 +347,19 @@ Partial Class frmPrincipal
         Me.KryptonLabel7.StateCommon.ShortText.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.KryptonLabel7.TabIndex = 1048
         Me.KryptonLabel7.Values.Text = "Motor traducción"
+        '
+        'cmbMotorTraduccion
+        '
+        Me.cmbMotorTraduccion.controlarBotonBorrar = True
+        Me.cmbMotorTraduccion.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.cmbMotorTraduccion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cmbMotorTraduccion.DropDownWidth = 212
+        Me.cmbMotorTraduccion.limpiarAlPulsarBoton = True
+        Me.cmbMotorTraduccion.Location = New System.Drawing.Point(595, 33)
+        Me.cmbMotorTraduccion.mostrarSiempreBotonBorrar = False
+        Me.cmbMotorTraduccion.Name = "cmbMotorTraduccion"
+        Me.cmbMotorTraduccion.Size = New System.Drawing.Size(212, 21)
+        Me.cmbMotorTraduccion.TabIndex = 1050
         '
         'ToolStrip1
         '
@@ -332,10 +383,13 @@ Partial Class frmPrincipal
         'cmbIdiomaVentana
         '
         Me.cmbIdiomaVentana.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-        Me.cmbIdiomaVentana.ConBorde = True
+        Me.cmbIdiomaVentana.conBorde = True
+        Me.cmbIdiomaVentana.controlarBotonBorrar = True
         Me.cmbIdiomaVentana.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cmbIdiomaVentana.DropDownWidth = 197
+        Me.cmbIdiomaVentana.limpiarAlPulsarBoton = True
         Me.cmbIdiomaVentana.Location = New System.Drawing.Point(146, 600)
+        Me.cmbIdiomaVentana.mostrarSiempreBotonBorrar = False
         Me.cmbIdiomaVentana.Name = "cmbIdiomaVentana"
         Me.cmbIdiomaVentana.Size = New System.Drawing.Size(197, 21)
         Me.cmbIdiomaVentana.StateCommon.ComboBox.Border.Draw = ComponentFactory.Krypton.Toolkit.InheritBool.[True]
@@ -343,54 +397,6 @@ Partial Class frmPrincipal
             Or ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Left) _
             Or ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Right), ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)
         Me.cmbIdiomaVentana.TabIndex = 1050
-        '
-        'txtRutaProyecto
-        '
-        Me.txtRutaProyecto.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtRutaProyecto.Apertura = Recompila.Controles.rTextOpenFile.AperturaTipo.OpenFile
-        Me.txtRutaProyecto.BackColor = System.Drawing.Color.Transparent
-        Me.txtRutaProyecto.ExtensionesArchivo = "VB (*.vbproj)|*.vbproj"
-        Me.txtRutaProyecto.Location = New System.Drawing.Point(164, 3)
-        Me.txtRutaProyecto.Name = "txtRutaProyecto"
-        Me.txtRutaProyecto.NombreArchivo = ""
-        Me.txtRutaProyecto.RutaInicial = "C:\rTrabajo\_PROYECTOS\Traductor\pruebasTraductor"
-        Me.txtRutaProyecto.Size = New System.Drawing.Size(321, 24)
-        Me.txtRutaProyecto.TabIndex = 1041
-        '
-        'txtNombreEnsamblado
-        '
-        Me.txtNombreEnsamblado.controlarBotonBorrar = True
-        Me.txtNombreEnsamblado.Dock = System.Windows.Forms.DockStyle.Fill        
-        Me.txtNombreEnsamblado.Location = New System.Drawing.Point(595, 3)
-        Me.txtNombreEnsamblado.mostrarSiempreBotonBorrar = False
-        Me.txtNombreEnsamblado.Name = "txtNombreEnsamblado"
-        Me.txtNombreEnsamblado.seleccionarTodo = True
-        Me.txtNombreEnsamblado.Size = New System.Drawing.Size(212, 20)
-        Me.txtNombreEnsamblado.TabIndex = 1049
-        '
-        'txtVersion
-        '
-        Me.txtVersion.controlarBotonBorrar = True
-        Me.txtVersion.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.txtVersion.Location = New System.Drawing.Point(164, 33)
-        Me.txtVersion.mostrarSiempreBotonBorrar = False
-        Me.txtVersion.Name = "txtVersion"
-        Me.txtVersion.seleccionarTodo = True
-        Me.txtVersion.Size = New System.Drawing.Size(321, 20)
-        Me.txtVersion.TabIndex = 1049
-        '
-        'cmbMotorTraduccion
-        '
-        Me.cmbMotorTraduccion.controlarBotonBorrar = True
-        Me.cmbMotorTraduccion.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.cmbMotorTraduccion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbMotorTraduccion.DropDownWidth = 212
-        Me.cmbMotorTraduccion.Location = New System.Drawing.Point(595, 33)
-        Me.cmbMotorTraduccion.mostrarSiempreBotonBorrar = False
-        Me.cmbMotorTraduccion.Name = "cmbMotorTraduccion"
-        Me.cmbMotorTraduccion.Size = New System.Drawing.Size(212, 21)
-        Me.cmbMotorTraduccion.TabIndex = 1050
         '
         'frmPrincipal
         '
@@ -417,10 +423,10 @@ Partial Class frmPrincipal
         Me.TableLayoutPanel2.PerformLayout()
         Me.TableLayoutPanel1.ResumeLayout(False)
         Me.TableLayoutPanel1.PerformLayout()
+        CType(Me.cmbMotorTraduccion, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ToolStrip1.ResumeLayout(False)
         Me.ToolStrip1.PerformLayout()
         CType(Me.cmbIdiomaVentana, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.cmbMotorTraduccion, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 

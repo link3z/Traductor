@@ -61,7 +61,7 @@ Public Class frmConfigurarFTP
 #End Region
 
 #Region " VALIDADORES "
-    Private Sub validarTextoObligatorio(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles txtFTPServidor.Validating, txtFTPUsuario.Validating, txtFTPContrasenha.Validating, txtURI.Validating, txtFTPPuerto.Validating
+    Private Sub validarTextoObligatorio(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles txtFTPServidor.Validating, txtFTPUsuario.Validating, txtFTPContrasenha.Validating, txtURI.Validating, txtFTPPuerto.Validating, txtFTPRuta.Validating
         If String.IsNullOrEmpty(CType(sender, KryptonTextBox).Text) Then
             gestorErrores.SetError(sender, "Este campo es obligatorio y no puede quedar en blanco.")
         Else
