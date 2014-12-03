@@ -245,7 +245,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Languages\" />
-    <Folder Include="Resources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\check_16.gris.66.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\close_16.gris.66.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
