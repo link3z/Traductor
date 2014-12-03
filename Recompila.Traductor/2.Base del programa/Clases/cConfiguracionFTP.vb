@@ -3,9 +3,10 @@
 ''' Clase para guardar la configuración del acceso al FTP
 ''' </summary>
 Public Class cConfiguracionFTP
-    Public Servidor As String = "ftp://traductor.recompila.com"
-    Public Usuario As String = "traductor"
-    Public Clave As String = "Ua5pg66~"
+    Public Servidor As String = ""
+    Public Puerto As Integer = 21
+    Public Usuario As String = ""
+    Public Clave As String = ""
     Public Ruta As String = "/"
-    Public URLBase As String = "traductor.recompila.com/"
+    Public URLBase As String = ""
 End Class
