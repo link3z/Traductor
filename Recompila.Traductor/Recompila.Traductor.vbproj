@@ -132,9 +132,12 @@
     <Import Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="2.Base del programa\Clases\cConfiguracionFTP.vb" />
+    <Compile Include="2.Base del programa\Clases\cConfiguracionNetwork.vb" />
     <Compile Include="2.Base del programa\Clases\cIdioma.vb" />
     <Compile Include="2.Base del programa\Clases\cMotorTraduccion.vb" />
+    <Compile Include="2.Base del programa\Clases\cObjetoNet.vb" />
+    <Compile Include="2.Base del programa\Clases\cProyectoTraductor.vb" />
+    <Compile Include="2.Base del programa\Clases\cProyectoVB.vb" />
     <Compile Include="2.Base del programa\Clases\cTraductorPO.vb" />
     <Compile Include="2.Base del programa\Enumerados\enmLenguajesCodigos.vb" />
     <Compile Include="2.Base del programa\Enumerados\enmLenguajesNombres.vb" />

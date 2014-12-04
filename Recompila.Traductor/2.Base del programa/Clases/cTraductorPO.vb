@@ -35,7 +35,7 @@ Public Class cTraductorPO
     ''' <summary>
     ''' Datos de acceso al servidor FTP intermedio para las traducciones
     ''' </summary>            
-    Public ConfiguracionFTP As New cConfiguracionFTP
+    Public ConfiguracionFTP As New cConfiguracionNetwork
 
     ''' <summary>
     ''' Finalidad que se le va a dar al objeto
@@ -2047,132 +2047,71 @@ Public Class cTraductorPO
 
 #Region " DESARROLLO "
     ''' <summary>
-    ''' Se encarga de localizar todas las versiones que ya hay del traductor para configurar de forma automática
-    ''' la siguiente versión. En el momento de realizar la traducción, los archivos originales se copiarán
-    ''' con el nombre de esta versión y se crearán unos nuevos utilizando la última como base de traducción
-    ''' </summary>
-    Public Shared Sub cargarVersionTraduccion(ByVal eRutaProyecto As String, _
-                                              ByRef eVersionSiguiente As Object)
-
-        Dim RutaProyecto As String = Ficheros.extraerRutaFichero(eRutaProyecto)
-        Dim RutaTraducciones As String = RutaProyecto & "\Languages\" & Criptografia.encriptarEnMD5(obtenerNombreEnsamblado(eRutaProyecto))
-
-        eVersionSiguiente.Text = "1"
-
-        If IO.Directory.Exists(RutaTraducciones) Then
-            Dim listaVersiones As New List(Of Long)
-            Dim versionMaxima As Long = 0
-
-            For Each unFichero As String In My.Computer.FileSystem.GetFiles(RutaTraducciones)
-                Dim nombreFichero As String = Ficheros.extraerNombreFicheroSinExtension(unFichero)
-                If nombreFichero.Trim <> "" AndAlso nombreFichero.Contains("_") Then
-                    Dim laVersion As Long = nombreFichero.Split(".")(0).Split("_")(1)
-                    If versionMaxima < laVersion Then versionMaxima = laVersion
-                    If Not listaVersiones.Contains(laVersion) Then listaVersiones.Add(laVersion)
-                End If
-            Next
-
-            eVersionSiguiente.Text = (versionMaxima + 1)
-        Else
-            System.IO.Directory.CreateDirectory(RutaTraducciones)
-        End If
-    End Sub
-
-    Public Shared Function obtenerRutaTraducciones(ByVal eRutaProyecto As String) As String
-        Dim RutaProyecto As String = Ficheros.extraerRutaFichero(eRutaProyecto)
-        Dim RutaTraducciones As String = RutaProyecto & "\Languages\" & Criptografia.encriptarEnMD5(obtenerNombreEnsamblado(eRutaProyecto))
-
-        Return RutaTraducciones
-    End Function
-
-    ''' <summary>
-    ''' Obtiene el nombre del ensamblado a traducir
-    ''' </summary>
-    Public Shared Function obtenerNombreEnsamblado(ByVal eRutaProyecto As String) As String
-        Dim RutaProyecto As String = Ficheros.extraerRutaFichero(eRutaProyecto)
-
-        If System.IO.File.Exists(eRutaProyecto) Then
-            Dim dsSupport As New DataSet
-            dsSupport.ReadXml(eRutaProyecto)
-
-            For Each T As DataTable In dsSupport.Tables
-                If T.TableName = "PropertyGroup" Then
-                    If T.TableName.Trim <> "" Then System.Diagnostics.Debug.WriteLine(T.TableName)
-                    For Each D As DataColumn In T.Columns
-                        If D.ColumnName.Trim = "AssemblyName" Then
-                            If D.ColumnName.Trim <> "" Then System.Diagnostics.Debug.WriteLine(vbTab & D.ColumnName)
-                            For Each R As DataRow In T.Rows
-                                If R.Item(D).ToString.Trim <> "" Then System.Diagnostics.Debug.WriteLine(vbTab & vbTab & R.Item(D).ToString)
-                                Dim elValor As String = R.Item(D).ToString
-                                Return elValor
-                            Next
-                        End If
-                    Next
-                End If
-            Next
-        End If
-
-        Return ""
-    End Function
-
-
-    ''' <summary>
     ''' Obtiene un listado con todos los Formularios que componen el proyecto seleccionado
     ''' </summary>
     ''' <returns>Listado de formularios</returns>
     ''' <remarks></remarks>
-    Public Shared Function obtenerFormulariosProyecto(ByVal eRutaProyecto As String, _
-                                                      Optional ByVal eObjetoCarga As Object = Nothing) As List(Of String)
-        ' Se trata de ir localizando todos los elementos de la Tabla que contengan el '.Desgner.vb', ya que
+    Public Shared Function obtenerFormulariosProyecto(ByVal eRutaProyecto As String) As List(Of cFicheroVB)
+        ' Se trata de ir localizando todos los elementos de la Tabla que finalicen el '.Desgner.vb', ya que
         ' estos serán los Formularios, descartando el Application, el Ressources y Settings.
+
         ' Además, tambien hay que analizar todos los módulos y Clases para realizar los cambios en las constantes
         ' de texto que pudieran existir
 
-        Dim arrayFormularios As New List(Of String)
-        If eObjetoCarga IsNot Nothing Then eObjetoCarga.Items.Clear()
+        ' Si no existe el archivo del proyecto no se puede procesar
+        If Not IO.File.Exists(eRutaProyecto) Then Return Nothing
 
-        Dim RutaProyecto As String = Ficheros.extraerRutaFichero(eRutaProyecto)
+        Dim paraDevolver As New List(Of cFicheroVB)
 
-        If System.IO.File.Exists(eRutaProyecto) Then
-            Dim dsSupport As New DataSet
-            dsSupport.ReadXml(eRutaProyecto)
+        ' Se obtiene la carpeta donde se encuentra el proyecto
+        Dim carpetaProyecto As String = Ficheros.extraerRutaFichero(eRutaProyecto)
 
-            For Each T As DataTable In dsSupport.Tables
-                If T.TableName.Trim = "Compile" Then
-                    If T.TableName.Trim <> "" Then System.Diagnostics.Debug.WriteLine(T.TableName)
-                    For Each D As DataColumn In T.Columns
-                        If D.ColumnName.Trim = "Include" Then
-                            If D.ColumnName.Trim <> "" Then System.Diagnostics.Debug.WriteLine(vbTab & D.ColumnName)
-                            For Each R As DataRow In T.Rows
-                                If R.Item(D).ToString.Trim <> "" Then System.Diagnostics.Debug.WriteLine(vbTab & vbTab & R.Item(D).ToString)
-                                Dim elValor As String = R.Item(D).ToString.ToUpper
-                                If elValor.IndexOf(".DESIGNER.VB") > 0 Then
-                                    If elValor.Contains("APPLICATION.DESIGNER.VB") = False And _
-                                       elValor.Contains("RESOURCES.DESIGNER.VB") = False And _
-                                       elValor.Contains("SETTINGS.DESIGNER.VB") = False And _
-                                       elValor.Contains("MODELOEF.DESIGNER.VB") = False Then
-                                        Dim elFormulario As String = (R.Item(D)).ToString.Trim
+        Try
+            Dim elDataSet As New DataSet
+            elDataSet.ReadXml(eRutaProyecto)
 
-                                        ' Dependiendo de la ruta del fichero hay que modificarla para obtener
-                                        ' la ruta absoluta
-                                        If elFormulario.StartsWith("\\") Or elFormulario.Substring(1, 1) = ":" Then
-                                            elFormulario = elFormulario
-                                        Else
-                                            elFormulario = RutaProyecto & "\" & elFormulario
-                                        End If
+            Dim laTabla As DataTable = (From it As DataTable In elDataSet.Tables _
+                                        Where it.TableName.Trim.ToUpper = "Compile".ToUpper _
+                                        Select it).FirstOrDefault
+            If laTabla IsNot Nothing Then
+                Dim laColumna As DataColumn = (From it As DataColumn In laTabla.Columns _
+                                               Where it.ColumnName.Trim.ToUpper = "Include".ToUpper _
+                                               Select it).FirstOrDefault
+                If laColumna IsNot Nothing Then
+                    For Each unRow As DataRow In laTabla.Rows
+                        Dim elValor As String = unRow.Item(laColumna).ToString.ToUpper.Trim
 
-                                        arrayFormularios.Add(elFormulario)
-                                        If eObjetoCarga IsNot Nothing Then eObjetoCarga.Items.Add(elFormulario)
-                                    End If
-                                End If
-                            Next
+                        If elValor.Contains(".DESIGNER.VB") AndAlso _
+                           Not elValor.Contains("APPLICATION.DESIGNER.VB") AndAlso _
+                           Not elValor.Contains("RESOURCES.DESIGNER.VB") AndAlso _
+                           Not elValor.Contains("SETTINGS.DESIGNER.VB") AndAlso _
+                           Not elValor.Contains("MODELOEF.DESIGNER.VB") Then
+
+                            ' Localizado un formulario para traducir
+                            Dim elFormulario As String = (unRow.Item(laColumna)).ToString.Trim
+                            If Log._LOG_ACTIVO Then Log.escribirLog(" > " & elFormulario, , New StackTrace(0, True))
+
+                            ' Dependiendo de la ruta del fichero hay que modificarla para obtener la ruta absoluta
+                            Dim rutaObjeto As String = ""
+                            If elFormulario.StartsWith("\\") Or elFormulario.Substring(1, 1) = ":" Then
+                                rutaObjeto = elFormulario
+                            Else
+                                rutaObjeto = carpetaProyecto & "\" & elFormulario
+                            End If
+
+                            ' Se crea el nuevo objeto y se añade a la lista de objetos a devolver
+                            Dim nuevoObjeto As cFicheroVB = New cFicheroVB(eRutaProyecto, rutaObjeto)
+                            paraDevolver.Add(nuevoObjeto)
                         End If
                     Next
                 End If
-            Next
-        End If
+            End If
+        Catch ex As Exception
+            If Log._LOG_ACTIVO Then Log.escribirLog("ERROR al obtener los objetos del proyecto...", ex, New StackTrace(0, True))
+            paraDevolver = Nothing
+        End Try
 
-        Return arrayFormularios
+        Return paraDevolver
     End Function
 #End Region
 End Class

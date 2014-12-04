@@ -43,7 +43,7 @@ Public Class frmPrincipal
         lstIdiomasExportacion.Items.Clear()
         iTraductorGenerar.Motor = cmbMotorTraduccion.SelectedItem
 
-        Dim rutaTraducciones As String = cTraductorPO.obtenerRutaTraducciones(txtRutaProyecto.text)
+        Dim rutaTraducciones As String = Sistema.Configuracion.proyectoVB.carpetaTraducciones
 
         For Each unIdioma As cIdioma In iTraductorGenerar.Idiomas
             Dim elIndice As Long = lstIdiomasExportacion.Items.Add(unIdioma)
@@ -99,7 +99,7 @@ Public Class frmPrincipal
             Exit Sub
         End If
 
-        If lstFormulariosExportar.CheckedItems.Count = 0 Then
+        If chklFormulariosExportar.CheckedItems.Count = 0 Then
             'MSG 1 : "Debe escoger por lo menos un formulario para crear el fichero XML."
             MsgBox(theMessages(0), MsgBoxStyle.Critical + MsgBoxStyle.OkOnly)
             Exit Sub
@@ -112,7 +112,7 @@ Public Class frmPrincipal
         End If
 
         WinForms.ProgressBar.fijarMinimoBarra(pbMayor, 0)
-        WinForms.ProgressBar.fijarMaximoBarra(pbMayor, lstFormulariosExportar.CheckedItems.Count + 1)
+        WinForms.ProgressBar.fijarMaximoBarra(pbMayor, chklFormulariosExportar.CheckedItems.Count + 1)
         WinForms.ProgressBar.FijarBarra(pbMayor, 0)
 
         ' Lista de los lenguajes de los que se van a generar las traducciones
@@ -155,10 +155,10 @@ Public Class frmPrincipal
         Next
 
         ' Se recorren todos los formualarios para realizar las traducciones        
-        For i As Integer = 0 To lstFormulariosExportar.CheckedItems.Count - 1
+        For i As Integer = 0 To chklFormulariosExportar.CheckedItems.Count - 1
             iTraductorGenerar.generarFicheroOP_VB(RutaProyecto, _
                                                   RutaTraducciones, _
-                                                  lstFormulariosExportar.CheckedItems(i), _
+                                                  chklFormulariosExportar.CheckedItems(i), _
                                                   ListaLenguajesExportar, _
                                                   cmbMotorTraduccion.SelectedItem, _
                                                   False, _
@@ -186,7 +186,7 @@ Public Class frmPrincipal
     End Sub
 
     Private Sub cmbOpcionesSeleccion_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmbOpcionesSeleccion.SelectedIndexChanged
-        WinForms.Selecciones.marcarSeleccionados(lstFormulariosExportar, cmbOpcionesSeleccion.SelectedIndex)
+        WinForms.Selecciones.marcarSeleccionados(chklFormulariosExportar, cmbOpcionesSeleccion.SelectedIndex)
     End Sub
 
     Private Sub cmbIdiomaVentana_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmbIdiomaVentana.SelectedIndexChanged
@@ -197,22 +197,11 @@ Public Class frmPrincipal
 
 #Region " CARGA DE FORMULARIOS "
     Private Sub txtRutaProyecto_CambioRuta(eRuta As String) Handles txtRutaProyecto.CambioRuta
-        cTraductorPO.obtenerFormulariosProyecto(txtRutaProyecto.text, lstFormulariosExportar)
-        txtNombreEnsamblado.Text = cTraductorPO.obtenerNombreEnsamblado(txtRutaProyecto.text)
-        cTraductorPO.cargarVersionTraduccion(txtRutaProyecto.text, Me.txtVersion)
+        'cTraductorPO.obtenerFormulariosProyecto(txtRutaProyecto.text, chklFormulariosExportar)
+        'txtNombreEnsamblado.Text = cTraductorPO.obtenerNombreEnsamblado(txtRutaProyecto.text)
+        'cTraductorPO.cargarVersionTraduccion(txtRutaProyecto.text, Me.txtVersion)
         cmbMotorTraduccion_SelectedIndexChanged(Nothing, Nothing)
     End Sub
 #End Region
 
-#Region " CONFIGURACION DEL FTP "
-    Private Sub tlsbConfigurarFTP_Click(sender As System.Object, e As System.EventArgs) Handles tlsbConfigurarFTP.Click
-        Dim VentanaConfiguracionFTP As New frmConfigurarFTP
-        VentanaConfiguracionFTP.StartPosition = FormStartPosition.CenterScreen
-        VentanaConfiguracionFTP.Mostrar(iTraductorGenerar.ConfiguracionFTP)
-    End Sub
-#End Region
-
-    Private Sub txtRutaProyecto_Load(sender As System.Object, e As System.EventArgs) Handles txtRutaProyecto.Load
-
-    End Sub
 End Class

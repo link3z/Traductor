@@ -29,7 +29,7 @@ Partial Class frmPrincipal
         Me.btnCerrar = New System.Windows.Forms.Button()
         Me.txtMensajes = New System.Windows.Forms.TextBox()
         Me.lstIdiomasExportacion = New System.Windows.Forms.CheckedListBox()
-        Me.lstFormulariosExportar = New System.Windows.Forms.CheckedListBox()
+        Me.chklFormulariosExportar = New System.Windows.Forms.CheckedListBox()
         Me.pbMenor = New System.Windows.Forms.ProgressBar()
         Me.cmbOpcionesSeleccion = New System.Windows.Forms.ComboBox()
         Me.Label5 = New System.Windows.Forms.Label()
@@ -116,14 +116,14 @@ Partial Class frmPrincipal
         Me.lstIdiomasExportacion.Size = New System.Drawing.Size(396, 146)
         Me.lstIdiomasExportacion.TabIndex = 11
         '
-        'lstFormulariosExportar
+        'chklFormulariosExportar
         '
-        Me.lstFormulariosExportar.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.lstFormulariosExportar.FormattingEnabled = True
-        Me.lstFormulariosExportar.Location = New System.Drawing.Point(3, 25)
-        Me.lstFormulariosExportar.Name = "lstFormulariosExportar"
-        Me.lstFormulariosExportar.Size = New System.Drawing.Size(396, 112)
-        Me.lstFormulariosExportar.TabIndex = 13
+        Me.chklFormulariosExportar.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.chklFormulariosExportar.FormattingEnabled = True
+        Me.chklFormulariosExportar.Location = New System.Drawing.Point(3, 25)
+        Me.chklFormulariosExportar.Name = "chklFormulariosExportar"
+        Me.chklFormulariosExportar.Size = New System.Drawing.Size(396, 112)
+        Me.chklFormulariosExportar.TabIndex = 13
         '
         'pbMenor
         '
@@ -208,7 +208,7 @@ Partial Class frmPrincipal
         Me.tblConfiguracionExportacion.Controls.Add(Me.Panel1, 0, 3)
         Me.tblConfiguracionExportacion.Controls.Add(Me.KryptonLabel4, 0, 0)
         Me.tblConfiguracionExportacion.Controls.Add(Me.KryptonLabel5, 1, 0)
-        Me.tblConfiguracionExportacion.Controls.Add(Me.lstFormulariosExportar, 0, 1)
+        Me.tblConfiguracionExportacion.Controls.Add(Me.chklFormulariosExportar, 0, 1)
         Me.tblConfiguracionExportacion.Controls.Add(Me.lstIdiomasExportacion, 1, 1)
         Me.tblConfiguracionExportacion.Dock = System.Windows.Forms.DockStyle.Fill
         Me.tblConfiguracionExportacion.Location = New System.Drawing.Point(0, 0)
@@ -287,6 +287,7 @@ Partial Class frmPrincipal
         Me.txtRutaProyecto.Apertura = Recompila.Controles.rTextOpenFile.AperturaTipo.OpenFile
         Me.txtRutaProyecto.BackColor = System.Drawing.Color.Transparent
         Me.txtRutaProyecto.ExtensionesArchivo = "VB (*.vbproj)|*.vbproj"
+        Me.txtRutaProyecto.IconoApertura = CType(resources.GetObject("txtRutaProyecto.IconoApertura"), System.Drawing.Image)
         Me.txtRutaProyecto.Location = New System.Drawing.Point(164, 3)
         Me.txtRutaProyecto.Name = "txtRutaProyecto"
         Me.txtRutaProyecto.NombreArchivo = ""
@@ -329,7 +330,6 @@ Partial Class frmPrincipal
         'txtVersion
         '
         Me.txtVersion.controlarBotonBorrar = True
-        Me.txtVersion.Dock = System.Windows.Forms.DockStyle.Fill
         Me.txtVersion.limpiarAlPulsarBoton = True
         Me.txtVersion.Location = New System.Drawing.Point(164, 33)
         Me.txtVersion.mostrarSiempreBotonBorrar = False
@@ -436,7 +436,7 @@ Partial Class frmPrincipal
     Friend WithEvents btnCerrar As System.Windows.Forms.Button
     Friend WithEvents txtMensajes As System.Windows.Forms.TextBox
     Friend WithEvents lstIdiomasExportacion As System.Windows.Forms.CheckedListBox
-    Friend WithEvents lstFormulariosExportar As System.Windows.Forms.CheckedListBox
+    Friend WithEvents chklFormulariosExportar As System.Windows.Forms.CheckedListBox
     Friend WithEvents pbMenor As System.Windows.Forms.ProgressBar
     Friend WithEvents cmbOpcionesSeleccion As System.Windows.Forms.ComboBox
     Friend WithEvents Label5 As System.Windows.Forms.Label

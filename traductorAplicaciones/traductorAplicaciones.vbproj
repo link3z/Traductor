@@ -192,12 +192,6 @@
     <Compile Include="3.Modulos del programa\Wizard\ctrWizard_01.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="4.Formularios\frmConfigurarFTP.Designer.vb">
-      <DependentUpon>frmConfigurarFTP.vb</DependentUpon>
-    </Compile>
-    <Compile Include="4.Formularios\frmConfigurarFTP.vb">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="4.Formularios\frmWizard.designer.vb">
       <DependentUpon>frmWizard.vb</DependentUpon>
     </Compile>
@@ -242,10 +236,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="3.Modulos del programa\Wizard\ctrWizard_01.resx">
       <DependentUpon>ctrWizard_01.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="4.Formularios\frmConfigurarFTP.resx">
-      <DependentUpon>frmConfigurarFTP.vb</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="4.Formularios\frmWizard.resx">
       <DependentUpon>frmWizard.vb</DependentUpon>
@@ -314,6 +304,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\arrow.right_16.gris.66.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\add_32.gris.66.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\folder.open_32.gris.66.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\folder.open_16.gris.66.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\page.bold_16.gris.66.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
