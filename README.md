@@ -1,5 +1,5 @@
 # Recompila.Traductor
 
-![PhotoDemon Screenshot] (http://photodemon.org/images/PD_64.jpg)
+### Añade de forma rápida y automática varios idiomas a tus proyectos VB.NET.
 
-### Sistema de traducción automática para proyectos y soluciones VB.NET a distintos idiomas.  
+Recompila.Traductor es un sistema de traducción automática para proyectos VB.NET a distintos idiomas.  
