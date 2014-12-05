@@ -22,9 +22,14 @@ Partial Class ctrWizard_04
     'No lo modifique con el editor de código.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
         Me.lblTitulo = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
-        Me.epErrores = New Recompila.Controles.rGestorErrores()
-        CType(Me.epErrores, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.gestorErrores = New Recompila.Controles.rGestorErrores()
+        Me.txtMensajes = New System.Windows.Forms.TextBox()
+        Me.pbGeneral = New System.Windows.Forms.ProgressBar()
+        Me.pbConcreta = New System.Windows.Forms.ProgressBar()
+        Me.tInicio = New System.Windows.Forms.Timer(Me.components)
+        CType(Me.gestorErrores, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'lblTitulo
@@ -38,26 +43,63 @@ Partial Class ctrWizard_04
         Me.lblTitulo.TabIndex = 4
         Me.lblTitulo.Values.Text = "Espere mientras se realiza la traducción"
         '
-        'epErrores
+        'gestorErrores
         '
-        Me.epErrores.Alineacion = System.Windows.Forms.ErrorIconAlignment.TopLeft
-        Me.epErrores.ContainerControl = Me
+        Me.gestorErrores.Alineacion = System.Windows.Forms.ErrorIconAlignment.MiddleLeft
+        Me.gestorErrores.ContainerControl = Me
+        '
+        'txtMensajes
+        '
+        Me.txtMensajes.BackColor = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.txtMensajes.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.txtMensajes.Font = New System.Drawing.Font("Lucida Console", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.txtMensajes.ForeColor = System.Drawing.Color.DarkGreen
+        Me.txtMensajes.Location = New System.Drawing.Point(3, 41)
+        Me.txtMensajes.MaxLength = 2147483647
+        Me.txtMensajes.Multiline = True
+        Me.txtMensajes.Name = "txtMensajes"
+        Me.txtMensajes.Size = New System.Drawing.Size(594, 418)
+        Me.txtMensajes.TabIndex = 9
+        '
+        'pbGeneral
+        '
+        Me.pbGeneral.Location = New System.Drawing.Point(3, 465)
+        Me.pbGeneral.Name = "pbGeneral"
+        Me.pbGeneral.Size = New System.Drawing.Size(594, 13)
+        Me.pbGeneral.TabIndex = 10
+        '
+        'pbConcreta
+        '
+        Me.pbConcreta.Location = New System.Drawing.Point(3, 484)
+        Me.pbConcreta.Name = "pbConcreta"
+        Me.pbConcreta.Size = New System.Drawing.Size(594, 13)
+        Me.pbConcreta.TabIndex = 11
+        '
+        'tInicio
+        '
         '
         'ctrWizard_04
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.Transparent
+        Me.Controls.Add(Me.pbConcreta)
+        Me.Controls.Add(Me.pbGeneral)
+        Me.Controls.Add(Me.txtMensajes)
         Me.Controls.Add(Me.lblTitulo)
         Me.Margin = New System.Windows.Forms.Padding(0)
         Me.Name = "ctrWizard_04"
         Me.Size = New System.Drawing.Size(600, 500)
-        CType(Me.epErrores, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.gestorErrores, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
     End Sub
     Friend WithEvents lblTitulo As ComponentFactory.Krypton.Toolkit.KryptonLabel
-    Friend WithEvents epErrores As Recompila.Controles.rGestorErrores
+    Friend WithEvents gestorErrores As Recompila.Controles.rGestorErrores
+    Friend WithEvents pbConcreta As System.Windows.Forms.ProgressBar
+    Friend WithEvents pbGeneral As System.Windows.Forms.ProgressBar
+    Friend WithEvents txtMensajes As System.Windows.Forms.TextBox
+    Friend WithEvents tInicio As System.Windows.Forms.Timer
 
 End Class

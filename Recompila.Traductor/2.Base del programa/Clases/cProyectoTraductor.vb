@@ -11,5 +11,7 @@ Public Class cProyectoTraductor
     Public Property IdiomaOrigen As idiomaLocalizacion = idiomaLocalizacion.es_ES
     Public Property Motor As motorTraduccion = MotorTraduccion.GoogleTranslate
     Public Property IdiomasDestino As New List(Of idiomaLocalizacion)
+
+    Public Property ArchivosVB As New List(Of cArchivoVB)
 #End Region
 End Class

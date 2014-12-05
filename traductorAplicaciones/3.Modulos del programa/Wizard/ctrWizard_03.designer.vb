@@ -24,7 +24,7 @@ Partial Class ctrWizard_03
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Me.lblTitulo = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
-        Me.epErrores = New Recompila.Controles.rGestorErrores()
+        Me.gestorErrores = New Recompila.Controles.rGestorErrores()
         Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel()
         Me.lblIdiomaOriginal = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
         Me.cmbIdiomaOriginal = New Recompila.Controles.rComboIcon()
@@ -38,7 +38,7 @@ Partial Class ctrWizard_03
         Me.txtTraduccionEmail = New Recompila.Controles.rTextBox()
         Me.KryptonLabel1 = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
         Me.chklIdiomasDestino = New ComponentFactory.Krypton.Toolkit.KryptonCheckedListBox()
-        CType(Me.epErrores, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.gestorErrores, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TableLayoutPanel1.SuspendLayout()
         CType(Me.cmbIdiomaOriginal, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.cmbMotorTraduccion, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -55,10 +55,10 @@ Partial Class ctrWizard_03
         Me.lblTitulo.TabIndex = 4
         Me.lblTitulo.Values.Text = "Configure las opciones de traducción"
         '
-        'epErrores
+        'gestorErrores
         '
-        Me.epErrores.Alineacion = System.Windows.Forms.ErrorIconAlignment.TopLeft
-        Me.epErrores.ContainerControl = Me
+        Me.gestorErrores.Alineacion = System.Windows.Forms.ErrorIconAlignment.MiddleLeft
+        Me.gestorErrores.ContainerControl = Me
         '
         'TableLayoutPanel1
         '
@@ -234,7 +234,7 @@ Partial Class ctrWizard_03
         Me.Margin = New System.Windows.Forms.Padding(0)
         Me.Name = "ctrWizard_03"
         Me.Size = New System.Drawing.Size(600, 500)
-        CType(Me.epErrores, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.gestorErrores, System.ComponentModel.ISupportInitialize).EndInit()
         Me.TableLayoutPanel1.ResumeLayout(False)
         Me.TableLayoutPanel1.PerformLayout()
         CType(Me.cmbIdiomaOriginal, System.ComponentModel.ISupportInitialize).EndInit()
@@ -244,7 +244,7 @@ Partial Class ctrWizard_03
 
     End Sub
     Friend WithEvents lblTitulo As ComponentFactory.Krypton.Toolkit.KryptonLabel
-    Friend WithEvents epErrores As Recompila.Controles.rGestorErrores
+    Friend WithEvents gestorErrores As Recompila.Controles.rGestorErrores
     Friend WithEvents TableLayoutPanel1 As System.Windows.Forms.TableLayoutPanel
     Friend WithEvents lblIdiomaOriginal As ComponentFactory.Krypton.Toolkit.KryptonLabel
     Friend WithEvents cmbIdiomaOriginal As Recompila.Controles.rComboIcon

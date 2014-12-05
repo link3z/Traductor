@@ -26,6 +26,15 @@ Public Class cProyectoVB
     End Property
 
     ''' <summary>
+    ''' Carpeta donde se van a guardar todos los lenguajes de la aplicación
+    ''' </summary>
+    Public ReadOnly Property carpetaLanguages As String
+        Get
+            Return carpetaProyecto & "\Languages\"
+        End Get
+    End Property
+
+    ''' <summary>
     ''' Ruta de la carpeta donde se encuentran las traducciones
     ''' </summary>
     Public ReadOnly Property carpetaTraducciones As String

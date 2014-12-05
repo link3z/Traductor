@@ -34,7 +34,7 @@ Public Class ctrWizard_03
         txtTraduccionTraductor.Text = ""
         chklIdiomasDestino.Items.Clear()
 
-        epErrores.Clear()
+        gestorErrores.Clear()
     End Sub
 
     Public Sub PrepararCierre() Implements ICBase.PrepararCierre
@@ -87,7 +87,7 @@ Public Class ctrWizard_03
 
     Public Function ExistenErrores() As Boolean Implements IControlWizard.ExistenErrores
         Me.ValidateChildren()
-        Return (epErrores.HasErrors)
+        Return (gestorErrores.HasErrors)
     End Function
 
     Public Function Guardar(eObjeto As Object) As Object Implements IControlWizard.Guardar
@@ -219,9 +219,9 @@ Public Class ctrWizard_03
 #Region " VALIDADORES "
     Private Sub chklIdiomasDestino_Validating(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles chklIdiomasDestino.Validating
         If chklIdiomasDestino.CheckedItems.Count = 0 Then
-            epErrores.SetError(chklIdiomasDestino, "Es necesario que seleccione al menos un idioma para realizar la traducción.")
+            gestorErrores.SetError(chklIdiomasDestino, "Es necesario que seleccione al menos un idioma para realizar la traducción.")
         Else
-            epErrores.SetError(chklIdiomasDestino, "")
+            gestorErrores.SetError(chklIdiomasDestino, "")
         End If
     End Sub
 #End Region

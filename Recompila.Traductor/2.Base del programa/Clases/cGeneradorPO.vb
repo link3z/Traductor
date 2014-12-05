@@ -4,25 +4,58 @@ Imports Recompila.Helper
 ''' <summary>
 ''' Clase encargada de la generación de los archivos PO con las traducciones
 ''' </summary>
-Friend Class cGeneradorPO
-#Region " DECLARACIONES "
-    ''' <summary>
-    ''' Proyecto VB.NET que se va a traducir
-    ''' </summary>
-    Private iProyectoVB As cProyectoVB = Nothing
-#End Region
-
+Public Class cGeneradorPO
 
 #Region " PROPIEDADES "
     ''' <summary>
-    ''' Motor de traducción que se va a utilizar para realizar las traducciones
+    ''' Proyecto VB.NET que se va a traducir
     ''' </summary>
-    Public Motor As IMotorTraduccion = Nothing
+    Private ReadOnly Property ProyectoVB As cProyectoVB
+        Get
+            Return iProyectoVB
+        End Get
+    End Property
+    Private iProyectoVB As cProyectoVB = Nothing
+
+    ''' <summary>
+    ''' Proyecto Traductor con toda la configuración necesaria para realizar la traducción
+    ''' </summary>
+    Private ReadOnly Property ProyectoTraductor As cProyectoTraductor
+        Get
+            Return iProyectoTraductor
+        End Get
+    End Property
+    Private iProyectoTraductor As cProyectoTraductor = Nothing
 
     ''' <summary>
     ''' Datos de acceso al servidor FTP/HTTP intermedio para las traducciones
     ''' </summary>            
-    Public Property ConfiguracionNetwork As cConfiguracionNetwork = Nothing
+    Private ReadOnly Property ConfiguracionNetwork As cConfiguracionNetwork
+        Get
+            Return iConfiguracionNetwork
+        End Get
+    End Property
+    Private iConfiguracionNetwork As cConfiguracionNetwork = Nothing
+
+    ''' <summary>
+    ''' Motor de traducción que se va a utilizar para realizar las traducciones
+    ''' </summary>
+    Private ReadOnly Property Motor As IMotorTraduccion
+        Get
+            Return iMotor
+        End Get
+    End Property
+    Private iMotor As IMotorTraduccion = Nothing
+
+    ''' <summary>
+    ''' Versión de la traducción que se va a realizar
+    ''' </summary>
+    Private ReadOnly Property VersionTraduccion As Integer
+        Get
+            Return iVersionTraduccion
+        End Get
+    End Property
+    Private iVersionTraduccion As Integer = 1
 
     ''' <summary>
     ''' Idioma original del formulario desde el que se van a realizar las traducciones
@@ -38,23 +71,6 @@ Friend Class cGeneradorPO
         End Get
     End Property
     Private iIdiomas As New List(Of cIdioma)
-
-    ''' <summary>
-    ''' Correo electrónico al que se tendrán que remitir las notificaciones de erroes en la traducción
-    ''' </summary>
-    Public Property correoErrores As String = "correo@errores"
-
-    ''' <summary>
-    ''' Nombre del traductor que se guardará en el fichero PO
-    ''' </summary>
-    Public Property nombreTraductor As String = "Nombre del traductor"
-
-    ''' <summary>
-    ''' Equipo encargado de la traducción del proyecto
-    ''' </summary>
-    Public Property equipoTraduccion As String = "Equipo traduccion"
-
-
 #End Region
 
 #Region " EVENTOS "
@@ -67,68 +83,96 @@ Friend Class cGeneradorPO
     Public Event notificarMensaje(ByVal eHora As DateTime, _
                                   ByVal eMensaje As String)
 
+    ''' <summary>
+    ''' Evento que se lanza para indicar el máximo valor que puede tomar la barra de progreso
+    ''' </summary>
+    ''' <param name="eValor">Valor máximo</param>
+    Public Event notificarMaximo(ByVal eValor As Long)
+
+    ''' <summary>
+    ''' Evento que se lanza cada vez que se cambia el progreso de las tareas
+    ''' </summary>
+    Public Event notificarProgreso()
+
+    ''' <summary>
+    ''' Evento que se lanza cada vez que finaliza la traducción de un formulario
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public Event notificarFinalizacion()
+
 #End Region
 
 #Region " CONSTRUCTORES "
-    Public Sub New(ByVal eProyectoVB As cProyectoVB)
+    Public Sub New(ByVal eProyectoVB As cProyectoVB, _
+                   ByVal eProyectoTraductor As cProyectoTraductor, _
+                   ByVal eConfiguracionNetwork As cConfiguracionNetwork)
+
+        ' Se guardan los objetos con las configuraciones
         iProyectoVB = eProyectoVB
-    End Sub
-#End Region
+        iProyectoTraductor = eProyectoTraductor
+        iConfiguracionNetwork = eConfiguracionNetwork
 
-#Region " METODOS CARGA/DESCARGA IDIOMAS "
-    ''' <summary>
-    ''' Añade un nuevo idioma al objeto
-    ''' </summary>
-    Public Sub anhadirIdioma(ByVal eIdioma As cIdioma)
-        Dim yaExiste As Boolean = False
-        yaExiste = ((From it As cIdioma In iIdiomas _
-                     Where it.codigoLocalizacion = eIdioma.codigoLocalizacion _
-                     Select it).Count > 0)
-        If Not yaExiste Then iIdiomas.Add(eIdioma)
-    End Sub
+        ' Se crea el motor de traducción seleccionado por el usuario
+        Dim elMotor As IMotorTraduccion = Nothing
+        Select Case ProyectoTraductor.Motor
+            Case motorTraduccion.GoogleTranslate
+                elMotor = New cMotorGoogle()
 
-    ''' <summary>
-    ''' Añade un nuevo idioma al objeto
-    ''' </summary>
-    Public Sub anhadirIdioma(ByVal eIdioma As idiomaLocalizacion)
-        Dim nuevoIdioma As cIdioma = New cIdioma(eIdioma)
-        anhadirIdioma(nuevoIdioma)
-    End Sub
+            Case motorTraduccion.OpenTrad
+                elMotor = New cMotorOpenTrad
 
-    ''' <summary>
-    ''' Elimina un idioma del objeto
-    ''' </summary>
-    Public Sub quitarIdioma(ByVal eIdioma As cIdioma)
-        Dim elIdioma As cIdioma = Nothing
-        elIdioma = (From it As cIdioma In iIdiomas _
-                    Where it.codigoLocalizacion = eIdioma.codigoLocalizacion _
-                    Select it).FirstOrDefault
-        If elIdioma IsNot Nothing Then iIdiomas.Remove(elIdioma)
-    End Sub
+            Case motorTraduccion.Intertran
+                elMotor = New cMotorIntertran
 
-    ''' <summary>
-    ''' Elimina un idioma del objeto
-    ''' </summary>
-    Public Sub quitarIdioma(ByVal eIdioma As idiomaLocalizacion)
-        Dim nuevoIdioma As cIdioma = New cIdioma(eIdioma)
-        quitarIdioma(nuevoIdioma)
-    End Sub
+            Case motorTraduccion.OnlineTranslator
+                elMotor = New cMotorOnlineTranslator
+        End Select
 
-    ''' <summary>
-    ''' Se cargan todos los idiomas a los que se puede traducir segun el
-    ''' motor que está configurado
-    ''' </summary>
-    Public Sub cargarTodos()
-        iIdiomas.Clear()
+        ' Se crea el idioma original de la aplicación
+        IdiomaUso = New cIdioma(ProyectoTraductor.IdiomaOrigen)
 
-        If Motor IsNot Nothing AndAlso IdiomaUso IsNot Nothing Then
-            If Motor.TiposTraduccion.Keys.Contains(IdiomaUso.codigoLocalizacion) Then
-                For Each unCodigo As idiomaLocalizacion In Motor.TiposTraduccion(IdiomaUso.codigoLocalizacion)
-                    Dim nuevoIdioma As New cIdioma(unCodigo)
-                    If Not iIdiomas.Contains(nuevoIdioma) Then iIdiomas.Add(nuevoIdioma)
-                Next
-            End If
-        End If
+        ' Se añaden todos los idiomas a los que se va a traducir la aplicación
+        Dim seAnhadioIdiomaUso As Boolean = False
+        For Each unIdioma As idiomaLocalizacion In ProyectoTraductor.IdiomasDestino
+            If unIdioma = IdiomaUso.codigoLocalizacion Then seAnhadioIdiomaUso = True
+            Dim elIdioma As New cIdioma(unIdioma)
+            If Not Idiomas.Contains(elIdioma) Then Idiomas.Add(elIdioma)
+        Next
+
+        ' Si no está añadido el idioma del que se va a traducir a los idiomas
+        ' a traducir este se añade, para que se pueda seleccionar en la configuración
+        ' del programa
+        If Not seAnhadioIdiomaUso Then Idiomas.Add(IdiomaUso)
+
+        ' Se crea la carpeta para los lenguajes si todavía no existe
+        If Not IO.Directory.Exists(ProyectoVB.carpetaLanguages) Then IO.Directory.CreateDirectory(ProyectoVB.carpetaLanguages)
+        If Not IO.Directory.Exists(ProyectoVB.carpetaTraducciones) Then IO.Directory.CreateDirectory(ProyectoVB.carpetaTraducciones)
+
+        ' Se copian los ficheros actuales en la versión de generación, los cuales serán
+        ' utilizados para comprobar si el texto ya está traducido o no. Antes de nada se guarda
+        ' la versión de la traducciónen la variable local ya que una vez copiados los archivos
+        ' el proyecto ya no devolverá el número real
+        iVersionTraduccion = ProyectoVB.versionTraduccion
+
+        Dim ExistenIdiomas As Boolean = False
+        Dim RutaIdioma_original As String = ""
+        Dim RutaIdioma_destino As String = ""
+        For Each UnIdioma As cIdioma In iIdiomas
+            RutaIdioma_original = ProyectoVB.carpetaTraducciones & UnIdioma.strCodigoLocalizacion & ".po"
+            RutaIdioma_destino = ProyectoVB.carpetaTraducciones & UnIdioma.strCodigoLocalizacion & "_" & VersionTraduccion & ".po"
+            If IO.File.Exists(RutaIdioma_destino) Then IO.File.Delete(RutaIdioma_destino)
+            If IO.File.Exists(RutaIdioma_original) Then IO.File.Move(RutaIdioma_original, RutaIdioma_destino)
+        Next
+
+        ' Se crean todos los ficheros PO de salida con la cabecera de cada fichero
+        Dim RutaIdioma As String = ""
+        For Each UnIdioma As cIdioma In iIdiomas
+            RutaIdioma = ProyectoVB.carpetaTraducciones & UnIdioma.strCodigoLocalizacion & ".po"
+            If IO.File.Exists(RutaIdioma) Then IO.File.Delete(RutaIdioma)
+            Dim elEscritorPO As New StreamWriter(RutaIdioma, False, System.Text.Encoding.UTF8)
+            EscribirCabeceraPO(elEscritorPO, UnIdioma.strCodigoLocalizacion)
+            elEscritorPO.Close()
+        Next
     End Sub
 #End Region
 
@@ -137,10 +181,7 @@ Friend Class cGeneradorPO
     ''' Genera los ficheros PO con las traducciones del proyecto utilizando los idiomas
     ''' configurados en el objeto
     ''' </summary>
-    Private Function VBFile2POFile(ByVal eRutaFicheroEntrada As String, _
-                                   ByVal eIgnorarHTMLSubida As Boolean, _
-                                   ByVal eIgnorarHTMLBajada As Boolean, _
-                                   ByVal eVersion As String) As Boolean
+    Public Function VBFile2POFile(ByVal eRutaFicheroEntrada As String) As Boolean
 
         ' Se guarda el momento de inicio para realizar cálculos de tiempo de procesado
         RaiseEvent notificarMensaje(Now, "Procesando el formulario/control " & eRutaFicheroEntrada & "...")
@@ -158,9 +199,9 @@ Friend Class cGeneradorPO
         ' de traducciones antiguas
         For Each unIdioma As cIdioma In iIdiomas
             Try
-                RaiseEvent notificarMensaje(Now, "Obteniendo traducciones de la versión " & eVersion & " para " & unIdioma.strNombre & "[" & unIdioma.codigoLocalizacion & "]...")
+                RaiseEvent notificarMensaje(Now, "Obteniendo traducciones de la versión " & VersionTraduccion & " para " & unIdioma.strNombre & "[" & unIdioma.codigoLocalizacion & "]...")
 
-                Dim rutaVersionAntigua As String = iProyectoVB.carpetaTraducciones & unIdioma.strCodigoLocalizacion & "_" & eVersion & ".po"
+                Dim rutaVersionAntigua As String = iProyectoVB.carpetaTraducciones & unIdioma.strCodigoLocalizacion & "_" & VersionTraduccion & ".po"
                 If File.Exists(rutaVersionAntigua) Then
                     Dim contenidoVersionAntigua As String = ""
 
@@ -257,8 +298,8 @@ Friend Class cGeneradorPO
         If NombreFormulario.Contains(".Designer.vb") Then NombreFormulario = NombreFormulario.Replace(".Designer.vb", "")
         If NombreFormulario.Contains(".vb") Then NombreFormulario = NombreFormulario.Replace(".vb", "")
 
-        ' ToDo: Barra progreso
-        'If eBarraProgreso IsNot Nothing Then WinForms.ProgressBar.fijarMaximoBarra(eBarraProgreso, ((totalControles + totalMensajes) * (totalIdiomas) * 6) + 1)
+        ' Se indica cual es el máximo que puede tomar la barra
+        RaiseEvent notificarMaximo(((totalControles + totalMensajes) * (totalIdiomas) * 6) + 1)
 
         ' Solamente se realiza la traducción si hay algo que traducir
         If totalControles > 0 Or totalIdiomas > 0 Then
@@ -284,7 +325,7 @@ Friend Class cGeneradorPO
             Dim DiccionarioTraducciones As New Dictionary(Of idiomaLocalizacion, List(Of cTraduccionIntermedia))
             For Each UnIdioma As cIdioma In iIdiomas
                 Try
-                    DiccionarioTraducciones.Add(UnIdioma.codigoLocalizacion, New List(Of cTraduccionIntermedia))                    
+                    DiccionarioTraducciones.Add(UnIdioma.codigoLocalizacion, New List(Of cTraduccionIntermedia))
                 Catch ex As Exception
                 End Try
             Next
@@ -325,72 +366,72 @@ Friend Class cGeneradorPO
                     uniqueName = "_KManager"
                 End If
 
-                PatronBusqueda = ".TextLine1 = "                
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_l1", elEscritor, eIgnorarHTMLSubida, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
+                PatronBusqueda = ".TextLine1 = "
+                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_l1", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
                 If seAnhadio Then yaAnhadido = True
 
                 PatronBusqueda = ".TextLine2 = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_l2", elEscritor, eIgnorarHTMLSubida, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
+                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_l2", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
                 If seAnhadio Then yaAnhadido = True
 
                 PatronBusqueda = ".Text = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "", elEscritor, eIgnorarHTMLSubida, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
+                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
                 If seAnhadio Then yaAnhadido = True
 
                 PatronBusqueda = ".Values.Text = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "", elEscritor, eIgnorarHTMLSubida, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
+                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
                 If seAnhadio Then yaAnhadido = True
 
                 PatronBusqueda = ".ExtraText = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_extraText", elEscritor, eIgnorarHTMLSubida, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
+                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_extraText", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
                 If seAnhadio Then yaAnhadido = True
 
                 PatronBusqueda = ".ToolTipBody = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_toolTipBody", elEscritor, eIgnorarHTMLSubida, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
+                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_toolTipBody", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
                 If seAnhadio Then yaAnhadido = True
 
                 PatronBusqueda = ".ToolTipTitle = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_toolTipTitle", elEscritor, eIgnorarHTMLSubida, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
+                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_toolTipTitle", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
                 If seAnhadio Then yaAnhadido = True
 
                 PatronBusqueda = ".ToolTipText = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_tooltiptext", elEscritor, eIgnorarHTMLSubida, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
+                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_tooltiptext", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
                 If seAnhadio Then yaAnhadido = True
 
                 PatronBusqueda = ".GlobalStrings.Abort = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_GlobalStrings_Abort", elEscritor, eIgnorarHTMLSubida, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
+                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_GlobalStrings_Abort", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
                 If seAnhadio Then yaAnhadido = True
 
                 PatronBusqueda = ".GlobalStrings.Cancel = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_GlobalStrings_Cancel", elEscritor, eIgnorarHTMLSubida, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
+                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_GlobalStrings_Cancel", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
                 If seAnhadio Then yaAnhadido = True
 
                 PatronBusqueda = ".GlobalStrings.Close = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_GlobalStrings_Close", elEscritor, eIgnorarHTMLSubida, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
+                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_GlobalStrings_Close", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
                 If seAnhadio Then yaAnhadido = True
 
                 PatronBusqueda = ".GlobalStrings.Ignore = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_GlobalStrings_Ignore", elEscritor, eIgnorarHTMLSubida, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
+                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_GlobalStrings_Ignore", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
                 If seAnhadio Then yaAnhadido = True
 
                 PatronBusqueda = ".GlobalStrings.No = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_GlobalStrings_No", elEscritor, eIgnorarHTMLSubida, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
+                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_GlobalStrings_No", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
                 If seAnhadio Then yaAnhadido = True
 
                 PatronBusqueda = ".GlobalStrings.OK = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_GlobalStrings_OK", elEscritor, eIgnorarHTMLSubida, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
+                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_GlobalStrings_OK", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
                 If seAnhadio Then yaAnhadido = True
 
                 PatronBusqueda = ".GlobalStrings.Retry = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_GlobalStrings_Retry", elEscritor, eIgnorarHTMLSubida, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
+                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_GlobalStrings_Retry", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
                 If seAnhadio Then yaAnhadido = True
 
                 PatronBusqueda = ".GlobalStrings.Today = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_GlobalStrings_Today", elEscritor, eIgnorarHTMLSubida, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
+                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_GlobalStrings_Today", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
                 If seAnhadio Then yaAnhadido = True
 
                 PatronBusqueda = ".GlobalStrings.Yes = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_GlobalStrings_Yes", elEscritor, eIgnorarHTMLSubida, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
+                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_GlobalStrings_Yes", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
                 If seAnhadio Then yaAnhadido = True
 
                 ' Si el control no se añadió con ningún padrón, entonces se
@@ -405,18 +446,16 @@ Friend Class cGeneradorPO
             ' y el Texto aparece directamente bajo el patrón .Text = 
             If Not encontroFormulario Then
                 Dim elPar As New KeyValuePair(Of String, String)("Me", "System.Windows.Forms.Form()")
-                AnhadirControl(elFicheroDesignerCompleto, elPar, ".Text = ", "_Form_Text", elEscritor, eIgnorarHTMLSubida, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, "")
+                AnhadirControl(elFicheroDesignerCompleto, elPar, ".Text = ", "_Form_Text", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, "")
             End If
 
             For Each S As KeyValuePair(Of String, String) In losMSGBOX
-                'If eBarraProgreso IsNot Nothing Then WinForms.ProgressBar.AumentarBarra(eBarraProgreso)
+                ' Se indica que se debe aumentar el progreso de la barra
+                RaiseEvent notificarProgreso()
+
                 elEscritor.Write("<tr>")
                 elEscritor.Write("<td>" & elIndice & "</td>")
-                If eIgnorarHTMLSubida Then
-                    elEscritor.Write("<td>" & S.Value & "</td>")
-                Else
-                    elEscritor.Write("<td>" & Web.HTML.UTF2HTML(S.Value) & "</td>")
-                End If
+                elEscritor.Write("<td>" & Web.HTML.UTF2HTML(S.Value) & "</td>")
                 elEscritor.WriteLine("</tr>")
 
                 'escribirMensaje(eMensajes, "[" & S.Key & "] <" & S.Value & ">")
@@ -428,9 +467,9 @@ Friend Class cGeneradorPO
                         .NombreControl = NombreFormulario & "." & S.Key,
                         .Original = S.Value,
                         .Traduccion = ""
-                }
+            }
                     DiccionarioTraducciones(unIdioma.codigoLocalizacion).Add(LaTraduccion)
-                    'If eBarraProgreso IsNot Nothing Then WinForms.ProgressBar.AumentarBarra(eBarraProgreso)
+                    RaiseEvent notificarProgreso()
                 Next
                 elIndice += 1
             Next
@@ -471,7 +510,7 @@ Friend Class cGeneradorPO
                     Dim Lineas() As String = laPagina.Body.Split(Chr(10))
 
                     For Each UnaLinea As String In Lineas
-                        'If eBarraProgreso IsNot Nothing Then WinForms.ProgressBar.AumentarBarra(eBarraProgreso)
+                        RaiseEvent notificarProgreso()
                         UnaLinea = UnaLinea.Trim
 
                         If UnaLinea.StartsWith("<tr><td>") Then
@@ -480,11 +519,7 @@ Friend Class cGeneradorPO
 
                                 Dim IndiceDiccionario As Long = Columnas(0).Trim.Replace("<tr>", "").Replace("</tr>", "").Replace("<td>", "").Replace("</td>", "")
                                 Dim Traduccion As String = ""
-                                If eIgnorarHTMLBajada Then
-                                    Traduccion = Columnas(1).Trim.Replace("<tr>", "").Replace("</tr>", "").Replace("<td>", "").Replace("</td>", "").Replace("�", "")
-                                Else
-                                    Traduccion = Web.HTML.HTML2UTF(Columnas(1).Trim.Replace("<tr>", "").Replace("</tr>", "").Replace("<td>", "").Replace("</td>", "")).Replace("�", "")
-                                End If
+                                Traduccion = Web.HTML.HTML2UTF(Columnas(1).Trim.Replace("<tr>", "").Replace("</tr>", "").Replace("<td>", "").Replace("</td>", "")).Replace("�", "")
 
                                 DiccionarioTraducciones(UnIdioma.codigoLocalizacion)(IndiceDiccionario).Traduccion = Traduccion
                             Catch ex As Exception
@@ -507,8 +542,7 @@ Friend Class cGeneradorPO
                     Dim elEscritorPO As New StreamWriter(NombreFicheroSalida, True, System.Text.Encoding.UTF8)
 
                     For Each UnaEntrada As cTraduccionIntermedia In DiccionarioTraducciones(UnIdioma.codigoLocalizacion)
-                        'If eBarraProgreso IsNot Nothing Then WinForms.ProgressBar.AumentarBarra(eBarraProgreso)
-
+                        RaiseEvent notificarProgreso()
 
                         ' Se comprueba si la traducción ya existía en la versión antigua y esta sigue siendo la misma, de
                         ' ser así, esta se ignora
@@ -545,7 +579,7 @@ Friend Class cGeneradorPO
             Dim elEscritorPOOriginal As New StreamWriter(NombreFicheroSalidaOriginal, True, System.Text.Encoding.UTF8)
 
             For Each UnaEntrada As cTraduccionIntermedia In DiccionarioTraducciones(ultimoTraducido)
-                'If eBarraProgreso IsNot Nothing Then WinForms.ProgressBar.AumentarBarra(eBarraProgreso)
+                RaiseEvent notificarProgreso()
 
                 elEscritorPOOriginal.WriteLine("#: " & UnaEntrada.NombreControl)
                 elEscritorPOOriginal.WriteLine("msgid """ & Web.HTML.ANSI2UTF8(UnaEntrada.Original) & """")
@@ -556,6 +590,8 @@ Friend Class cGeneradorPO
             elEscritorPOOriginal.Close()
         End If
 
+        ' Se avisa que se finalió la conversión del fichero
+        RaiseEvent notificarFinalizacion()
         Return True
     End Function
 #End Region
@@ -573,11 +609,11 @@ Friend Class cGeneradorPO
                     .WriteLine("msgid " & """" & """")
                     .WriteLine("msgstr " & """" & """")
                     .WriteLine("""" & "Project-Id-Version: " & iProyectoVB.Ensamblado & "\n" & """")
-                    .WriteLine("""" & "Report-Msgid-Bugs-To: " & correoErrores & "\n" & """")
+                    .WriteLine("""" & "Report-Msgid-Bugs-To: " & iProyectoTraductor.TraductorEmail & "\n" & """")
                     .WriteLine("""" & "POT-Creation-Date: " & Now & "\n" & """")
                     .WriteLine("""" & "PO-Revision-Date: " & Now & "\n" & """")
-                    .WriteLine("""" & "Last-Translator: " & nombreTraductor & "\n" & """")
-                    .WriteLine("""" & "Language-Team: " & equipoTraduccion & "\n" & """")
+                    .WriteLine("""" & "Last-Translator: " & iProyectoTraductor.TraductorNombre & "\n" & """")
+                    .WriteLine("""" & "Language-Team: " & iProyectoTraductor.TraductorEquipo & "\n" & """")
                     .WriteLine("""" & "MIME-Version: 1.0\n" & """")
                     .WriteLine("""" & "Content-Type: text/plain; charset=UTF-8\n" & """")
                     .WriteLine("""" & "Content-Transfer-Encoding: 8bit\n" & """")
@@ -611,7 +647,6 @@ Friend Class cGeneradorPO
                                     ByVal ePatronBusqueda As String, _
                                     ByVal ePostNombre As String, _
                                     ByVal elEscritor As StreamWriter, _
-                                    ByVal eIgnorarHTMLSubida As Boolean, _
                                     ByRef elIndice As Long, _
                                     ByVal NombreFormulario As String, _
                                     ByRef DiccionarioTraducciones As Dictionary(Of idiomaLocalizacion, List(Of cTraduccionIntermedia)), _
@@ -650,11 +685,7 @@ Friend Class cGeneradorPO
 
                 elEscritor.Write("<tr>")
                 elEscritor.Write("<td>" & elIndice & "</td>")
-                If eIgnorarHTMLSubida Then
-                    elEscritor.Write("<td>" & elTextoTraducir & "</td>")
-                Else
-                    elEscritor.Write("<td>" & Web.HTML.UTF2HTML(elTextoTraducir) & "</td>")
-                End If
+                elEscritor.Write("<td>" & Web.HTML.UTF2HTML(elTextoTraducir) & "</td>")
                 elEscritor.WriteLine("</tr>")
 
                 Dim nombreControl As String = eNombreControl
