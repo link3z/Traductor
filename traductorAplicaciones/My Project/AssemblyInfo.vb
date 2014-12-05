@@ -8,11 +8,11 @@ Imports System.Runtime.InteropServices
 
 ' Revisar los valores de los atributos del ensamblado
 
-<Assembly: AssemblyTitle("traductorAplicaciones")> 
-<Assembly: AssemblyDescription("")> 
-<Assembly: AssemblyCompany("")> 
-<Assembly: AssemblyProduct("traductorAplicaciones")> 
-<Assembly: AssemblyCopyright("Copyright ©  2009")> 
+<Assembly: AssemblyTitle("Recompila.Traductor")> 
+<Assembly: AssemblyDescription("Traductor automático de la interfaz de unsuario para proyectos VB.NET a varios idiomas de forma automática.")> 
+<Assembly: AssemblyCompany("recompila.com")> 
+<Assembly: AssemblyProduct("Recompila.Traductor")> 
+<Assembly: AssemblyCopyright("Copyright ©  20014 recompila.com")> 
 <Assembly: AssemblyTrademark("")> 
 
 <Assembly: ComVisible(False)>

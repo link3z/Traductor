@@ -99,7 +99,7 @@ Public Class cMotorTraduccion
         If iMotor = enmMotorTraducciones.Bing Then
 
         ElseIf iMotor = enmMotorTraducciones.Google Then
-            iURL = URI_GOOGLE.Replace("@entrada@", cIdioma.ObtenerCodigoCorto(enmLenguajesNombres.Español)).Replace("@salida@", cIdioma.ObtenerCodigoCorto(eIdiomaSalida.Id)).Replace("@URI@", eURL.Replace("http://", ""))
+            iURL = URI_GOOGLE.Replace("@entrada@", cIdioma.ObtenerCodigoCorto(enmLenguajesNombres.Spanish)).Replace("@salida@", cIdioma.ObtenerCodigoCorto(eIdiomaSalida.Id)).Replace("@URI@", eURL.Replace("http://", ""))
             iSleepTime = 5000
         ElseIf iMotor = enmMotorTraducciones.Online_Translator_com Then
             Dim caracterEntrada As String = "s"
@@ -117,7 +117,7 @@ Public Class cMotorTraduccion
             iURL = URI_ONLINE_TRANSLATOR.Replace("@entrada@", caracterEntrada).Replace("@salida@", caracterSalida).Replace("@URI@", eURL.Replace("http://", ""))
             iSleepTime = 2000
         ElseIf iMotor = enmMotorTraducciones.OpenTrad Then
-            iURL = URI_OPEN_TRAD.Replace("@entrada@", cIdioma.ObtenerCodigoCorto(enmLenguajesNombres.Español)).Replace("@salida@", cIdioma.ObtenerCodigoCorto(eIdiomaSalida.Id)).Replace("@URI@", eURL.Replace("http://", ""))
+            iURL = URI_OPEN_TRAD.Replace("@entrada@", cIdioma.ObtenerCodigoCorto(enmLenguajesNombres.Spanish)).Replace("@salida@", cIdioma.ObtenerCodigoCorto(eIdiomaSalida.Id)).Replace("@URI@", eURL.Replace("http://", ""))
             iSleepTime = 0
         ElseIf iMotor = enmMotorTraducciones.InterTran Then
             Dim codigoSalida As String = "spa"
@@ -177,40 +177,40 @@ Public Class cMotorTraduccion
         ElseIf iMotor = enmMotorTraducciones.Google Then
 
         ElseIf iMotor = enmMotorTraducciones.Online_Translator_com Then
-            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Deutsch))
-            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Español))
-            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Français))
+            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.German))
+            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Spanish))
+            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.French))
             paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.English))
-            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.русский_язык))
+            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Russian))
         ElseIf iMotor = enmMotorTraducciones.OpenTrad Then
-            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Català))
+            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Catalan))
             paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.English))
-            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Español))
-            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Italiano))
-            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Français))
-            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Galego))
-            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Português))
+            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Spanish))
+            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Italian))
+            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.French))
+            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Galician))
+            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Portuguese))
             paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Romanian))
         ElseIf iMotor = enmMotorTraducciones.InterTran Then
-            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.čeština))
+            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Czech))
             paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.English))
             paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Bulgarian))
             paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Croatian))
             paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Danish))
             paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Dutch))
-            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Suomi))
-            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Español))
-            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Deutsch))
-            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Français))
-            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Ελληνική))
+            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Finnish))
+            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Spanish))
+            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.German))
+            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.French))
+            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Greek))
             paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Hungarian))
-            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Italiano))
-            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.日本語))
-            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Português))
-            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.русский_язык))
+            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Italian))
+            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Japanese))
+            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Portuguese))
+            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Russian))
             paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Romanian))
             paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Swedish))
-            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Türkçe))
+            paradevolver.Add(cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Turkish))
         End If
 
         Return paradevolver

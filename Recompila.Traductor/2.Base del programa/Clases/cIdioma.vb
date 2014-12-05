@@ -1,11 +1,5 @@
 ﻿Imports System.Drawing
 
-' ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-''' <summary>
-''' Idioma para traducciones
-''' Mantiene información sobre el idioma para poder utilizar tanto internamente
-''' como externamente
-''' </summary>
 Public Class cIdioma
 #Region " PROPIEDADES "
     Public Property Id As enmLenguajesCodigos
@@ -65,25 +59,25 @@ Public Class cIdioma
             Case enmLenguajesNombres.English
                 Return "en-US"
 
-            Case enmLenguajesNombres.Español
+            Case enmLenguajesNombres.Spanish
                 Return "es-ES"
 
-            Case enmLenguajesNombres.Galego
+            Case enmLenguajesNombres.Galician
                 Return "gl-GL"
 
-            Case enmLenguajesNombres.Deutsch
+            Case enmLenguajesNombres.German
                 Return "de-DE"
 
-            Case enmLenguajesNombres.Português
+            Case enmLenguajesNombres.Portuguese
                 Return "pt-PT"
 
-            Case enmLenguajesNombres.Italiano
+            Case enmLenguajesNombres.Italian
                 Return "it-IT"
 
-            Case enmLenguajesNombres.Français
+            Case enmLenguajesNombres.French
                 Return "fr-FR"
 
-            Case enmLenguajesNombres.Català
+            Case enmLenguajesNombres.Catalan
                 Return "ca-CA"
 
                 'Case enmLenguajesNombres.العربية
@@ -98,19 +92,19 @@ Public Class cIdioma
                 'Case enmLenguajesNombres.Euskera
                 '    Return "eu-EU"
 
-            Case enmLenguajesNombres.Ελληνική
+            Case enmLenguajesNombres.Greek
                 Return "el-EL"
 
-            Case enmLenguajesNombres.日本語
+            Case enmLenguajesNombres.Japanese
                 Return "ja-JA"
 
-            Case enmLenguajesNombres.русский_язык
+            Case enmLenguajesNombres.Russian
                 Return "ru-RU"
 
             Case enmLenguajesNombres.Romanian
                 Return "ro-RO"
 
-            Case enmLenguajesNombres.čeština
+            Case enmLenguajesNombres.Czech
                 Return "cz-CZ"
 
             Case enmLenguajesNombres.Bulgarian
@@ -125,7 +119,7 @@ Public Class cIdioma
             Case enmLenguajesNombres.Dutch
                 Return "nl-NL"
 
-            Case enmLenguajesNombres.Suomi
+            Case enmLenguajesNombres.Finnish
                 Return "fi-FI"
 
             Case enmLenguajesNombres.Hungarian
@@ -134,7 +128,7 @@ Public Class cIdioma
             Case enmLenguajesNombres.Swedish
                 Return "sv-SV"
 
-            Case enmLenguajesNombres.Türkçe
+            Case enmLenguajesNombres.Turkish
                 Return "tr-TR"
 
 
@@ -154,25 +148,25 @@ Public Class cIdioma
                 Return enmLenguajesNombres.English
 
             Case "Español"
-                Return enmLenguajesNombres.Español
+                Return enmLenguajesNombres.Spanish
 
             Case "Galego"
-                Return enmLenguajesNombres.Galego
+                Return enmLenguajesNombres.Galician
 
             Case "Deutsch"
-                Return enmLenguajesNombres.Deutsch
+                Return enmLenguajesNombres.German
 
             Case "Português"
-                Return enmLenguajesNombres.Português
+                Return enmLenguajesNombres.Portuguese
 
             Case "Italiano"
-                Return enmLenguajesNombres.Italiano
+                Return enmLenguajesNombres.Italian
 
             Case "Français"
-                Return enmLenguajesNombres.Français
+                Return enmLenguajesNombres.French
 
             Case "Català"
-                Return enmLenguajesNombres.Català
+                Return enmLenguajesNombres.Catalan
 
                 'Case "العربية"
                 '    Return enmLenguajesNombres.العربية
@@ -187,19 +181,19 @@ Public Class cIdioma
                 '    Return enmLenguajesNombres.Euskera
 
             Case "Ελληνική"
-                Return enmLenguajesNombres.Ελληνική
+                Return enmLenguajesNombres.Greek
 
             Case "日本語"
-                Return enmLenguajesNombres.日本語
+                Return enmLenguajesNombres.Japanese
 
             Case "русский_язык"
-                Return enmLenguajesNombres.русский_язык
+                Return enmLenguajesNombres.Russian
 
             Case "Romanian"
                 Return enmLenguajesNombres.Romanian
 
             Case "čeština"
-                Return enmLenguajesNombres.čeština
+                Return enmLenguajesNombres.Czech
 
             Case "Bulgarian"
                 Return enmLenguajesNombres.Bulgarian
@@ -214,7 +208,7 @@ Public Class cIdioma
                 Return enmLenguajesNombres.Dutch
 
             Case "Suomi"
-                Return enmLenguajesNombres.Suomi
+                Return enmLenguajesNombres.Finnish
 
             Case "Hungarian"
                 Return enmLenguajesNombres.Hungarian
@@ -223,12 +217,12 @@ Public Class cIdioma
                 Return enmLenguajesNombres.Swedish
 
             Case "Türkçe"
-                Return enmLenguajesNombres.Türkçe
+                Return enmLenguajesNombres.Turkish
 
 
 
             Case Else
-                Return enmLenguajesNombres.Español
+                Return enmLenguajesNombres.Spanish
         End Select
     End Function
 
@@ -238,25 +232,25 @@ Public Class cIdioma
                 Return enmLenguajesNombres.English
 
             Case "es-ES"
-                Return enmLenguajesNombres.Español
+                Return enmLenguajesNombres.Spanish
 
             Case "gl-GL"
-                Return enmLenguajesNombres.Galego
+                Return enmLenguajesNombres.Galician
 
             Case "de-DE"
-                Return enmLenguajesNombres.Deutsch
+                Return enmLenguajesNombres.German
 
             Case "pt-PT"
-                Return enmLenguajesNombres.Português
+                Return enmLenguajesNombres.Portuguese
 
             Case "it-IT"
-                Return enmLenguajesNombres.Italiano
+                Return enmLenguajesNombres.Italian
 
             Case "fr-FR"
-                Return enmLenguajesNombres.Français
+                Return enmLenguajesNombres.French
 
             Case "ca-CA"
-                Return enmLenguajesNombres.Català
+                Return enmLenguajesNombres.Catalan
 
                 'Case "ar-AR"
                 '    Return enmLenguajesNombres.العربية
@@ -271,19 +265,19 @@ Public Class cIdioma
                 '    Return enmLenguajesNombres.Euskera
 
             Case "el-EL"
-                Return enmLenguajesNombres.Ελληνική
+                Return enmLenguajesNombres.Greek
 
             Case "ja-JA"
-                Return enmLenguajesNombres.日本語
+                Return enmLenguajesNombres.Japanese
 
             Case "ru-RU"
-                Return enmLenguajesNombres.русский_язык
+                Return enmLenguajesNombres.Russian
 
             Case "ro-RO"
                 Return enmLenguajesNombres.Romanian
 
             Case "cz-CZ"
-                Return enmLenguajesNombres.čeština
+                Return enmLenguajesNombres.Czech
 
             Case "bg-BG"
                 Return enmLenguajesNombres.Bulgarian
@@ -298,7 +292,7 @@ Public Class cIdioma
                 Return enmLenguajesNombres.Dutch
 
             Case "fi-FI"
-                Return enmLenguajesNombres.Suomi
+                Return enmLenguajesNombres.Finnish
 
             Case "hu-HU"
                 Return enmLenguajesNombres.Hungarian
@@ -307,12 +301,12 @@ Public Class cIdioma
                 Return enmLenguajesNombres.Swedish
 
             Case "tr-TR"
-                Return enmLenguajesNombres.Türkçe
+                Return enmLenguajesNombres.Turkish
 
 
 
             Case Else
-                Return enmLenguajesNombres.Español
+                Return enmLenguajesNombres.Spanish
         End Select
     End Function
 

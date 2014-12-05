@@ -1,0 +1,5 @@
+﻿Información sobre los códigos de los idiomas
+	http://es.wikipedia.org/wiki/ISO_639-1
+
+Códigos de idiomas utilizados por Google Translate
+	https://sites.google.com/site/tomihasa/google-language-codes

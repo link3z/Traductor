@@ -370,7 +370,7 @@ Public Class cTraductorPO
                                         ByVal eVersion As String, _
                                         Optional ByRef eBarraProgreso As ProgressBar = Nothing) As Boolean
         Dim momentoInicio As DateTime = Now
-        Dim eLenguajeEntrada As cIdioma = cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Español)
+        Dim eLenguajeEntrada As cIdioma = cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Spanish)
 
         ' Se lee el contenido de fichero con la versión antigua de la traducción, para utilizarla como
         ' base de traducción y evitar volver a traducir el texto ya traducido

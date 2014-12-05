@@ -122,7 +122,7 @@ Public Class frmPrincipal
         Next
 
         ' Se añade el propio lenguaje como lenguaje a traducir
-        Dim elSpanish As cIdioma = cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Español)
+        Dim elSpanish As cIdioma = cIdioma.ObtenerObjetoIdioma(enmLenguajesNombres.Spanish)
         If Not ListaLenguajesExportar.Contains(elSpanish) Then ListaLenguajesExportar.Add(elSpanish)
 
         ' Se crea la carpeta para los lenguajes si todavía no existe

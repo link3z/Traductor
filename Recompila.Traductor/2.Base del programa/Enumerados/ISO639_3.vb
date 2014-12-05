@@ -1,0 +1,24 @@
+﻿Public Enum ISO639_3
+    esp = 0
+    eng = 1
+    glg = 2
+    deu = 3
+    por = 4
+    ita = 5
+    fra = 6
+    cat = 7
+    eus = 8
+    ell = 9
+    jpn = 10
+    rus = 11
+    ron = 12
+    ces = 13
+    bul = 14
+    hrv = 15
+    dan = 16
+    nld = 17
+    fin = 18
+    hun = 19
+    swe = 20
+    tur = 21
+End Enum

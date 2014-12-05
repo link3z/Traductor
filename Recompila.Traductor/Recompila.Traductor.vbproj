@@ -141,6 +141,8 @@
     <Compile Include="2.Base del programa\Clases\cTraductorPO.vb" />
     <Compile Include="2.Base del programa\Enumerados\enmLenguajesCodigos.vb" />
     <Compile Include="2.Base del programa\Enumerados\enmLenguajesNombres.vb" />
+    <Compile Include="2.Base del programa\Enumerados\ISO639_1.vb" />
+    <Compile Include="2.Base del programa\Enumerados\ISO639_3.vb" />
     <Compile Include="2.Base del programa\Modulos\Traductor.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
@@ -176,6 +178,9 @@
       <CustomToolNamespace>My</CustomToolNamespace>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="0.Informacion\Códigos idiomas.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
