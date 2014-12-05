@@ -281,10 +281,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Recompila.Traductor.UI\Recompila.Traductor.UI.vbproj">
-      <Project>{8f236b17-3217-4703-b970-a923a29f78b1}</Project>
-      <Name>Recompila.Traductor.UI</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Recompila.Traductor\Recompila.Traductor.vbproj">
       <Project>{86fad325-9fa2-4200-a3d8-e66e20a9d0f4}</Project>
       <Name>Recompila.Traductor</Name>
