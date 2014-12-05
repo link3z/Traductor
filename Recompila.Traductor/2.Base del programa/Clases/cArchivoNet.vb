@@ -1,6 +1,6 @@
 ﻿Imports Recompila.Helper
 
-Public Class cFicheroVB
+Public Class cArchivoVB
 #Region " PROPIEDADES "
     Public Property RutaCompleta As String
     Public Property RutaProyecto As String

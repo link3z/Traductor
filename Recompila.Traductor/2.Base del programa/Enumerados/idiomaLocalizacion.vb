@@ -1,4 +1,7 @@
-﻿Public Enum enmLenguajesCodigos
+﻿''' <summary>
+''' Código del idioma y código de localización del pais.
+''' </summary>
+Public Enum idiomaLocalizacion
     es_ES = 0
     en_US = 1
     gl_GL = 2
@@ -11,7 +14,7 @@
     el_EL = 9
     ja_JA = 10
     ru_RU = 11
-    ro_ro = 12
+    ro_RO = 12
     cz_CZ = 13
     bg_BG = 14
     hr_HR = 15

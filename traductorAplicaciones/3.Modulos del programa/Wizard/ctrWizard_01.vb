@@ -26,6 +26,9 @@ Public Class ctrWizard_01
     End Sub
 
     Public Sub LimpiarCampos() Implements ICBase.LimpiarCampos
+        txtNombre.Text = ""
+        txtDescripcion.Text = ""
+        txtRutaProyecto.Text = ""
         gestorErrores.Clear()
     End Sub
 
@@ -34,6 +37,13 @@ Public Class ctrWizard_01
     End Sub
 
     Public Function Cargar(eObjeto As Object) As Boolean Implements IControlWizard.Cargar
+        ' Si ya existía un proyecto previamente cargado se obtienen los datos y se muestran en el formulario
+        If Sistema.Configuracion.proyectoTraductor IsNot Nothing Then
+            With Sistema.Configuracion.proyectoTraductor
+                txtNombre.Text = .Nombre
+                txtDescripcion.Text = .Descripcion
+            End With
+        End If
 
         Return True
     End Function
@@ -57,7 +67,7 @@ Public Class ctrWizard_01
     End Sub
 
     Public Sub DarFoco() Implements IControlWizard.DarFoco
-
+        radAbrirProyectoExistente.Focus()
     End Sub
 
     Public Function ExistenErrores() As Boolean Implements IControlWizard.ExistenErrores
@@ -78,6 +88,16 @@ Public Class ctrWizard_01
         End With
         Sistema.Configuracion.configuracionNetwork.guardar(Sistema.Configuracion.rutaConfiguracionNetwork)
 
+        ' Una vez guardado, si se trata de un nuevo proyecto este se crea, en caso contario
+        ' se actualizan los datos del que se cargo al seleccionar desde disco
+        If radNuevoProyecto.Checked Then
+            Sistema.Configuracion.proyectoTraductor = New Recompila.Traductor.cProyectoTraductor
+        End If
+
+        With Sistema.Configuracion.proyectoTraductor
+            .Nombre = txtNombre.Text
+            .Descripcion = txtDescripcion.Text
+        End With
 
         Return True
     End Function

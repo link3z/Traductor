@@ -133,17 +133,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="2.Base del programa\Clases\cConfiguracionNetwork.vb" />
+    <Compile Include="2.Base del programa\Clases\cConsumidorPO.vb" />
+    <Compile Include="2.Base del programa\Clases\cGeneradorPO.vb" />
     <Compile Include="2.Base del programa\Clases\cIdioma.vb" />
-    <Compile Include="2.Base del programa\Clases\cMotorTraduccion.vb" />
-    <Compile Include="2.Base del programa\Clases\cObjetoNet.vb" />
+    <Compile Include="2.Base del programa\Clases\cArchivoNet.vb" />
     <Compile Include="2.Base del programa\Clases\cProyectoTraductor.vb" />
     <Compile Include="2.Base del programa\Clases\cProyectoVB.vb" />
+    <Compile Include="2.Base del programa\Clases\cTraduccionIntermedia.vb" />
     <Compile Include="2.Base del programa\Clases\cTraductorPO.vb" />
-    <Compile Include="2.Base del programa\Enumerados\enmLenguajesCodigos.vb" />
-    <Compile Include="2.Base del programa\Enumerados\enmLenguajesNombres.vb" />
-    <Compile Include="2.Base del programa\Enumerados\ISO639_1.vb" />
-    <Compile Include="2.Base del programa\Enumerados\ISO639_3.vb" />
+    <Compile Include="2.Base del programa\Enumerados\idiomaLocalizacion.vb" />
+    <Compile Include="2.Base del programa\Enumerados\idiomaNombre.vb" />
+    <Compile Include="2.Base del programa\Enumerados\idiomaISO639_1.vb" />
+    <Compile Include="2.Base del programa\Enumerados\idiomaISO639_3.vb" />
+    <Compile Include="2.Base del programa\Enumerados\motorTraduccion.vb" />
     <Compile Include="2.Base del programa\Modulos\Traductor.vb" />
+    <Compile Include="3.Modulos\Traductores\Interfaces\IMotorTraduccion.vb" />
+    <Compile Include="3.Modulos\Traductores\Motores\cMotorBase.vb" />
+    <Compile Include="3.Modulos\Traductores\Motores\cMotorGoogle.vb" />
+    <Compile Include="3.Modulos\Traductores\Motores\cMotorIntertran.vb" />
+    <Compile Include="3.Modulos\Traductores\Motores\cMotorOnlineTranslator.vb" />
+    <Compile Include="3.Modulos\Traductores\Motores\cMotorOpenTrad.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>

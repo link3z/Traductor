@@ -1,4 +1,4 @@
-﻿Public Enum ISO639_1
+﻿Public Enum idiomaISO639_1
     es = 0
     en = 1
     gl = 2

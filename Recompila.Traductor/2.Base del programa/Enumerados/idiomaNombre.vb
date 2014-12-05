@@ -1,4 +1,7 @@
-﻿Public Enum enmLenguajesNombres
+﻿''' <summary>
+''' Nombre del idioma
+''' </summary>
+Public Enum idiomaNombre
     Spanish = 0
     English = 1
     Galician = 2

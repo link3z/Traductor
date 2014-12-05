@@ -1,4 +1,4 @@
-﻿Public Enum ISO639_3
+﻿Public Enum idiomaISO639_3
     esp = 0
     eng = 1
     glg = 2
