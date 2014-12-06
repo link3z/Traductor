@@ -407,7 +407,7 @@ Public Class cGeneradorPO
         If NombreFormulario.Contains(".vb") Then NombreFormulario = NombreFormulario.Replace(".vb", "")
 
         ' Solamente se realiza la traducción si hay algo que traducir
-        If totalControles > 0 Or totalIdiomas > 0 Then
+        If totalControles > 0 Or totalIdiomas > 0 AndAlso IO.File.Exists(eArchivoVB.RutaCompleta) Then
             ' Se lee el contenido del formulario. Este formulario ya está convertido a UTF-8
             ' por lo que el Encodig se fija a este formato
             Dim elLector As StreamReader = New System.IO.StreamReader(eArchivoVB.RutaCompleta, System.Text.Encoding.UTF8)
@@ -621,7 +621,7 @@ Public Class cGeneradorPO
                     Dim NombreFicheroSalida As String = iProyectoVB.carpetaTraducciones & UnIdioma.strCodigoLocalizacion & ".po"
                     Dim elEscritorPO As New StreamWriter(NombreFicheroSalida, True, System.Text.Encoding.UTF8)
 
-                    For Each UnaEntrada As cTraduccionIntermedia In DiccionarioTraducciones(UnIdioma.codigoLocalizacion)                        
+                    For Each UnaEntrada As cTraduccionIntermedia In DiccionarioTraducciones(UnIdioma.codigoLocalizacion)
                         ' Se comprueba si la traducción ya existía en la versión antigua y esta sigue siendo la misma, de
                         ' ser así, esta se ignora
                         If traduccionesAntiguas IsNot Nothing AndAlso traduccionesAntiguas.Keys.Contains(UnIdioma.codigoLocalizacion) Then
@@ -660,7 +660,7 @@ Public Class cGeneradorPO
             Dim NombreFicheroSalidaOriginal As String = iProyectoVB.carpetaTraducciones & IdiomaUso.strCodigoLocalizacion & ".po"
             Dim elEscritorPOOriginal As New StreamWriter(NombreFicheroSalidaOriginal, True, System.Text.Encoding.UTF8)
 
-            For Each UnaEntrada As cTraduccionIntermedia In DiccionarioTraducciones(ultimoTraducido)                
+            For Each UnaEntrada As cTraduccionIntermedia In DiccionarioTraducciones(ultimoTraducido)
                 elEscritorPOOriginal.WriteLine("#: " & UnaEntrada.NombreControl)
                 elEscritorPOOriginal.WriteLine("msgid """ & Web.HTML.ANSI2UTF8(UnaEntrada.Original) & """")
                 elEscritorPOOriginal.WriteLine("msgstr """ & Web.HTML.ANSI2UTF8(UnaEntrada.Original) & """")
@@ -862,118 +862,120 @@ Public Class cGeneradorPO
 
         Dim paraDevolver As New Dictionary(Of String, String)
 
-        Dim elLector As New System.IO.StreamReader(eArchivoVB.RutaCompleta, System.Text.Encoding.UTF8)
-        Dim laCadena As String = ""
+        If IO.File.Exists(eArchivoVB.RutaCompleta) Then
+            Dim elLector As New System.IO.StreamReader(eArchivoVB.RutaCompleta, System.Text.Encoding.UTF8)
+            Dim laCadena As String = ""
 
-        ' Se obtienen todos los controles a traducir
-        Do
-            laCadena = elLector.ReadLine.Trim
+            ' Se obtienen todos los controles a traducir
+            Do
+                laCadena = elLector.ReadLine.Trim
 
-            If (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonWrapLabel()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonWrapLabel")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonLabel()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonLabel")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonButton()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonButton")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonCheckBox()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonCheckBox")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonRadioButton()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonRadioButton")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonGroupBox()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonGroupBox")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonPanel()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonPanel")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonForm()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonForm")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonHeaderGroup()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonHeaderGroup")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonSplitContainer")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonSplitContainer()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonManager")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonManager()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonManager(Me.components)")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.ButtonSpecAny")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.ButtonSpecAny()")) Or _
+                If (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonWrapLabel()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonWrapLabel")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonLabel()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonLabel")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonButton()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonButton")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonCheckBox()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonCheckBox")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonRadioButton()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonRadioButton")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonGroupBox()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonGroupBox")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonPanel()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonPanel")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonForm()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonForm")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonHeaderGroup()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonHeaderGroup")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonSplitContainer")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonSplitContainer()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonManager")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonManager()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonManager(Me.components)")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.ButtonSpecAny")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.ButtonSpecAny()")) Or _
  _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Docking.KryptonDockableNavigator")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Docking.KryptonDockableNavigator()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Navigator.KryptonNavigator")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Navigator.KryptonNavigator()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Navigator.KryptonPage")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Navigator.KryptonPage()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Docking.KryptonDockableNavigator")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Docking.KryptonDockableNavigator()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Navigator.KryptonNavigator")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Navigator.KryptonNavigator()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Navigator.KryptonPage")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Navigator.KryptonPage()")) Or _
  _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Label()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Label")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.LinkLabel()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.LinkLabel")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Button()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Button")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.CheckBox()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.CheckBox")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.RadioButton()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.RadioButton")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.GroupBox()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.GroupBox")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.CheckedListBox()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.CheckedListBox")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.TreeNode()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.TreeNode")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Form()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Form")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.SplitContainer()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.SplitContainer")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.FlowLayoutPanel()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.FlowLayoutPanel")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Label()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Label")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.LinkLabel()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.LinkLabel")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Button()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Button")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.CheckBox()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.CheckBox")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.RadioButton()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.RadioButton")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.GroupBox()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.GroupBox")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.CheckedListBox()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.CheckedListBox")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.TreeNode()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.TreeNode")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Form()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Form")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.SplitContainer()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.SplitContainer")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.FlowLayoutPanel()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.FlowLayoutPanel")) Or _
  _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.MenuStrip()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.MenuStrip(Me.components)")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.MenuStrip")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStrip()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStrip")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripDropDownButton()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripDropDownButton")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripSplitButton()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripSplitButton")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripStatusLabel()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripStatusLabel")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripButton()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripButton")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripTextBox()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripTextBox")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.StatusStrip()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.StatusStrip")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ContextMenuStrip()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ContextMenuStrip(Me.components)")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ContextMenuStrip")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripMenuItem()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripMenuItem")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripDropDownItem()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripDropDownItem")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripLabel()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripLabel")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripComboBox()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripComboBox")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.TabPage()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.TabPage")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.MenuStrip()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.MenuStrip(Me.components)")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.MenuStrip")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStrip()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStrip")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripDropDownButton()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripDropDownButton")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripSplitButton()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripSplitButton")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripStatusLabel()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripStatusLabel")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripButton()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripButton")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripTextBox()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripTextBox")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.StatusStrip()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.StatusStrip")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ContextMenuStrip()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ContextMenuStrip(Me.components)")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ContextMenuStrip")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripMenuItem()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripMenuItem")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripDropDownItem()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripDropDownItem")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripLabel()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripLabel")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripComboBox()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripComboBox")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.TabPage()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.TabPage")) Or _
  _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonTab()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonTab")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonGroup()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonGroup")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonGroupButton()")) Or _
-              (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonGroupButton")) Then
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonTab()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonTab")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonGroup()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonGroup")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonGroupButton()")) Or _
+                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonGroupButton")) Then
 
-                Try
-                    Dim nombreControl As String = laCadena.Substring(0, laCadena.IndexOf("=")).Trim
-                    Dim tipoComponente As String = laCadena.Substring(laCadena.IndexOf("=") + 5).Trim
-                    tipoComponente = tipoComponente.Replace("Me.components", "")
+                    Try
+                        Dim nombreControl As String = laCadena.Substring(0, laCadena.IndexOf("=")).Trim
+                        Dim tipoComponente As String = laCadena.Substring(laCadena.IndexOf("=") + 5).Trim
+                        tipoComponente = tipoComponente.Replace("Me.components", "")
 
-                    paraDevolver.Add(nombreControl, tipoComponente)
-                Catch ex As Exception
-                End Try
-            End If
-        Loop Until elLector.EndOfStream
-        elLector.Close()
+                        paraDevolver.Add(nombreControl, tipoComponente)
+                    Catch ex As Exception
+                    End Try
+                End If
+            Loop Until elLector.EndOfStream
+            elLector.Close()
+        End If
 
         Return paraDevolver
     End Function

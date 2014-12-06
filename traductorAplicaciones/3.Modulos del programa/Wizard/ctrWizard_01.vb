@@ -48,6 +48,7 @@ Public Class ctrWizard_01
         ' Se selecciona la operación seleccionada por el usuario previamente
         If Sistema.Traduccion._OPERACION = Operacion.AbrirProyecto Then
             radOperacionAbrir.Checked = True
+            txtOperacionRuta.Text = Sistema.Traduccion._RUTA_RTRAD
         Else
             radOperacionNuevo.Checked = True
         End If
@@ -136,6 +137,14 @@ Public Class ctrWizard_01
         frmWizard.btnSiguiente.Enabled = True
     End Sub
 
+    Private Sub txtOperacionRuta_CambioRuta(eRuta As String) Handles txtOperacionRuta.CambioRuta
+        If Cargando Then Exit Sub
+        If Not String.IsNullOrEmpty(txtOperacionRuta.Text) AndAlso IO.File.Exists(txtOperacionRuta.Text) Then
+            Sistema.Traduccion._RUTA_RTRAD = txtOperacionRuta.Text
+            radOperacionAbrir_CheckedChanged(Nothing, Nothing)
+        End If
+    End Sub
+
     Private Sub radOperacionAbrir_CheckedChanged(sender As Object, e As EventArgs) Handles radOperacionAbrir.CheckedChanged
         If Cargando Then Exit Sub
         tblControles.SuspendLayout()
@@ -150,7 +159,6 @@ Public Class ctrWizard_01
         hdrTraduccion.Enabled = True
         If radOperacionAbrir.Checked Then
             Sistema.Traduccion._OPERACION = Operacion.AbrirProyecto
-            LimpiarCampos()
 
             ' Si ya estába configurada una ruta se carga, en caso contrario
             ' se bloquen los campos de los datos del proyecto hasta que se
@@ -158,8 +166,11 @@ Public Class ctrWizard_01
             If Not String.IsNullOrEmpty(Sistema.Traduccion._RUTA_RTRAD) AndAlso IO.File.Exists(Sistema.Traduccion._RUTA_RTRAD) Then
                 Sistema.Traduccion._CONFIGURACION_TRADUCTOR = New Recompila.Traductor.cProyectoTraductor
                 Sistema.Traduccion._CONFIGURACION_TRADUCTOR.cargar(Sistema.Traduccion._RUTA_RTRAD)
+                txtTraduccionNombre.Text = Sistema.Traduccion._CONFIGURACION_TRADUCTOR.Nombre
+                txtTraduccionDescripcion.Text = Sistema.Traduccion._CONFIGURACION_TRADUCTOR.Descripcion
                 txtTraduccionNombre.Focus()
             Else
+                LimpiarCampos()
                 Sistema.Traduccion._CONFIGURACION_TRADUCTOR = Nothing
                 hdrTraduccion.Enabled = False
                 txtOperacionRuta.Focus()

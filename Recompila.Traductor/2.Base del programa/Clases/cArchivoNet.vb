@@ -1,5 +1,6 @@
 ﻿Imports Recompila.Helper
 
+<Serializable>
 Public Class cArchivoVB
 #Region " PROPIEDADES "
     Public Property RutaCompleta As String
@@ -9,6 +10,10 @@ Public Class cArchivoVB
 #End Region
 
 #Region " CONSTRUCTORES "
+    Public Sub New()
+
+    End Sub
+
     Public Sub New(ByVal eRutaProyecto As String, _
                    ByVal eRutaObjeto As String)
         Me.RutaCompleta = eRutaObjeto

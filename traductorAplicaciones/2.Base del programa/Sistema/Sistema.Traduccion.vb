@@ -52,10 +52,13 @@ Namespace Sistema
             ''' traducir como a la hora de utilizar los archivos PO generados
             ''' </summary>
             Public Property _PROYECTO_VB As cProyectoVB = Nothing
+
+            ''' <summary>
+            ''' Guarda de forma automática la configuración del proyecto de traducción al
+            ''' finalizar la traducción del proyecto
+            ''' </summary>
+            Public Property _GUARDAR_AL_FINALIZAR As Boolean = True
 #End Region
-
-
-
         End Module
     End Namespace
 End Namespace

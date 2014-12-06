@@ -191,7 +191,7 @@ Public Class cMotorGoogle
                                     Else
                                         IndiceDiccionario = Funciones.NZL(laColumna1)
                                     End If
-                                    If laColumna1.Contains("~") Then
+                                    If laColumna2.Contains("~") Then
                                         Traduccion = Web.HTML.HTML2UTF(laColumna2.Split("~")(1))
                                     Else
                                         Traduccion = Web.HTML.HTML2UTF(laColumna2)

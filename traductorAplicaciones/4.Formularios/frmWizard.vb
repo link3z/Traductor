@@ -30,7 +30,7 @@ Public Class frmWizard
         Next
     End Sub
 
-    Private Sub cargarPaso(Optional ePaso As Integer = -1)
+    Public Sub cargarPaso(Optional ePaso As Integer = -1)
         btnSiguiente.Visible = False
         Dim mostrarSiguiente As Boolean = False
         Dim mostrarAnterior As Boolean = False

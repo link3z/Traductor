@@ -63,32 +63,52 @@ Partial Class ctrWizard_05
         '
         Me.lnkInformacionUso.Location = New System.Drawing.Point(40, 64)
         Me.lnkInformacionUso.Name = "lnkInformacionUso"
-        Me.lnkInformacionUso.Size = New System.Drawing.Size(394, 20)
+        Me.lnkInformacionUso.OverrideNotVisited.ShortText.Color1 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.lnkInformacionUso.OverrideNotVisited.ShortText.Color2 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.lnkInformacionUso.Size = New System.Drawing.Size(410, 20)
+        Me.lnkInformacionUso.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.lnkInformacionUso.StateCommon.ShortText.Color2 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
         Me.lnkInformacionUso.TabIndex = 6
+        Me.lnkInformacionUso.Values.Image = Global.traductorAplicaciones.My.Resources.Resources.information_16_gris_66
         Me.lnkInformacionUso.Values.Text = "Obtener información de como utilizar las traducciones en mi proyecto."
         '
         'lnkAbrirCarpetaPO
         '
         Me.lnkAbrirCarpetaPO.Location = New System.Drawing.Point(40, 90)
         Me.lnkAbrirCarpetaPO.Name = "lnkAbrirCarpetaPO"
-        Me.lnkAbrirCarpetaPO.Size = New System.Drawing.Size(411, 20)
+        Me.lnkAbrirCarpetaPO.OverrideNotVisited.ShortText.Color1 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.lnkAbrirCarpetaPO.OverrideNotVisited.ShortText.Color2 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.lnkAbrirCarpetaPO.Size = New System.Drawing.Size(427, 20)
+        Me.lnkAbrirCarpetaPO.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.lnkAbrirCarpetaPO.StateCommon.ShortText.Color2 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
         Me.lnkAbrirCarpetaPO.TabIndex = 7
+        Me.lnkAbrirCarpetaPO.Values.Image = Global.traductorAplicaciones.My.Resources.Resources.folder_open_16_gris_66
         Me.lnkAbrirCarpetaPO.Values.Text = "Abrir la carpeta donde se generaron los archivos PO con las traducciones."
         '
         'lnkDescargarPoedit
         '
         Me.lnkDescargarPoedit.Location = New System.Drawing.Point(40, 116)
         Me.lnkDescargarPoedit.Name = "lnkDescargarPoedit"
-        Me.lnkDescargarPoedit.Size = New System.Drawing.Size(403, 20)
+        Me.lnkDescargarPoedit.OverrideNotVisited.ShortText.Color1 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.lnkDescargarPoedit.OverrideNotVisited.ShortText.Color2 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.lnkDescargarPoedit.Size = New System.Drawing.Size(419, 20)
+        Me.lnkDescargarPoedit.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.lnkDescargarPoedit.StateCommon.ShortText.Color2 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
         Me.lnkDescargarPoedit.TabIndex = 8
+        Me.lnkDescargarPoedit.Values.Image = Global.traductorAplicaciones.My.Resources.Resources.edit_16_gris_66
         Me.lnkDescargarPoedit.Values.Text = "Descargar la última versión de Poedit para trabajar con las traducciones."
         '
         'lnkGuardarProyecto
         '
         Me.lnkGuardarProyecto.Location = New System.Drawing.Point(40, 142)
         Me.lnkGuardarProyecto.Name = "lnkGuardarProyecto"
-        Me.lnkGuardarProyecto.Size = New System.Drawing.Size(447, 20)
+        Me.lnkGuardarProyecto.OverrideNotVisited.ShortText.Color1 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.lnkGuardarProyecto.OverrideNotVisited.ShortText.Color2 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.lnkGuardarProyecto.Size = New System.Drawing.Size(463, 20)
+        Me.lnkGuardarProyecto.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.lnkGuardarProyecto.StateCommon.ShortText.Color2 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
         Me.lnkGuardarProyecto.TabIndex = 9
+        Me.lnkGuardarProyecto.Values.Image = Global.traductorAplicaciones.My.Resources.Resources.save_16_gris_66
         Me.lnkGuardarProyecto.Values.Text = "Guardar el proyecto de traducción para volver a traducir la aplicación más tarde." & _
     ""
         '
@@ -96,8 +116,15 @@ Partial Class ctrWizard_05
         '
         Me.lnkReiniciarAsistente.Location = New System.Drawing.Point(40, 168)
         Me.lnkReiniciarAsistente.Name = "lnkReiniciarAsistente"
-        Me.lnkReiniciarAsistente.Size = New System.Drawing.Size(314, 20)
+        Me.lnkReiniciarAsistente.OverrideNotVisited.ShortText.Color1 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.lnkReiniciarAsistente.OverrideNotVisited.ShortText.Color2 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.lnkReiniciarAsistente.Size = New System.Drawing.Size(330, 20)
+        Me.lnkReiniciarAsistente.StateCommon.LongText.Color1 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.lnkReiniciarAsistente.StateCommon.LongText.Color2 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.lnkReiniciarAsistente.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.lnkReiniciarAsistente.StateCommon.ShortText.Color2 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
         Me.lnkReiniciarAsistente.TabIndex = 10
+        Me.lnkReiniciarAsistente.Values.Image = Global.traductorAplicaciones.My.Resources.Resources.undo_point_16_gris_66
         Me.lnkReiniciarAsistente.Values.Text = "Volver a iniciar el asistente para realizar otra traducción."
         '
         'ctrWizard_05

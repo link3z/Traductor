@@ -55,6 +55,9 @@ Public Class ctrWizard_02
             End If
         End If
 
+        ' Se cargan el resto de parámetros
+        chkGuardar.Checked = Sistema.Traduccion._GUARDAR_AL_FINALIZAR
+
         Return True
     End Function
 
@@ -89,6 +92,9 @@ Public Class ctrWizard_02
                 Sistema.Traduccion._CONFIGURACION_TRADUCTOR.ArchivosVB.Add(unObjeto)
             End If
         Next
+
+        ' Se guarda el resto de parámetros
+        Sistema.Traduccion._GUARDAR_AL_FINALIZAR = chkGuardar.Checked
 
         Return True
     End Function
