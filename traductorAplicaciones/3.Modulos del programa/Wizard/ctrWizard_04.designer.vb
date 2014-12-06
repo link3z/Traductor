@@ -26,8 +26,8 @@ Partial Class ctrWizard_04
         Me.lblTitulo = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
         Me.gestorErrores = New Recompila.Controles.rGestorErrores()
         Me.txtMensajes = New System.Windows.Forms.TextBox()
-        Me.pbGeneral = New System.Windows.Forms.ProgressBar()
-        Me.pbConcreta = New System.Windows.Forms.ProgressBar()
+        Me.pbPrimaria = New System.Windows.Forms.ProgressBar()
+        Me.pbSecundaria = New System.Windows.Forms.ProgressBar()
         Me.tInicio = New System.Windows.Forms.Timer(Me.components)
         CType(Me.gestorErrores, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -52,8 +52,8 @@ Partial Class ctrWizard_04
         '
         Me.txtMensajes.BackColor = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
         Me.txtMensajes.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.txtMensajes.Font = New System.Drawing.Font("Lucida Console", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txtMensajes.ForeColor = System.Drawing.Color.DarkGreen
+        Me.txtMensajes.Font = New System.Drawing.Font("Lucida Console", 6.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.txtMensajes.ForeColor = System.Drawing.Color.LightGray
         Me.txtMensajes.Location = New System.Drawing.Point(3, 41)
         Me.txtMensajes.MaxLength = 2147483647
         Me.txtMensajes.Multiline = True
@@ -61,19 +61,19 @@ Partial Class ctrWizard_04
         Me.txtMensajes.Size = New System.Drawing.Size(594, 418)
         Me.txtMensajes.TabIndex = 9
         '
-        'pbGeneral
+        'pbPrimaria
         '
-        Me.pbGeneral.Location = New System.Drawing.Point(3, 465)
-        Me.pbGeneral.Name = "pbGeneral"
-        Me.pbGeneral.Size = New System.Drawing.Size(594, 13)
-        Me.pbGeneral.TabIndex = 10
+        Me.pbPrimaria.Location = New System.Drawing.Point(3, 465)
+        Me.pbPrimaria.Name = "pbPrimaria"
+        Me.pbPrimaria.Size = New System.Drawing.Size(594, 13)
+        Me.pbPrimaria.TabIndex = 10
         '
-        'pbConcreta
+        'pbSecundaria
         '
-        Me.pbConcreta.Location = New System.Drawing.Point(3, 484)
-        Me.pbConcreta.Name = "pbConcreta"
-        Me.pbConcreta.Size = New System.Drawing.Size(594, 13)
-        Me.pbConcreta.TabIndex = 11
+        Me.pbSecundaria.Location = New System.Drawing.Point(3, 484)
+        Me.pbSecundaria.Name = "pbSecundaria"
+        Me.pbSecundaria.Size = New System.Drawing.Size(594, 13)
+        Me.pbSecundaria.TabIndex = 11
         '
         'tInicio
         '
@@ -83,8 +83,8 @@ Partial Class ctrWizard_04
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.Transparent
-        Me.Controls.Add(Me.pbConcreta)
-        Me.Controls.Add(Me.pbGeneral)
+        Me.Controls.Add(Me.pbSecundaria)
+        Me.Controls.Add(Me.pbPrimaria)
         Me.Controls.Add(Me.txtMensajes)
         Me.Controls.Add(Me.lblTitulo)
         Me.Margin = New System.Windows.Forms.Padding(0)
@@ -97,8 +97,8 @@ Partial Class ctrWizard_04
     End Sub
     Friend WithEvents lblTitulo As ComponentFactory.Krypton.Toolkit.KryptonLabel
     Friend WithEvents gestorErrores As Recompila.Controles.rGestorErrores
-    Friend WithEvents pbConcreta As System.Windows.Forms.ProgressBar
-    Friend WithEvents pbGeneral As System.Windows.Forms.ProgressBar
+    Friend WithEvents pbSecundaria As System.Windows.Forms.ProgressBar
+    Friend WithEvents pbPrimaria As System.Windows.Forms.ProgressBar
     Friend WithEvents txtMensajes As System.Windows.Forms.TextBox
     Friend WithEvents tInicio As System.Windows.Forms.Timer
 

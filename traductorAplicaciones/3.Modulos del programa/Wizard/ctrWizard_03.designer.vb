@@ -217,6 +217,7 @@ Partial Class ctrWizard_03
         '
         'chklIdiomasDestino
         '
+        Me.chklIdiomasDestino.CheckOnClick = True
         Me.chklIdiomasDestino.Dock = System.Windows.Forms.DockStyle.Fill
         Me.chklIdiomasDestino.Location = New System.Drawing.Point(156, 135)
         Me.chklIdiomasDestino.Name = "chklIdiomasDestino"

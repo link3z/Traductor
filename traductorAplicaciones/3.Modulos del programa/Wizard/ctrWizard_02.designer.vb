@@ -34,6 +34,8 @@ Partial Class ctrWizard_02
         Me.txtVersion = New Recompila.Controles.rTextBox()
         Me.lblVersion = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
         Me.lblSeleccionar = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
+        Me.lblGuardar = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
+        Me.chkGuardar = New ComponentFactory.Krypton.Toolkit.KryptonCheckBox()
         CType(Me.gestorErrores, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.cmbSeleccionar.SuspendLayout()
         CType(Me.cmbOpcionesSeleccion, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -85,15 +87,18 @@ Partial Class ctrWizard_02
         Me.cmbSeleccionar.Controls.Add(Me.txtVersion, 2, 2)
         Me.cmbSeleccionar.Controls.Add(Me.lblVersion, 0, 2)
         Me.cmbSeleccionar.Controls.Add(Me.lblSeleccionar, 0, 4)
+        Me.cmbSeleccionar.Controls.Add(Me.lblGuardar, 0, 6)
+        Me.cmbSeleccionar.Controls.Add(Me.chkGuardar, 2, 6)
         Me.cmbSeleccionar.Location = New System.Drawing.Point(3, 41)
         Me.cmbSeleccionar.Name = "cmbSeleccionar"
-        Me.cmbSeleccionar.RowCount = 6
+        Me.cmbSeleccionar.RowCount = 7
         Me.cmbSeleccionar.RowStyles.Add(New System.Windows.Forms.RowStyle())
         Me.cmbSeleccionar.RowStyles.Add(New System.Windows.Forms.RowStyle())
         Me.cmbSeleccionar.RowStyles.Add(New System.Windows.Forms.RowStyle())
         Me.cmbSeleccionar.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
         Me.cmbSeleccionar.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me.cmbSeleccionar.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
+        Me.cmbSeleccionar.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.cmbSeleccionar.RowStyles.Add(New System.Windows.Forms.RowStyle())
         Me.cmbSeleccionar.Size = New System.Drawing.Size(594, 456)
         Me.cmbSeleccionar.TabIndex = 1043
         '
@@ -105,7 +110,7 @@ Partial Class ctrWizard_02
         Me.chklObjetos.Location = New System.Drawing.Point(1, 114)
         Me.chklObjetos.Margin = New System.Windows.Forms.Padding(1)
         Me.chklObjetos.Name = "chklObjetos"
-        Me.chklObjetos.Size = New System.Drawing.Size(592, 341)
+        Me.chklObjetos.Size = New System.Drawing.Size(592, 315)
         Me.chklObjetos.StateCommon.Border.Color1 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
         Me.chklObjetos.StateCommon.Border.DrawBorders = CType((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top Or ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) _
             Or ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Left) _
@@ -200,6 +205,29 @@ Partial Class ctrWizard_02
         Me.lblSeleccionar.TabIndex = 1051
         Me.lblSeleccionar.Values.Text = "Formularios"
         '
+        'lblGuardar
+        '
+        Me.lblGuardar.Dock = System.Windows.Forms.DockStyle.Right
+        Me.lblGuardar.Location = New System.Drawing.Point(56, 431)
+        Me.lblGuardar.Margin = New System.Windows.Forms.Padding(1)
+        Me.lblGuardar.Name = "lblGuardar"
+        Me.lblGuardar.Size = New System.Drawing.Size(53, 24)
+        Me.lblGuardar.StateCommon.ShortText.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblGuardar.TabIndex = 1051
+        Me.lblGuardar.Values.Text = "Guardar"
+        '
+        'chkGuardar
+        '
+        Me.chkGuardar.Checked = True
+        Me.chkGuardar.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkGuardar.LabelStyle = ComponentFactory.Krypton.Toolkit.LabelStyle.NormalControl
+        Me.chkGuardar.Location = New System.Drawing.Point(133, 433)
+        Me.chkGuardar.Name = "chkGuardar"
+        Me.chkGuardar.Size = New System.Drawing.Size(397, 20)
+        Me.chkGuardar.TabIndex = 1052
+        Me.chkGuardar.Text = "Guardar la configuración de la traducción en la carpeta del proyecto."
+        Me.chkGuardar.Values.Text = "Guardar la configuración de la traducción en la carpeta del proyecto."
+        '
         'ctrWizard_02
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -230,5 +258,7 @@ Partial Class ctrWizard_02
     Friend WithEvents chklObjetos As ComponentFactory.Krypton.Toolkit.KryptonCheckedListBox
     Friend WithEvents cmbOpcionesSeleccion As Recompila.Controles.rComboBox
     Friend WithEvents lblSeleccionar As ComponentFactory.Krypton.Toolkit.KryptonLabel
+    Friend WithEvents lblGuardar As ComponentFactory.Krypton.Toolkit.KryptonLabel
+    Friend WithEvents chkGuardar As ComponentFactory.Krypton.Toolkit.KryptonCheckBox
 
 End Class

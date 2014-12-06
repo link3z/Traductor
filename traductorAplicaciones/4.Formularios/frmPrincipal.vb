@@ -36,7 +36,7 @@ Public Class frmPrincipal
         lstIdiomasExportacion.Items.Clear()
         'iTraductorGenerar.Motor = cmbMotorTraduccion.SelectedItem
 
-        Dim rutaTraducciones As String = Sistema.Configuracion.proyectoVB.carpetaTraducciones
+        Dim rutaTraducciones As String = Sistema.Traduccion._PROYECTO_VB.carpetaTraducciones
 
         'For Each unIdioma As cIdioma In iTraductorGenerar.Idiomas
         '    Dim elIndice As Long = lstIdiomasExportacion.Items.Add(unIdioma)

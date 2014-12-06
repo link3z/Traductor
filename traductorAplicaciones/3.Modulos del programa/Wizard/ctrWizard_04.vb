@@ -29,9 +29,10 @@ Public Class ctrWizard_04
         gestorErrores.Clear()
     End Sub
 
-    Public Sub PrepararCierre() Implements ICBase.PrepararCierre
+    Public Function PrepararCierre() As Boolean Implements ICBase.PrepararCierre
 
-    End Sub
+        Return True
+    End Function
 
     Public Function Cargar(eObjeto As Object) As Boolean Implements IControlWizard.Cargar
 
@@ -39,12 +40,6 @@ Public Class ctrWizard_04
     End Function
 
     Public Sub CargarDatosMaestros() Implements IControlWizard.CargarDatosMaestros
-        ' Se fijan los valores de la barra de progreso general
-        WinForms.ProgressBar.fijarMinimoBarra(pbGeneral, 0)
-        WinForms.ProgressBar.fijarMaximoBarra(pbGeneral, Sistema.Configuracion.objetosTraducir.Count + 1)
-        WinForms.ProgressBar.FijarBarra(pbGeneral, 0)
-
-
 
     End Sub
 
@@ -57,7 +52,7 @@ Public Class ctrWizard_04
         Return (gestorErrores.HasErrors)
     End Function
 
-    Public Function Guardar(eObjeto As Object) As Object Implements IControlWizard.Guardar
+    Public Function Guardar(ByRef eObjeto As Object) As Object Implements IControlWizard.Guardar
 
         Return True
     End Function
@@ -71,9 +66,9 @@ Public Class ctrWizard_04
         escribirMensaje("Configurando parámetros para la traducción.")
 
         ' Se crea el objeto traductor
-        Dim elTraductor As cGeneradorPO = New cGeneradorPO(Sistema.Configuracion.proyectoVB, _
-                                                           Sistema.Configuracion.proyectoTraductor,
-                                                           Sistema.Configuracion.configuracionNetwork)
+        Dim elTraductor As cGeneradorPO = New cGeneradorPO(Sistema.Traduccion._PROYECTO_VB, _
+                                                           Sistema.Traduccion._CONFIGURACION_TRADUCTOR,
+                                                           Sistema.Traduccion._CONFIGURACION_CONEXION)
 
         ' Se añaden los manejadores para recibir información del estado de la traducción
         AddHandler elTraductor.notificarMensaje, AddressOf manejadorNotificarMensaje
@@ -81,43 +76,64 @@ Public Class ctrWizard_04
         AddHandler elTraductor.notificarProgreso, AddressOf manejadorNotificarProgreso
         AddHandler elTraductor.notificarFinalizacion, AddressOf manejadorNotificarFinalizacion
 
+
         ' Una vez que el código llega hasta este punto, se puede realizar la traducción 
         ' recorriendo todos los archivos seleccionados
-        ' Se recorren todos los formualarios para realizar las traducciones        
-        For Each unArchivo As cArchivoVB In Sistema.Configuracion.proyectoTraductor.ArchivosVB
-            elTraductor.VBFile2POFile(unArchivo.RutaCompleta)
-        Next
-
+        elTraductor.Traducir()
 
         frmWizard.btnAnterior.Enabled = True
         frmWizard.btnSiguiente.Enabled = True
+        frmWizard.btnSiguiente.PerformClick()
     End Sub
 #End Region
 
 #Region " MANEJADORES "
-    Private Sub manejadorNotificarMensaje(eHora As Date, eMensaje As String)
+    Private Sub manejadorNotificarMensaje(ByVal eMensaje As String)
         escribirMensaje(eMensaje)
     End Sub
 
-    Private Sub manejadorNotificarMaximo(eValor As Long)
-        WinForms.ProgressBar.fijarMinimoBarra(pbConcreta, 0)
-        WinForms.ProgressBar.fijarMaximoBarra(pbConcreta, eValor)
-        WinForms.ProgressBar.FijarBarra(pbConcreta, 0)
+    Private Sub manejadorNotificarMaximo(ByVal eBarra As cGeneradorPO.TipoBarraProgreso, ByVal eValor As Long)
+        If eBarra = cGeneradorPO.TipoBarraProgreso.Primaria Then
+            WinForms.ProgressBar.fijarMinimoBarra(pbPrimaria, 0)
+            WinForms.ProgressBar.fijarMaximoBarra(pbPrimaria, eValor)
+            WinForms.ProgressBar.FijarBarra(pbPrimaria, 0)
+        ElseIf eBarra = cGeneradorPO.TipoBarraProgreso.Secundaria Then
+            WinForms.ProgressBar.fijarMinimoBarra(pbSecundaria, 0)
+            WinForms.ProgressBar.fijarMaximoBarra(pbSecundaria, eValor)
+            WinForms.ProgressBar.FijarBarra(pbSecundaria, 0)
+        End If
     End Sub
 
-    Private Sub manejadorNotificarProgreso()
-        WinForms.ProgressBar.AumentarBarra(pbConcreta)
+    Private Sub manejadorNotificarProgreso(ByVal eBarra As cGeneradorPO.TipoBarraProgreso, _
+                                           ByVal eValor As Integer)
+        If eBarra = cGeneradorPO.TipoBarraProgreso.Primaria Then
+            If eValor = 0 Then
+                WinForms.ProgressBar.AumentarBarra(pbPrimaria)
+            Else
+                WinForms.ProgressBar.FijarBarra(pbPrimaria, eValor)
+            End If
+        ElseIf eBarra = cGeneradorPO.TipoBarraProgreso.Secundaria Then
+            If eValor = 0 Then
+                WinForms.ProgressBar.AumentarBarra(pbSecundaria)
+            Else
+                WinForms.ProgressBar.FijarBarra(pbSecundaria, eValor)
+            End If
+        End If
     End Sub
 
-    Private Sub manejadorNotificarFinalizacion()
-        WinForms.ProgressBar.FijarBarra(pbConcreta, 0)
+    Private Sub manejadorNotificarFinalizacion(ByVal eBarra As cGeneradorPO.TipoBarraProgreso)
+        If eBarra = cGeneradorPO.TipoBarraProgreso.Primaria Then
+            WinForms.ProgressBar.FijarBarra(pbPrimaria, 0)
+        ElseIf eBarra = cGeneradorPO.TipoBarraProgreso.Secundaria Then
+            WinForms.ProgressBar.FijarBarra(pbSecundaria, 0)
+        End If
     End Sub
 #End Region
 
 #Region " METODOS AUXILIARES "
     Private Sub escribirMensaje(ByVal eMensaje As String)
         Try
-            txtMensajes.AppendText(" " & Format(Now, "HH:mm:ss") & " > " & eMensaje.Trim & vbCrLf)
+            txtMensajes.AppendText(Format(Now, "mm:ss") & " " & eMensaje.Trim & vbCrLf)
             txtMensajes.Refresh()
             Application.DoEvents()
         Catch ex As Exception

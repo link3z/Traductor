@@ -73,7 +73,7 @@ Public Class frmWizard
             mostrarSiguiente = True
             mostrarAnterior = False
             _PASO_ACTUAL = New ctrWizard_05
-            btnSiguiente.Text = "Salir"
+            btnSiguiente.Text = "Cerrar"
             btnSiguiente.Values.Image = Nothing
         End If
 

@@ -37,15 +37,16 @@ Public Class ctrWizard_03
         gestorErrores.Clear()
     End Sub
 
-    Public Sub PrepararCierre() Implements ICBase.PrepararCierre
+    Public Function PrepararCierre() As Boolean Implements ICBase.PrepararCierre
 
-    End Sub
+        Return True
+    End Function
 
     Public Function Cargar(eObjeto As Object) As Boolean Implements IControlWizard.Cargar
         Cargando = True
 
-        If Sistema.Configuracion.proyectoTraductor IsNot Nothing Then
-            With Sistema.Configuracion.proyectoTraductor
+        If Sistema.Traduccion._CONFIGURACION_TRADUCTOR IsNot Nothing Then
+            With Sistema.Traduccion._CONFIGURACION_TRADUCTOR
                 ' Carga el motor utilizado para la traducción
                 Dim elMotor As cMotorBase = Nothing
                 elMotor = (From it As cMotorBase In cmbMotorTraduccion.Items _
@@ -90,11 +91,11 @@ Public Class ctrWizard_03
         Return (gestorErrores.HasErrors)
     End Function
 
-    Public Function Guardar(eObjeto As Object) As Object Implements IControlWizard.Guardar
+    Public Function Guardar(ByRef eObjeto As Object) As Object Implements IControlWizard.Guardar
         Dim elIdiomaOrigen As cIdioma = cmbIdiomaOriginal.SelectedItemReal
         Dim elMotor As cMotorBase = cmbMotorTraduccion.SelectedItem
 
-        With Sistema.Configuracion.proyectoTraductor
+        With Sistema.Traduccion._CONFIGURACION_TRADUCTOR
             .IdiomaOrigen = elIdiomaOrigen.codigoLocalizacion
             .Motor = elMotor.Tipo
 
@@ -172,8 +173,8 @@ Public Class ctrWizard_03
         Next
 
         ' Se seleccionan los idiomas que están configurados en la configuración del proyecto
-        If Sistema.Configuracion.proyectoTraductor IsNot Nothing Then
-            With Sistema.Configuracion.proyectoTraductor
+        If Sistema.Traduccion._CONFIGURACION_TRADUCTOR IsNot Nothing Then
+            With Sistema.Traduccion._CONFIGURACION_TRADUCTOR
                 If chklIdiomasDestino.Items.Count > 0 Then
                     For i As Integer = 0 To chklIdiomasDestino.Items.Count - 1
                         Dim elIdioma As cIdioma = chklIdiomasDestino.Items(i)

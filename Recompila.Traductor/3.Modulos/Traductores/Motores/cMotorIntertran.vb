@@ -48,6 +48,10 @@
     Private iTiposTraduccion As Dictionary(Of idiomaLocalizacion, List(Of idiomaLocalizacion)) = Nothing
 #End Region
 
+#Region " EVENTOS "
+    Public Event notificarMensaje(eMensaje As String) Implements IMotorTraduccion.notificarMensaje
+#End Region
+
 #Region " CONSTRUCTORES "
     Public Sub New()
         MyBase.SleepTime = 2000
@@ -59,18 +63,21 @@
     ''' Obtiene la URL que se tiene que invocar para realizar la traducción de la página
     ''' que se le pasa por parámetro de un idioma dado a otro
     ''' </summary>
+    ''' <param name="eDatosConexion">Datos de acceso al servidor FTP/HTTP</param>
     ''' <param name="eIdiomaEntrada">Idioma de entrada para la traducción</param>
     ''' <param name="eIdiomaSalida">Idioma de salida para la traducción</param>
     ''' <param name="eURL">URL donde se tiene que realizar la traducción</param>
     ''' <returns>URL formateada para poder realizar la traducción</returns>
-    Public Function obtenerURL(eIdiomaEntrada As cIdioma, _
-                               eIdiomaSalida As cIdioma, _
-                               eURL As String) As String Implements IMotorTraduccion.obtenerURL
-        Dim paraDevolver As String = Me.URI
+    Public Function obtenerTraducciones(ByVal eDatosConexion As cConfiguracionNetwork, _
+                                        ByVal eIdiomaEntrada As cIdioma, _
+                                        ByVal eIdiomaSalida As cIdioma, _
+                                        ByVal eURL As String, _
+                                        ByVal eTagEOF As String) As Dictionary(Of Long, String) Implements IMotorTraduccion.obtenerTraducciones
+        Dim paraDevolver As New Dictionary(Of Long, String)
 
-        paraDevolver = paraDevolver.Replace("@entrada@", eIdiomaEntrada.strISO639_3)
-        paraDevolver = paraDevolver.Replace("@salida@", eIdiomaSalida.strISO639_3)
-        paraDevolver = paraDevolver.Replace("@URI@", eURL.Replace("http://", ""))
+        'paraDevolver = paraDevolver.Replace("@entrada@", eIdiomaEntrada.strISO639_3)
+        'paraDevolver = paraDevolver.Replace("@salida@", eIdiomaSalida.strISO639_3)
+        'paraDevolver = paraDevolver.Replace("@URI@", eURL.Replace("http://", ""))
 
         Return paraDevolver
     End Function

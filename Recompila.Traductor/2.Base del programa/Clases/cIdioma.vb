@@ -30,7 +30,7 @@ Public Class cIdioma
     ''' </summary>
     Public ReadOnly Property strCodigoLocalizacion As String
         Get
-            Return Me.codigoLocalizacion.ToString
+            Return Me.codigoLocalizacion.ToString.Replace("_", "-")
         End Get
     End Property
 

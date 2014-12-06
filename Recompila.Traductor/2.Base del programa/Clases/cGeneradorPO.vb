@@ -1,10 +1,43 @@
 ﻿Imports System.IO
 Imports Recompila.Helper
+Imports System.Net
+Imports System.Windows.Forms
 
 ''' <summary>
 ''' Clase encargada de la generación de los archivos PO con las traducciones
 ''' </summary>
 Public Class cGeneradorPO
+
+#Region " ENUMERADOS "
+    ''' <summary>
+    ''' La información de progreso se puede reaizar sobre un proceso de traducción
+    ''' en concreto (barra secundaria), o sobre un proceso general (total de objetos
+    ''' a traducir). Este enumerado lo utilizan los eventos de información de proceso
+    ''' para indicar sobre que barra se está actuando
+    ''' </summary>
+    Public Enum TipoBarraProgreso
+        Primaria = 1
+        Secundaria = 2
+    End Enum
+#End Region
+
+#Region " DECLARACIONES "
+    ''' <summary>
+    ''' Gestor de subidas al FTP
+    ''' </summary>
+    Private WithEvents fileUploader As Net.WebClient = Nothing
+
+    ''' <summary>
+    ''' Controla si se están subiendo ficheros al FTP
+    ''' </summary>
+    Private iSubiendo As Boolean = False
+
+    ''' <summary>
+    ''' Tag que se añade al final del HTML que se va a traducir para detectar el final
+    ''' de la traducción o el fichero
+    ''' </summary>
+    Private Const _END_OF_FILE As String = "<b>__999__</b>"
+#End Region
 
 #Region " PROPIEDADES "
     ''' <summary>
@@ -75,31 +108,43 @@ Public Class cGeneradorPO
 
 #Region " EVENTOS "
     ''' <summary>
-    ''' Evento que se lanza cada vez que se producen cambios para informar al usuario de los cambios
-    ''' que se están realizando 
+    ''' Evento que se lanza cada vez que se producen cambios para informar al usuario de estos
+    ''' El manejador que está comprobando este evento se encargará de mostrar estos mensajes
+    ''' mediante un cuadro de texto, un log, etc.
     ''' </summary>
-    ''' <param name="eHora">Hora en la que se envía el mensaje</param>
-    ''' <param name="eMensaje">Mensaje que se envía</param>
-    Public Event notificarMensaje(ByVal eHora As DateTime, _
-                                  ByVal eMensaje As String)
+    ''' <param name="eMensaje">Mensaje que se envía desde el traductor</param>
+    Public Event notificarMensaje(ByVal eMensaje As String)
 
     ''' <summary>
     ''' Evento que se lanza para indicar el máximo valor que puede tomar la barra de progreso
     ''' </summary>
+    ''' <param name="eBarra">Sobre que barra se va a actuar</param>
     ''' <param name="eValor">Valor máximo</param>
-    Public Event notificarMaximo(ByVal eValor As Long)
+    Public Event notificarMaximo(ByVal eBarra As TipoBarraProgreso, ByVal eValor As Long)
 
     ''' <summary>
     ''' Evento que se lanza cada vez que se cambia el progreso de las tareas
     ''' </summary>
-    Public Event notificarProgreso()
+    ''' <param name="eBarra">Sobre que barra se va a actuar</param>
+    Public Event notificarProgreso(ByVal eBarra As TipoBarraProgreso, _
+                                   ByVal eValor As Integer)
 
     ''' <summary>
     ''' Evento que se lanza cada vez que finaliza la traducción de un formulario
     ''' </summary>
-    ''' <remarks></remarks>
-    Public Event notificarFinalizacion()
+    ''' <param name="eBarra">Sobre que barra se va a actuar</param>
+    Public Event notificarFinalizacion(ByVal eBarra As TipoBarraProgreso)
+#End Region
 
+#Region " MANEJADORES "
+    ''' <summary>
+    ''' Captura los mensajes enviados por el motor de traducción y los envía
+    ''' mediante el evento notificarMensaje para ser procesados
+    ''' </summary>
+    ''' <param name="eMensaje">Mensaje devuelto por el motor</param>
+    Private Sub manejadorNotificacionesMotor(eMensaje As String)
+        RaiseEvent notificarMensaje(eMensaje)
+    End Sub
 #End Region
 
 #Region " CONSTRUCTORES "
@@ -113,20 +158,25 @@ Public Class cGeneradorPO
         iConfiguracionNetwork = eConfiguracionNetwork
 
         ' Se crea el motor de traducción seleccionado por el usuario
-        Dim elMotor As IMotorTraduccion = Nothing
         Select Case ProyectoTraductor.Motor
             Case motorTraduccion.GoogleTranslate
-                elMotor = New cMotorGoogle()
+                iMotor = New cMotorGoogle
 
             Case motorTraduccion.OpenTrad
-                elMotor = New cMotorOpenTrad
+                iMotor = New cMotorOpenTrad
 
             Case motorTraduccion.Intertran
-                elMotor = New cMotorIntertran
+                iMotor = New cMotorIntertran
 
             Case motorTraduccion.OnlineTranslator
-                elMotor = New cMotorOnlineTranslator
+                iMotor = New cMotorOnlineTranslator
         End Select
+
+        ' Se añade el manejador para capturar los mensajes enviados por el
+        ' motor y poder mostrarlos en el proceso
+        If iMotor IsNot Nothing Then
+            AddHandler iMotor.notificarMensaje, AddressOf manejadorNotificacionesMotor
+        End If
 
         ' Se crea el idioma original de la aplicación
         IdiomaUso = New cIdioma(ProyectoTraductor.IdiomaOrigen)
@@ -144,62 +194,122 @@ Public Class cGeneradorPO
         ' del programa
         If Not seAnhadioIdiomaUso Then Idiomas.Add(IdiomaUso)
 
-        ' Se crea la carpeta para los lenguajes si todavía no existe
-        If Not IO.Directory.Exists(ProyectoVB.carpetaLanguages) Then IO.Directory.CreateDirectory(ProyectoVB.carpetaLanguages)
-        If Not IO.Directory.Exists(ProyectoVB.carpetaTraducciones) Then IO.Directory.CreateDirectory(ProyectoVB.carpetaTraducciones)
-
-        ' Se copian los ficheros actuales en la versión de generación, los cuales serán
-        ' utilizados para comprobar si el texto ya está traducido o no. Antes de nada se guarda
-        ' la versión de la traducciónen la variable local ya que una vez copiados los archivos
-        ' el proyecto ya no devolverá el número real
+        ' Se guarda la versión de traducción a generar
         iVersionTraduccion = ProyectoVB.versionTraduccion
-
-        Dim ExistenIdiomas As Boolean = False
-        Dim RutaIdioma_original As String = ""
-        Dim RutaIdioma_destino As String = ""
-        For Each UnIdioma As cIdioma In iIdiomas
-            RutaIdioma_original = ProyectoVB.carpetaTraducciones & UnIdioma.strCodigoLocalizacion & ".po"
-            RutaIdioma_destino = ProyectoVB.carpetaTraducciones & UnIdioma.strCodigoLocalizacion & "_" & VersionTraduccion & ".po"
-            If IO.File.Exists(RutaIdioma_destino) Then IO.File.Delete(RutaIdioma_destino)
-            If IO.File.Exists(RutaIdioma_original) Then IO.File.Move(RutaIdioma_original, RutaIdioma_destino)
-        Next
-
-        ' Se crean todos los ficheros PO de salida con la cabecera de cada fichero
-        Dim RutaIdioma As String = ""
-        For Each UnIdioma As cIdioma In iIdiomas
-            RutaIdioma = ProyectoVB.carpetaTraducciones & UnIdioma.strCodigoLocalizacion & ".po"
-            If IO.File.Exists(RutaIdioma) Then IO.File.Delete(RutaIdioma)
-            Dim elEscritorPO As New StreamWriter(RutaIdioma, False, System.Text.Encoding.UTF8)
-            EscribirCabeceraPO(elEscritorPO, UnIdioma.strCodigoLocalizacion)
-            elEscritorPO.Close()
-        Next
     End Sub
 #End Region
 
 #Region " TRADUCTOR "
     ''' <summary>
+    ''' Realiza la traducción a partir de los parámetros configurados
+    ''' </summary>
+    ''' <returns>True o Fals dependiendo del resultado de la traducción</returns>
+    Public Function Traducir() As Boolean
+        Dim paraDevolver As Boolean = True
+        Dim elMensaje As String = String.Empty
+
+        ' Se guarda el momento inicial para poder realizar cálculos de rendimiento
+        Dim momentoInicio As DateTime = Now
+
+        ' Se inicializa el traductor y se lanzan los eventos iniciales
+        ' -----------------------------------------------------------------------------------
+        RaiseEvent notificarMensaje("Iniciando proceso de traducción...")
+        RaiseEvent notificarFinalizacion(TipoBarraProgreso.Primaria)
+        RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
+
+        ' Se crea la carpeta para los lenguajes si todavía no existe
+        ' -----------------------------------------------------------------------------------
+        RaiseEvent notificarMensaje("Creando estructura de carpetas de salida...")
+        RaiseEvent notificarMensaje("+ " & ProyectoVB.carpetaLanguages)
+        If Not IO.Directory.Exists(ProyectoVB.carpetaLanguages) Then IO.Directory.CreateDirectory(ProyectoVB.carpetaLanguages)
+
+        RaiseEvent notificarMensaje("+ " & ProyectoVB.carpetaTraducciones)
+        If Not IO.Directory.Exists(ProyectoVB.carpetaTraducciones) Then IO.Directory.CreateDirectory(ProyectoVB.carpetaTraducciones)
+
+        ' Se guarda la anterior versión de traducción
+        ' -----------------------------------------------------------------------------------
+        RaiseEvent notificarMensaje("Cambiando versión de traducción a " & VersionTraduccion & "...")
+        ' Se copian los ficheros actuales en la versión de generación, los cuales serán
+        ' utilizados para comprobar si el texto ya está traducido o no. 
+        Dim rutaOrigen As String = ""
+        Dim rutaDestino As String = ""
+
+        RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, iIdiomas.Count + 1)
+        For Each UnIdioma As cIdioma In iIdiomas
+            Try
+                rutaOrigen = ProyectoVB.carpetaTraducciones & UnIdioma.strCodigoLocalizacion & ".po"
+                rutaDestino = ProyectoVB.carpetaTraducciones & UnIdioma.strCodigoLocalizacion & "_" & VersionTraduccion & ".po"
+
+                elMensaje = ("> " & Ficheros.extraerNombreFichero(rutaOrigen) & " -> " & Ficheros.extraerNombreFichero(rutaDestino))
+                RaiseEvent notificarMensaje(elMensaje)
+                RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, 0)
+
+                If IO.File.Exists(rutaDestino) Then IO.File.Delete(rutaDestino)
+                If IO.File.Exists(rutaOrigen) Then IO.File.Move(rutaOrigen, rutaDestino)
+            Catch ex As Exception
+                RaiseEvent notificarMensaje("! ERROR - Al guardar " & Ficheros.extraerNombreFichero(rutaDestino))
+            End Try
+        Next
+        RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
+
+        ' Se crean todos los ficheros PO de salida con la cabecera de cada fichero
+        ' -----------------------------------------------------------------------------------        
+        RaiseEvent notificarMensaje("Creando cabeceras de ficheros PO de la versión " & VersionTraduccion & "...")
+
+        RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, iIdiomas.Count + 1)
+        For Each UnIdioma As cIdioma In iIdiomas
+            Try
+                rutaDestino = ProyectoVB.carpetaTraducciones & UnIdioma.strCodigoLocalizacion & ".po"
+
+                elMensaje = ("> Generando cabecera PO de " & Ficheros.extraerNombreFichero(rutaDestino))
+                RaiseEvent notificarMensaje(elMensaje)
+                RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, 0)
+
+                If IO.File.Exists(rutaDestino) Then IO.File.Delete(rutaDestino)
+                Dim elEscritorPO As New StreamWriter(rutaDestino, False, System.Text.Encoding.UTF8)
+                EscribirCabeceraPO(elEscritorPO, UnIdioma.strCodigoLocalizacion)
+                elEscritorPO.Close()
+            Catch ex As Exception
+                RaiseEvent notificarMensaje("! ERROR - Al crear la cabecera PO de " & Ficheros.extraerNombreFichero(rutaDestino))
+            End Try
+        Next
+        RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
+
+        ' Se recorren todos los objetos a traducir seleccionados por el usuario
+        RaiseEvent notificarMaximo(TipoBarraProgreso.Primaria, iProyectoTraductor.ArchivosVB.Count + 1)
+        For Each unArchivo As cArchivoVB In iProyectoTraductor.ArchivosVB
+            elMensaje = ("* Traduciendo " & unArchivo.NombreFichero)
+            RaiseEvent notificarMensaje(elMensaje)
+            RaiseEvent notificarProgreso(TipoBarraProgreso.Primaria, 0)
+
+            ArchivoVB2ArchivoPO(unArchivo)
+        Next
+        RaiseEvent notificarFinalizacion(TipoBarraProgreso.Primaria)
+
+        Return paraDevolver
+    End Function
+
+
+    ''' <summary>
     ''' Genera los ficheros PO con las traducciones del proyecto utilizando los idiomas
     ''' configurados en el objeto
     ''' </summary>
-    Public Function VBFile2POFile(ByVal eRutaFicheroEntrada As String) As Boolean
-
-        ' Se guarda el momento de inicio para realizar cálculos de tiempo de procesado
-        RaiseEvent notificarMensaje(Now, "Procesando el formulario/control " & eRutaFicheroEntrada & "...")
-        Dim momentoInicio As DateTime = Now
-
+    Public Function ArchivoVB2ArchivoPO(ByVal eArchivoVB As cArchivoVB) As Boolean
         ' Se lee el contenido de fichero con la versión antigua de la traducción, para utilizarla como
         ' base de traducción y evitar volver a traducir el texto ya traducido o el texto que fué
         ' corregido posteriormente por otra persona
-        RaiseEvent notificarMensaje(Now, "Analizando traducciones previas...")
+        RaiseEvent notificarMensaje("? Analizando traducciones previas de " & eArchivoVB.NombreFichero & "...")
 
         ' Diccionario donde se va a guardar el idioma y el contenido del fichero PO previo
         Dim traduccionesAntiguas As New Dictionary(Of idiomaLocalizacion, String)
 
         ' Se recorre cada uno de los idiomas de salida configurados y se carga en el diccionario
         ' de traducciones antiguas
+        RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, iIdiomas.Count + 1)
         For Each unIdioma As cIdioma In iIdiomas
             Try
-                RaiseEvent notificarMensaje(Now, "Obteniendo traducciones de la versión " & VersionTraduccion & " para " & unIdioma.strNombre & "[" & unIdioma.codigoLocalizacion & "]...")
+                RaiseEvent notificarMensaje("< Obteniendo traducciones de la versión " & VersionTraduccion & " para " & unIdioma.strNombre & "[" & unIdioma.codigoLocalizacion & "]...")
+                RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, 0)
 
                 Dim rutaVersionAntigua As String = iProyectoVB.carpetaTraducciones & unIdioma.strCodigoLocalizacion & "_" & VersionTraduccion & ".po"
                 If File.Exists(rutaVersionAntigua) Then
@@ -213,37 +323,37 @@ Public Class cGeneradorPO
                     traduccionesAntiguas.Add(unIdioma.codigoLocalizacion, contenidoVersionAntigua)
                 End If
             Catch ex As Exception
-                If Log._LOG_ACTIVO Then Log.escribirLog("ERROR al obtener las traducciones antiguas para un idioma...", ex, New StackTrace(0, True))
+                RaiseEvent notificarMensaje("! ERROR al obtenerlas traducciones de la versión" & VersionTraduccion & " para " & unIdioma.strNombre & " [" & unIdioma.strCodigoLocalizacion & "]...")
             End Try
         Next
-
+        RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
 
         ' Se convierte todo el proyecto a UTF8 para evitar problemas de traduccion, para ello, se van
         ' leyendo todos los componentes del proyecto, se escriben en UTF8 en un fichero temporal, y se vuelven
         ' a copiar en el proyecto, guardando una copia del documento original en la carpeta _BACKUP en
         ' la misma carpeta donde se encuentra el proyecto.
-        RaiseEvent notificarMensaje(Now, "Realizando copia de seguridad de '" & Ficheros.extraerNombreFichero(eRutaFicheroEntrada) & "'...")
+        RaiseEvent notificarMensaje("# Realizando copia de seguridad de " & eArchivoVB.NombreFichero & "...")
         Try
             Dim rutaBackup As String = iProyectoVB.carpetaProyecto & "\_BACKUP\"
             If Not IO.Directory.Exists(rutaBackup) Then IO.Directory.CreateDirectory(rutaBackup)
 
-            If eRutaFicheroEntrada.Contains("\..\") Then
-                rutaBackup = eRutaFicheroEntrada & ".bak"
+            If eArchivoVB.RutaCompleta.Contains("\..\") Then
+                rutaBackup = eArchivoVB.RutaCompleta & ".bak"
             Else
-                rutaBackup &= eRutaFicheroEntrada.Substring(iProyectoVB.carpetaProyecto.Length + 1) & ".bak"
+                rutaBackup &= eArchivoVB.RutaCompleta.Substring(iProyectoVB.carpetaProyecto.Length + 1) & ".bak"
             End If
-            Ficheros.Copiar.copiarArchivo(eRutaFicheroEntrada, rutaBackup, True, True)
+            Ficheros.Copiar.copiarArchivo(eArchivoVB.RutaCompleta, rutaBackup, True, True)
         Catch ex As Exception
-            If Log._LOG_ACTIVO Then Log.escribirLog("ERROR al realizar la copiad e seguridad de un archivo...", ex, New StackTrace(0, True))
+            RaiseEvent notificarMensaje("! ERROR al realizar la copia de seguridad de " & eArchivoVB.NombreFichero & "...")
         End Try
 
         ' Cambio del fichero a UTF-8, además, se crea el objeto Components para poder acceder a estos a la hora de traducir los objetos
         ' que no tiene representación sobre el formulario, accediendo a ellos mediante esta nueva propiedad
-        RaiseEvent notificarMensaje(Now, "Convirtiendo a UFT-8 el archivo '" & Ficheros.extraerNombreFichero(eRutaFicheroEntrada) & "'...")
+        RaiseEvent notificarMensaje("# Convirtiendo " & eArchivoVB.NombreFichero & " a UFT-8...")
         Try
             Dim archivoTemporal As String = Ficheros.obtenerFicheroTemporal
             If IO.File.Exists(archivoTemporal) Then IO.File.Delete(archivoTemporal)
-            Dim contenidoOriginal As String = File.ReadAllText(eRutaFicheroEntrada, System.Text.Encoding.Default)
+            Dim contenidoOriginal As String = File.ReadAllText(eArchivoVB.RutaCompleta, System.Text.Encoding.Default)
 
             ' Se realizan ajustes sobre el objeto Comonents para poder acceder a estos,
             ' cambiando la linean "End Class" por la nueva linea de componentes
@@ -268,23 +378,21 @@ Public Class cGeneradorPO
 
             ' Se copia el fichero en UTF sobreescribiendo el fichero origienal            
             File.WriteAllText(archivoTemporal, contenidoOriginal, System.Text.Encoding.UTF8)
-            IO.File.Copy(archivoTemporal, eRutaFicheroEntrada, True)
+            IO.File.Copy(archivoTemporal, eArchivoVB.RutaCompleta, True)
         Catch ex As Exception
-            If Log._LOG_ACTIVO Then Log.escribirLog("ERROR al convertir el fichero a UTF-8...", ex, New StackTrace(0, True))
+            RaiseEvent notificarMensaje("# Error al convertir " & eArchivoVB.NombreFichero & " a UFT-8...")
         End Try
 
-        ' ---------------------------------------------------------------------------------------------
-
         ' Se cuentan cuantos elementos se van a procesar
-        RaiseEvent notificarMensaje(Now, vbTab & "Obteniendo elementos a traducir...")
+        RaiseEvent notificarMensaje(vbTab & "? Obteniendo controles/cadneas a traducir...")
 
         ' + CONTAR CONTROLES
-        Dim losControles As Dictionary(Of String, String) = obtenerControles(eRutaFicheroEntrada)
+        Dim losControles As Dictionary(Of String, String) = obtenerControles(eArchivoVB)
         Dim totalControles As Integer = losControles.Count
 
         ' + CONTAR MENSAJES
-        Dim losMSGBOX As Dictionary(Of String, String) = obtenerMensajes(eRutaFicheroEntrada)
-        Dim totalMensajes As Integer = losMSGBOX.Count
+        Dim lasCadenas As Dictionary(Of String, String) = obtenerCadenas(eArchivoVB)
+        Dim totalMensajes As Integer = lasCadenas.Count
 
         ' CONTAR IDIOMAS
         Dim totalIdiomas As Integer = iIdiomas.Count
@@ -293,20 +401,16 @@ Public Class cGeneradorPO
         ' a insertar el fichero PO. Los nombres de los formularios son únicos por proyecto, por
         ' lo que esta será la base del objeto que se añadirá al fichero PO para identificar 
         ' los controles y mensajes traducidos
-        Dim NombreFormulario As String = Ficheros.extraerNombreFichero(eRutaFicheroEntrada)
+        Dim NombreFormulario As String = eArchivoVB.NombreFichero
         If NombreFormulario.Contains(".designer.vb") Then NombreFormulario = NombreFormulario.Replace(".designer.vb", "")
         If NombreFormulario.Contains(".Designer.vb") Then NombreFormulario = NombreFormulario.Replace(".Designer.vb", "")
         If NombreFormulario.Contains(".vb") Then NombreFormulario = NombreFormulario.Replace(".vb", "")
 
-        ' Se indica cual es el máximo que puede tomar la barra
-        RaiseEvent notificarMaximo(((totalControles + totalMensajes) * (totalIdiomas) * 6) + 1)
-
         ' Solamente se realiza la traducción si hay algo que traducir
         If totalControles > 0 Or totalIdiomas > 0 Then
-
             ' Se lee el contenido del formulario. Este formulario ya está convertido a UTF-8
             ' por lo que el Encodig se fija a este formato
-            Dim elLector As StreamReader = New System.IO.StreamReader(eRutaFicheroEntrada, System.Text.Encoding.UTF8)
+            Dim elLector As StreamReader = New System.IO.StreamReader(eArchivoVB.RutaCompleta, System.Text.Encoding.UTF8)
             Dim elFicheroDesignerCompleto As String = elLector.ReadToEnd
             elLector.Close()
 
@@ -322,124 +426,108 @@ Public Class cGeneradorPO
             ' y el texto original, siempre y cuando este no se encuentre ya en la versión antigua de la
             ' traducción con el mismo texto, lo que significaría que la traducción no cambia y sigue siendo
             ' la misma, en caso contrario, se tiene que volver a traducir.
+            RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, iIdiomas.Count + 1)
             Dim DiccionarioTraducciones As New Dictionary(Of idiomaLocalizacion, List(Of cTraduccionIntermedia))
             For Each UnIdioma As cIdioma In iIdiomas
+                RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, 0)
                 Try
                     DiccionarioTraducciones.Add(UnIdioma.codigoLocalizacion, New List(Of cTraduccionIntermedia))
                 Catch ex As Exception
                 End Try
             Next
+            RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
 
             ' Controla el numero de elementos que se están traduciendo y si se encontró el propio formulario
             Dim elIndice As Long = 0
             Dim encontroFormulario As Boolean = False
 
-            For Each S As KeyValuePair(Of String, String) In losControles
-                Dim seAnhadio As Boolean = False
-                Dim yaAnhadido As Boolean = False
-                Dim PatronBusqueda As String = ""
+            ' TODO: Meter en un XML
+            Dim patronesFormulario As New List(Of String)
+            With patronesFormulario
+                .Add("System.Windows.Forms.Form")
+                .Add("System.Windows.Forms.Form()")
+            End With
+
+            ' ToDo: Meter en un XML
+            ' Si el UniqueName queda en blanco, se obtiene, en caso contrario es el que se guarda
+            Dim patronesUniqueName As New Dictionary(Of String, String)
+            With patronesUniqueName
+                .Add("ComponentFactory.Krypton.Toolkit.ButtonSpecAny.UniqueName =", "_ButtonSpecAny")
+                .Add("ComponentFactory.Krypton.Toolkit.KryptonManager.UniqueName =", "_KryptonManager")
+            End With
+
+            RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, losControles.Count + 1)
+            For Each parControles As KeyValuePair(Of String, String) In losControles
+                Dim posInicio As Integer = 0
+                Dim posFin As Integer = 0
                 Dim uniqueName As String = ""
 
-                If S.Value.EndsWith("System.Windows.Forms.Form") OrElse S.Value.EndsWith("System.Windows.Forms.Form()") Then encontroFormulario = True
+                ' Se verifica si el control que se está analizando es el formulario
+                For Each unPatronFormulario As String In patronesFormulario
+                    If parControles.Value.EndsWith(unPatronFormulario) Then
+                        encontroFormulario = True
+                    End If
+                Next
 
-                ' Algunos controles no tienen la propiedad nombre (Krypton), por lo que 
-                ' hay que utilizar el UniqueName
-                If S.Value.Contains("ComponentFactory.Krypton.Toolkit.ButtonSpecAny") Then
-                    Try
-                        Dim patronUniqueName As String = S.Key & ".UniqueName ="
+                ' Se verifican los controles UniqueName
+                For Each unPatronUnique As KeyValuePair(Of String, String) In patronesUniqueName
+                    If parControles.Value.Contains(unPatronUnique.Key) Then
+                        If String.IsNullOrEmpty(unPatronUnique.Value) Then
+                            Try
+                                Dim elPatron As String = unPatronUnique.Key
+                                posInicio = elFicheroDesignerCompleto.IndexOf(elPatron)
 
-                        Dim posInicio As Integer = 0
-                        Dim posFin As Integer = 0
-                        posInicio = elFicheroDesignerCompleto.IndexOf(patronUniqueName)
+                                If posInicio > 0 Then
+                                    posFin = elFicheroDesignerCompleto.IndexOf("""", posInicio + elPatron.Length + 1)
 
-                        If posInicio > 0 Then
-                            posFin = elFicheroDesignerCompleto.IndexOf("""", posInicio + patronUniqueName.Length + 1)
-
-                            uniqueName = elFicheroDesignerCompleto.Substring(posInicio + patronUniqueName.Length + 1, (posFin + 1) - (posInicio - 1))
-                            uniqueName = uniqueName.Replace("""", "").Trim
+                                    uniqueName = elFicheroDesignerCompleto.Substring(posInicio + elPatron.Length + 1, (posFin + 1) - (posInicio - 1))
+                                    uniqueName = uniqueName.Replace("""", "").Trim
+                                End If
+                            Catch ex As Exception
+                                Debugger.Break()
+                                uniqueName = ""
+                            End Try
+                        Else
+                            uniqueName = unPatronUnique.Value
                         End If
-                    Catch ex As Exception
-                        Debugger.Break()
-                        uniqueName = ""
-                    End Try
-                ElseIf S.Value.Contains("ComponentFactory.Krypton.Toolkit.KryptonManager") Then
-                    uniqueName = "_KManager"
-                End If
+                    End If
+                Next
 
-                PatronBusqueda = ".TextLine1 = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_l1", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
-                If seAnhadio Then yaAnhadido = True
+                ' Se realizan las búsquedas de patrones para crear los nombres únicos
+                ' a los distintos controles del formulario
 
-                PatronBusqueda = ".TextLine2 = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_l2", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
-                If seAnhadio Then yaAnhadido = True
+                ' ToDo: Meter en un XML
+                Dim losPatrones As New Dictionary(Of String, String)
+                With losPatrones
+                    .Add(".TextLine1 = ", "_TextLine1")
+                    .Add(".TextLine2 = ", "_TextLine2")
+                    .Add(".Text = ", "_Text")
+                    .Add(".Values.Text = ", "_Values_Text")
+                    .Add(".ExtraText = ", "_ExtraText")
+                    .Add(".ToolTipBody = ", "_ToolTipBody")
+                    .Add(".ToolTipTitle = ", "_ToolTipTitle")
+                    .Add(".ToolTipText = ", "_ToolTipText")
+                    .Add(".GlobalStrings.Abort = ", "_GlobalStrings_Abort")
+                    .Add(".GlobalStrings.Cancel = ", "_GlobalStrings_Cancel")
+                    .Add(".GlobalStrings.Close = ", "_GlobalStrings_Close")
+                    .Add(".GlobalStrings.Ignore = ", "_GlobalStrings_Ignore")
+                    .Add(".GlobalStrings.No = ", "_GlobalStrings_No")
+                    .Add(".GlobalStrings.OK = ", "_GlobalStrings_OK")
+                    .Add(".GlobalStrings.Retry = ", "_GlobalStrings_Retry")
+                    .Add(".GlobalStrings.Today = ", "_GlobaStrings_Today")
+                    .Add(".GlobalStrings.Yes = ", "_GlobalStrings_Yes")
+                End With
 
-                PatronBusqueda = ".Text = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
-                If seAnhadio Then yaAnhadido = True
+                For Each unPatron As KeyValuePair(Of String, String) In losPatrones
+                    Dim elPatron As String = unPatron.Key
+                    Dim elSufijo As String = unPatron.Value
 
-                PatronBusqueda = ".Values.Text = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
-                If seAnhadio Then yaAnhadido = True
+                    AnhadirControl(elFicheroDesignerCompleto, parControles, elPatron, elSufijo, elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
+                Next
 
-                PatronBusqueda = ".ExtraText = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_extraText", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
-                If seAnhadio Then yaAnhadido = True
-
-                PatronBusqueda = ".ToolTipBody = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_toolTipBody", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
-                If seAnhadio Then yaAnhadido = True
-
-                PatronBusqueda = ".ToolTipTitle = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_toolTipTitle", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
-                If seAnhadio Then yaAnhadido = True
-
-                PatronBusqueda = ".ToolTipText = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_tooltiptext", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
-                If seAnhadio Then yaAnhadido = True
-
-                PatronBusqueda = ".GlobalStrings.Abort = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_GlobalStrings_Abort", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
-                If seAnhadio Then yaAnhadido = True
-
-                PatronBusqueda = ".GlobalStrings.Cancel = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_GlobalStrings_Cancel", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
-                If seAnhadio Then yaAnhadido = True
-
-                PatronBusqueda = ".GlobalStrings.Close = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_GlobalStrings_Close", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
-                If seAnhadio Then yaAnhadido = True
-
-                PatronBusqueda = ".GlobalStrings.Ignore = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_GlobalStrings_Ignore", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
-                If seAnhadio Then yaAnhadido = True
-
-                PatronBusqueda = ".GlobalStrings.No = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_GlobalStrings_No", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
-                If seAnhadio Then yaAnhadido = True
-
-                PatronBusqueda = ".GlobalStrings.OK = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_GlobalStrings_OK", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
-                If seAnhadio Then yaAnhadido = True
-
-                PatronBusqueda = ".GlobalStrings.Retry = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_GlobalStrings_Retry", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
-                If seAnhadio Then yaAnhadido = True
-
-                PatronBusqueda = ".GlobalStrings.Today = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_GlobalStrings_Today", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
-                If seAnhadio Then yaAnhadido = True
-
-                PatronBusqueda = ".GlobalStrings.Yes = "
-                seAnhadio = AnhadirControl(elFicheroDesignerCompleto, S, PatronBusqueda, "_GlobalStrings_Yes", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
-                If seAnhadio Then yaAnhadido = True
-
-                ' Si el control no se añadió con ningún padrón, entonces se
-                ' añade de todas formas sin traducción
-                If Not yaAnhadido Then
-                    ' ToDo: Necesario??
-                End If
+                RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, 0)
             Next
+            RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
 
             ' Si no encontró el formulario se fuerza la búsqueda.
             ' A veces el propio formulario no se crea con New System.Windows.Forms.Form() 
@@ -449,90 +537,82 @@ Public Class cGeneradorPO
                 AnhadirControl(elFicheroDesignerCompleto, elPar, ".Text = ", "_Form_Text", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, "")
             End If
 
-            For Each S As KeyValuePair(Of String, String) In losMSGBOX
-                ' Se indica que se debe aumentar el progreso de la barra
-                RaiseEvent notificarProgreso()
-
+            RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, lasCadenas.Count + 1)
+            For Each parCadenas As KeyValuePair(Of String, String) In lasCadenas
                 elEscritor.Write("<tr>")
-                elEscritor.Write("<td>" & elIndice & "</td>")
-                elEscritor.Write("<td>" & Web.HTML.UTF2HTML(S.Value) & "</td>")
+                elEscritor.Write("<td>_" & elIndice & "_</td>")
+                elEscritor.Write("<td>" & Web.HTML.UTF2HTML(parCadenas.Value) & "</td>")
                 elEscritor.WriteLine("</tr>")
 
-                'escribirMensaje(eMensajes, "[" & S.Key & "] <" & S.Value & ">")
+                RaiseEvent notificarMensaje("[" & parCadenas.Key & "] <" & parCadenas.Value & ">")
 
                 ' Se añadio el row a la tabla, por lo que se añade a la lista de controles coincidiendo con el índice
                 For Each unIdioma As cIdioma In iIdiomas
                     Dim LaTraduccion As New cTraduccionIntermedia With {
                         .Indice = elIndice,
-                        .NombreControl = NombreFormulario & "." & S.Key,
-                        .Original = S.Value,
+                        .NombreControl = NombreFormulario & "." & parCadenas.Key,
+                        .Original = parCadenas.Value,
                         .Traduccion = ""
             }
                     DiccionarioTraducciones(unIdioma.codigoLocalizacion).Add(LaTraduccion)
-                    RaiseEvent notificarProgreso()
+
                 Next
                 elIndice += 1
+                RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, 0)
             Next
+            RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
 
             elEscritor.WriteLine("</table>")
+
+            ' Utilizado para verificar que se terminó de cargar la página
+            elEscritor.WriteLine(_END_OF_FILE)
             elEscritor.Close()
 
-            'escribirMensaje(eMensajes, "Subiendo fichero al FTP...")
+            RaiseEvent notificarMensaje("~ Enviando HTML al servidor FTP...")
             Dim NombreFicheroServidor As String = Aleatorios.cadenaAleatoria(8, True) & ".html"
             Dim ErrorSubida As Boolean = False
-            Dim ContadorIntentos As Integer = 0
+            Dim ContadorIntentos As Integer = 1
             Do
-                'escribirMensaje(eMensajes, "Preparando archivo HTML para subir al servidor FTP (" & ContadorIntentos & "/10)...")
+                RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, 100)
+                RaiseEvent notificarMensaje("~ Intento " & ContadorIntentos & " de 10...")
                 System.Threading.Thread.Sleep(500)
                 Try
+                    'ToDo: Arreglar el upload file par amostrar el progreso
+                    'UploadFile(NombreFicheroIdiomaEntrada, ConfiguracionNetwork.Servidor & ConfiguracionNetwork.Ruta & NombreFicheroServidor)
                     My.Computer.Network.UploadFile(NombreFicheroIdiomaEntrada, ConfiguracionNetwork.Servidor & ConfiguracionNetwork.Ruta & NombreFicheroServidor, ConfiguracionNetwork.Usuario, ConfiguracionNetwork.Clave, True, 2500)
                     ErrorSubida = False
                 Catch ex As Exception
                     ErrorSubida = True
                 End Try
                 ContadorIntentos += 1
-            Loop While (ContadorIntentos < 10) And ErrorSubida
+            Loop While (ContadorIntentos <= 10) And ErrorSubida
+            RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
 
             ' Una vez que se ha subido el fichero al servidor, se recorre cada uno de los lenguaje sde salida
             ' pora completar los diccionarios con las traducciones que realiza el parseador            
+            RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, iIdiomas.Count + 1)
             For Each UnIdioma As cIdioma In iIdiomas
-                Dim URI As String = ""
-                'escribirMensaje(eMensajes, "Realizando las traducciones del formulario/control " & NombreFormulario & " de " & cIdioma.ObtenerCodigoCorto(eLenguajeEntrada.codigoLocalizacion) & " a " & cIdioma.ObtenerCodigoCorto(UnIdioma.codigoLocalizacion) & "...")
+                RaiseEvent notificarMensaje("@ Realizando traducción de " & eArchivoVB.NombreFichero & " a " & UnIdioma.strNombre & " [" & UnIdioma.strCodigoLocalizacion & "]...")
+
+                ' Se obtiene el body de la página traducido
                 Dim url_Original As String = ConfiguracionNetwork.URLBase & NombreFicheroServidor
+                Dim lasTraducciones As Dictionary(Of Long, String) = Motor.obtenerTraducciones(iConfiguracionNetwork, IdiomaUso, UnIdioma, url_Original, _END_OF_FILE)
 
-                URI = Motor.obtenerURL(IdiomaUso, UnIdioma, url_Original)
-
-                Dim laPagina As New Web.cPaginaHTML(120)
-                laPagina.cargarURL(URI)
-
-                Dim Limpio As String = ""
-                If laPagina.Body.Length > 0 Then
-                    Dim Lineas() As String = laPagina.Body.Split(Chr(10))
-
-                    For Each UnaLinea As String In Lineas
-                        RaiseEvent notificarProgreso()
-                        UnaLinea = UnaLinea.Trim
-
-                        If UnaLinea.StartsWith("<tr><td>") Then
-                            Try
-                                Dim Columnas() As String = UnaLinea.Replace("</td><td>", "~").Split("~")
-
-                                Dim IndiceDiccionario As Long = Columnas(0).Trim.Replace("<tr>", "").Replace("</tr>", "").Replace("<td>", "").Replace("</td>", "")
-                                Dim Traduccion As String = ""
-                                Traduccion = Web.HTML.HTML2UTF(Columnas(1).Trim.Replace("<tr>", "").Replace("</tr>", "").Replace("<td>", "").Replace("</td>", "")).Replace("�", "")
-
-                                DiccionarioTraducciones(UnIdioma.codigoLocalizacion)(IndiceDiccionario).Traduccion = Traduccion
-                            Catch ex As Exception
-
-                            End Try
-                        End If
-                    Next
-                End If
-
-                ' Entre traducción y traducción se espera un tiempo prudencial
-                ' para evitar bloqueos por abuso en el uso del sistema
-                'escribirMensaje(eMensajes, "Esperando " & iSleepTime & " milisegundos para evitar bloqueo por abuso del servicio...")
+                ' Se espera el tiempo configurado para el motor para evitar uso excesivo
+                ' de CPU y del propio servicio
                 System.Threading.Thread.Sleep(CType(Motor, cMotorBase).SleepTime)
+
+                ' Se añaden las traducciones obtenidas al diccionario de traducciones para 
+                ' exportarlos al fichero PO asociado al idioma traducido
+                If lasTraducciones IsNot Nothing AndAlso lasTraducciones.Count > 0 Then
+                    RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, lasTraducciones.Count)
+                    For Each unaTraduccion As KeyValuePair(Of Long, String) In lasTraducciones
+                        DiccionarioTraducciones(UnIdioma.codigoLocalizacion)(unaTraduccion.Key).Traduccion = unaTraduccion.Value
+
+                        RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, 0)
+                    Next
+                    RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
+                End If
             Next
 
             Dim ultimoTraducido As idiomaLocalizacion = IdiomaUso.codigoLocalizacion
@@ -541,26 +621,28 @@ Public Class cGeneradorPO
                     Dim NombreFicheroSalida As String = iProyectoVB.carpetaTraducciones & UnIdioma.strCodigoLocalizacion & ".po"
                     Dim elEscritorPO As New StreamWriter(NombreFicheroSalida, True, System.Text.Encoding.UTF8)
 
-                    For Each UnaEntrada As cTraduccionIntermedia In DiccionarioTraducciones(UnIdioma.codigoLocalizacion)
-                        RaiseEvent notificarProgreso()
-
+                    For Each UnaEntrada As cTraduccionIntermedia In DiccionarioTraducciones(UnIdioma.codigoLocalizacion)                        
                         ' Se comprueba si la traducción ya existía en la versión antigua y esta sigue siendo la misma, de
                         ' ser así, esta se ignora
-                        Dim IndiceCabecera As Integer = traduccionesAntiguas(UnIdioma.codigoLocalizacion).IndexOf("#: " & UnaEntrada.NombreControl)
-                        If IndiceCabecera > 0 Then
-                            Dim IndiceCuerpo As Integer = traduccionesAntiguas(UnIdioma.codigoLocalizacion).IndexOf("msgid """ & UnaEntrada.Original & """", IndiceCabecera)
-                            If IndiceCuerpo > 0 Then
-                                Dim inicioMensajeAntiguo As Integer = traduccionesAntiguas(UnIdioma.codigoLocalizacion).IndexOf("msgstr ", IndiceCuerpo) + 8
-                                Dim finalMensajeAntiguo As Integer = traduccionesAntiguas(UnIdioma.codigoLocalizacion).IndexOf(Chr(10), inicioMensajeAntiguo) - 1
-                                UnaEntrada.Traduccion = traduccionesAntiguas(UnIdioma.codigoLocalizacion).Substring(inicioMensajeAntiguo, finalMensajeAntiguo - (inicioMensajeAntiguo + 1)).Trim
+                        If traduccionesAntiguas IsNot Nothing AndAlso traduccionesAntiguas.Keys.Contains(UnIdioma.codigoLocalizacion) Then
+                            Dim IndiceCabecera As Integer = traduccionesAntiguas(UnIdioma.codigoLocalizacion).IndexOf("#: " & UnaEntrada.NombreControl)
+                            If IndiceCabecera > 0 Then
+                                Dim IndiceCuerpo As Integer = traduccionesAntiguas(UnIdioma.codigoLocalizacion).IndexOf("msgid """ & UnaEntrada.Original & """", IndiceCabecera)
+                                If IndiceCuerpo > 0 Then
+                                    Dim inicioMensajeAntiguo As Integer = traduccionesAntiguas(UnIdioma.codigoLocalizacion).IndexOf("msgstr ", IndiceCuerpo) + 8
+                                    Dim finalMensajeAntiguo As Integer = traduccionesAntiguas(UnIdioma.codigoLocalizacion).IndexOf(Chr(10), inicioMensajeAntiguo) - 1
+                                    UnaEntrada.Traduccion = traduccionesAntiguas(UnIdioma.codigoLocalizacion).Substring(inicioMensajeAntiguo, finalMensajeAntiguo - (inicioMensajeAntiguo + 1)).Trim
+                                End If
                             End If
                         End If
-
 
                         elEscritorPO.WriteLine("#: " & UnaEntrada.NombreControl)
                         elEscritorPO.WriteLine("msgid """ & Web.HTML.ANSI2UTF8(UnaEntrada.Original) & """")
                         elEscritorPO.WriteLine("msgstr """ & Web.HTML.HTML2UTF(Web.HTML.ANSI2UTF8(UnaEntrada.Traduccion)) & """")
                         elEscritorPO.WriteLine()
+
+                        RaiseEvent notificarMensaje("* [" & IdiomaUso.strCodigoLocalizacion & "] -> [" & UnIdioma.strCodigoLocalizacion & "] " & UnaEntrada.Original & " -> " & UnaEntrada.Traduccion)
+                        RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, 0)
                     Next
 
                     ' Se escribe un texto de final de documento para evitar problemas de EOF cuando se trabaja con el fichero
@@ -578,20 +660,28 @@ Public Class cGeneradorPO
             Dim NombreFicheroSalidaOriginal As String = iProyectoVB.carpetaTraducciones & IdiomaUso.strCodigoLocalizacion & ".po"
             Dim elEscritorPOOriginal As New StreamWriter(NombreFicheroSalidaOriginal, True, System.Text.Encoding.UTF8)
 
-            For Each UnaEntrada As cTraduccionIntermedia In DiccionarioTraducciones(ultimoTraducido)
-                RaiseEvent notificarProgreso()
-
+            For Each UnaEntrada As cTraduccionIntermedia In DiccionarioTraducciones(ultimoTraducido)                
                 elEscritorPOOriginal.WriteLine("#: " & UnaEntrada.NombreControl)
                 elEscritorPOOriginal.WriteLine("msgid """ & Web.HTML.ANSI2UTF8(UnaEntrada.Original) & """")
                 elEscritorPOOriginal.WriteLine("msgstr """ & Web.HTML.ANSI2UTF8(UnaEntrada.Original) & """")
                 elEscritorPOOriginal.WriteLine()
+
+                RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, 0)
             Next
 
             elEscritorPOOriginal.Close()
+
+            ' Se elimina el fichero HTML utilizado para realizar la traducción
+            If IO.File.Exists(NombreFicheroIdiomaEntrada) Then
+                Try
+                    IO.File.Delete(NombreFicheroIdiomaEntrada)
+                Catch ex As Exception
+                End Try
+            End If
         End If
 
         ' Se avisa que se finalió la conversión del fichero
-        RaiseEvent notificarFinalizacion()
+        RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
         Return True
     End Function
 #End Region
@@ -631,6 +721,44 @@ Public Class cGeneradorPO
             End If
         Catch ex As Exception
             If Log._LOG_ACTIVO Then Log.escribirLog("ERROR al tratar de escribir la cabecera del archivo PO...", , New StackTrace(0, True))
+        End Try
+    End Sub
+#End Region
+
+#Region " UPLOAD"
+    Public Sub UploadFile(ByVal eLocal As String, _
+                          ByVal eRemoto As String)
+        Try
+            RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, 100)
+            Me.fileUploader = New Net.WebClient
+
+
+            Dim Credenciales As New NetworkCredential(iConfiguracionNetwork.Usuario, iConfiguracionNetwork.Clave)
+            Me.fileUploader.Credentials = Credenciales
+            Me.fileUploader.UploadFileAsync(New Uri(eRemoto), eLocal)
+        Catch ex As Exception
+            If Log._LOG_ACTIVO Then Log.escribirLog("Error al iniciar la subida de un fichero...", ex, New StackTrace(0, True))
+        End Try
+    End Sub
+
+    Public Sub UpdateProgressBar(ByVal sender As Object, ByVal e As UploadProgressChangedEventArgs) Handles fileUploader.UploadProgressChanged
+        RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, CInt(Math.Round(e.ProgressPercentage)) * 2)
+    End Sub
+
+    Public Sub UploadComplete(ByVal sender As Object, ByVal e As System.ComponentModel.AsyncCompletedEventArgs) Handles fileUploader.UploadFileCompleted
+        Try
+            RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
+
+            Do
+                Application.DoEvents()
+            Loop While fileUploader.IsBusy
+
+            If fileUploader IsNot Nothing Then Me.fileUploader.Dispose()
+            fileUploader = Nothing
+        Catch ex As Exception
+            If Log._LOG_ACTIVO Then Log.escribirLog("Error al finalizar la subida de un fichero...", ex, New StackTrace(0, True))
+        Finally
+            iSubiendo = False
         End Try
     End Sub
 #End Region
@@ -697,7 +825,7 @@ Public Class cGeneradorPO
                     End If
                 End If
 
-                RaiseEvent notificarMensaje(Now, "[" & nombreControl & " : " & S.Value & "] <" & elTextoTraducir & ">")
+                RaiseEvent notificarMensaje("[" & nombreControl & " : " & S.Value & "] <" & elTextoTraducir & ">")
 
                 ' Se añadio el row a la tabla, por lo que se añade a la lista de controles coincidiendo con el índice
                 For Each unIdioma As cIdioma In iIdiomas
@@ -729,12 +857,12 @@ Public Class cGeneradorPO
     ''' <summary>
     ''' Obitiene los controles que se pueden traducir o el sistema reconoce
     ''' </summary>
-    Private Function obtenerControles(ByVal eFicheroEntrada As String) As Dictionary(Of String, String)
+    Private Function obtenerControles(ByVal eArchivoVB As cArchivoVB) As Dictionary(Of String, String)
         ' ToDo: Cambiar el sistema de traducción del ribbon y utilizar el mismo que se usar par alos bottonspec            
 
         Dim paraDevolver As New Dictionary(Of String, String)
 
-        Dim elLector As New System.IO.StreamReader(eFicheroEntrada, System.Text.Encoding.UTF8)
+        Dim elLector As New System.IO.StreamReader(eArchivoVB.RutaCompleta, System.Text.Encoding.UTF8)
         Dim laCadena As String = ""
 
         ' Se obtienen todos los controles a traducir
@@ -850,19 +978,14 @@ Public Class cGeneradorPO
         Return paraDevolver
     End Function
 
-
-
     ''' <summary>
     ''' Obitnene las cadenas de texto que el sistema es capaz de traducir
     ''' </summary>
-    Private Function obtenerMensajes(ByVal eFicheroEntrada As String) As Dictionary(Of String, String)
-        Dim laRutaCodigoFuente As String = eFicheroEntrada
+    Private Function obtenerCadenas(ByVal eArchivoVB As cArchivoVB) As Dictionary(Of String, String)
         Dim paraDevolver As New Dictionary(Of String, String)
-
-        laRutaCodigoFuente = eFicheroEntrada.Substring(0, eFicheroEntrada.Length - 11) & "vb"
-
         Dim encontroInicio As Boolean = False
 
+        Dim laRutaCodigoFuente As String = eArchivoVB.RutaCompleta.Substring(0, eArchivoVB.RutaCompleta.Length - 11) & "vb"
         If System.IO.File.Exists(laRutaCodigoFuente) Then
             Dim elReader As New System.IO.StreamReader(laRutaCodigoFuente, System.Text.Encoding.UTF8)
             Dim laCadena As String

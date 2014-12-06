@@ -23,45 +23,50 @@ Partial Class ctrWizard_01
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.lblTitulo = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
-        Me.radNuevoProyecto = New ComponentFactory.Krypton.Toolkit.KryptonRadioButton()
-        Me.radAbrirProyectoExistente = New ComponentFactory.Krypton.Toolkit.KryptonRadioButton()
-        Me.hdrProyecto = New ComponentFactory.Krypton.Toolkit.KryptonHeaderGroup()
-        Me.tblProyecto = New System.Windows.Forms.TableLayoutPanel()
-        Me.lblDescripcion = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
-        Me.lblNombre = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
-        Me.txtNombre = New Recompila.Controles.rTextBox()
-        Me.txtDescripcion = New Recompila.Controles.rTextBox()
+        Me.radOperacionNuevo = New ComponentFactory.Krypton.Toolkit.KryptonRadioButton()
+        Me.radOperacionAbrir = New ComponentFactory.Krypton.Toolkit.KryptonRadioButton()
+        Me.hdrTraduccion = New ComponentFactory.Krypton.Toolkit.KryptonHeaderGroup()
+        Me.tblTraduccion = New System.Windows.Forms.TableLayoutPanel()
+        Me.lblTraduccionDescripcion = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
+        Me.lblTraduccionNombre = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
+        Me.txtTraduccionNombre = New Recompila.Controles.rTextBox()
+        Me.txtTraduccionDescripcion = New Recompila.Controles.rTextBox()
         Me.hdrConexion = New ComponentFactory.Krypton.Toolkit.KryptonHeaderGroup()
-        Me.tblConexion = New System.Windows.Forms.TableLayoutPanel()
-        Me.lblFTPServidor = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
-        Me.lblFTPUsuario = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
-        Me.lblFTPClave = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
-        Me.lblFTPRuta = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
-        Me.lblFTPURL = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
-        Me.txtFTPServidor = New Recompila.Controles.rTextBox()
-        Me.txtFTPUsuario = New Recompila.Controles.rTextBox()
-        Me.txtFTPContrasenha = New Recompila.Controles.rTextBox()
-        Me.txtFTPRuta = New Recompila.Controles.rTextBox()
-        Me.txtURI = New Recompila.Controles.rTextBox()
-        Me.lblFTPPuerto = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
-        Me.txtFTPPuerto = New Recompila.Controles.rTextBox()
-        Me.tblConfiguracion = New System.Windows.Forms.TableLayoutPanel()
-        Me.txtRutaProyecto = New Recompila.Controles.rTextOpenFile()
+        Me.tblConfiguracionConexion = New System.Windows.Forms.TableLayoutPanel()
+        Me.lblConexionFTPServidor = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
+        Me.lblConexionFTPUsuario = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
+        Me.lblConexionFTPClave = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
+        Me.lblConexionFTPRuta = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
+        Me.lblConexionHTTP = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
+        Me.txtConexionFTPServidor = New Recompila.Controles.rTextBox()
+        Me.txtConexionFTPUsuario = New Recompila.Controles.rTextBox()
+        Me.txtConexionFTPClave = New Recompila.Controles.rTextBox()
+        Me.txtConexionFTPRuta = New Recompila.Controles.rTextBox()
+        Me.txtConexionHTTP = New Recompila.Controles.rTextBox()
+        Me.lblConexionFTPPuerto = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
+        Me.txtConexionFTPPuerto = New Recompila.Controles.rTextBox()
+        Me.tblControles = New System.Windows.Forms.TableLayoutPanel()
+        Me.hdrOperacion = New ComponentFactory.Krypton.Toolkit.KryptonHeaderGroup()
+        Me.tblOperacion = New System.Windows.Forms.TableLayoutPanel()
+        Me.txtOperacionRuta = New Recompila.Controles.rTextOpenFile()
         Me.gestorErrores = New Recompila.Controles.rGestorErrores()
-        Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel()
-        CType(Me.hdrProyecto, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.hdrProyecto.Panel, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.hdrProyecto.Panel.SuspendLayout()
-        Me.hdrProyecto.SuspendLayout()
-        Me.tblProyecto.SuspendLayout()
+        CType(Me.hdrTraduccion, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.hdrTraduccion.Panel, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.hdrTraduccion.Panel.SuspendLayout()
+        Me.hdrTraduccion.SuspendLayout()
+        Me.tblTraduccion.SuspendLayout()
         CType(Me.hdrConexion, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.hdrConexion.Panel, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.hdrConexion.Panel.SuspendLayout()
         Me.hdrConexion.SuspendLayout()
-        Me.tblConexion.SuspendLayout()
-        Me.tblConfiguracion.SuspendLayout()
+        Me.tblConfiguracionConexion.SuspendLayout()
+        Me.tblControles.SuspendLayout()
+        CType(Me.hdrOperacion, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.hdrOperacion.Panel, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.hdrOperacion.Panel.SuspendLayout()
+        Me.hdrOperacion.SuspendLayout()
+        Me.tblOperacion.SuspendLayout()
         CType(Me.gestorErrores, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.TableLayoutPanel1.SuspendLayout()
         Me.SuspendLayout()
         '
         'lblTitulo
@@ -75,154 +80,153 @@ Partial Class ctrWizard_01
         Me.lblTitulo.TabIndex = 4
         Me.lblTitulo.Values.Text = "Seleccione la operación a realizar"
         '
-        'radNuevoProyecto
+        'radOperacionNuevo
         '
-        Me.TableLayoutPanel1.SetColumnSpan(Me.radNuevoProyecto, 2)
-        Me.radNuevoProyecto.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.radNuevoProyecto.Location = New System.Drawing.Point(1, 62)
-        Me.radNuevoProyecto.Margin = New System.Windows.Forms.Padding(1)
-        Me.radNuevoProyecto.Name = "radNuevoProyecto"
-        Me.radNuevoProyecto.Size = New System.Drawing.Size(544, 33)
-        Me.radNuevoProyecto.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
-        Me.radNuevoProyecto.StateCommon.ShortText.Color2 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
-        Me.radNuevoProyecto.StateCommon.ShortText.Font = New System.Drawing.Font("Microsoft Sans Serif", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.radNuevoProyecto.TabIndex = 5
-        Me.radNuevoProyecto.Values.Image = Global.traductorAplicaciones.My.Resources.Resources.add_32_gris_66
-        Me.radNuevoProyecto.Values.Text = "Iniciar una nueva traducción"
+        Me.tblOperacion.SetColumnSpan(Me.radOperacionNuevo, 2)
+        Me.radOperacionNuevo.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.radOperacionNuevo.Location = New System.Drawing.Point(1, 49)
+        Me.radOperacionNuevo.Margin = New System.Windows.Forms.Padding(1)
+        Me.radOperacionNuevo.Name = "radOperacionNuevo"
+        Me.radOperacionNuevo.Size = New System.Drawing.Size(563, 20)
+        Me.radOperacionNuevo.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.radOperacionNuevo.StateCommon.ShortText.Color2 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.radOperacionNuevo.TabIndex = 5
+        Me.radOperacionNuevo.Values.Image = Global.traductorAplicaciones.My.Resources.Resources.add_16_gris_66
+        Me.radOperacionNuevo.Values.Text = "Iniciar una nueva traducción"
         '
-        'radAbrirProyectoExistente
+        'radOperacionAbrir
         '
-        Me.radAbrirProyectoExistente.Checked = True
-        Me.TableLayoutPanel1.SetColumnSpan(Me.radAbrirProyectoExistente, 2)
-        Me.radAbrirProyectoExistente.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.radAbrirProyectoExistente.Location = New System.Drawing.Point(1, 1)
-        Me.radAbrirProyectoExistente.Margin = New System.Windows.Forms.Padding(1)
-        Me.radAbrirProyectoExistente.Name = "radAbrirProyectoExistente"
-        Me.radAbrirProyectoExistente.Size = New System.Drawing.Size(544, 33)
-        Me.radAbrirProyectoExistente.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
-        Me.radAbrirProyectoExistente.StateCommon.ShortText.Color2 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
-        Me.radAbrirProyectoExistente.StateCommon.ShortText.Font = New System.Drawing.Font("Microsoft Sans Serif", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.radAbrirProyectoExistente.TabIndex = 6
-        Me.radAbrirProyectoExistente.Values.Image = Global.traductorAplicaciones.My.Resources.Resources.folder_open_32_gris_66
-        Me.radAbrirProyectoExistente.Values.Text = "Abrir una traducción existente"
+        Me.radOperacionAbrir.Checked = True
+        Me.tblOperacion.SetColumnSpan(Me.radOperacionAbrir, 2)
+        Me.radOperacionAbrir.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.radOperacionAbrir.Location = New System.Drawing.Point(1, 1)
+        Me.radOperacionAbrir.Margin = New System.Windows.Forms.Padding(1)
+        Me.radOperacionAbrir.Name = "radOperacionAbrir"
+        Me.radOperacionAbrir.Size = New System.Drawing.Size(563, 20)
+        Me.radOperacionAbrir.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.radOperacionAbrir.StateCommon.ShortText.Color2 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.radOperacionAbrir.TabIndex = 6
+        Me.radOperacionAbrir.Values.Image = Global.traductorAplicaciones.My.Resources.Resources.folder_open_16_gris_66
+        Me.radOperacionAbrir.Values.Text = "Abrir una traducción existente"
         '
-        'hdrProyecto
+        'hdrTraduccion
         '
-        Me.hdrProyecto.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.hdrProyecto.HeaderVisibleSecondary = False
-        Me.hdrProyecto.Location = New System.Drawing.Point(3, 3)
-        Me.hdrProyecto.Name = "hdrProyecto"
+        Me.hdrTraduccion.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.hdrTraduccion.Enabled = False
+        Me.hdrTraduccion.HeaderVisibleSecondary = False
+        Me.hdrTraduccion.Location = New System.Drawing.Point(3, 109)
+        Me.hdrTraduccion.Name = "hdrTraduccion"
         '
-        'hdrProyecto.Panel
+        'hdrTraduccion.Panel
         '
-        Me.hdrProyecto.Panel.Controls.Add(Me.tblProyecto)
-        Me.hdrProyecto.Panel.Padding = New System.Windows.Forms.Padding(0, 10, 0, 0)
-        Me.hdrProyecto.Size = New System.Drawing.Size(292, 349)
-        Me.hdrProyecto.StateCommon.Back.Color1 = System.Drawing.Color.Transparent
-        Me.hdrProyecto.StateCommon.Back.Color2 = System.Drawing.Color.Transparent
-        Me.hdrProyecto.StateCommon.Border.Color1 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
-        Me.hdrProyecto.StateCommon.Border.Color2 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
-        Me.hdrProyecto.StateCommon.Border.Draw = ComponentFactory.Krypton.Toolkit.InheritBool.[False]
-        Me.hdrProyecto.StateCommon.Border.DrawBorders = CType((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top Or ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) _
+        Me.hdrTraduccion.Panel.Controls.Add(Me.tblTraduccion)
+        Me.hdrTraduccion.Panel.Padding = New System.Windows.Forms.Padding(24, 5, 0, 0)
+        Me.hdrTraduccion.Size = New System.Drawing.Size(591, 141)
+        Me.hdrTraduccion.StateCommon.Back.Color1 = System.Drawing.Color.Transparent
+        Me.hdrTraduccion.StateCommon.Back.Color2 = System.Drawing.Color.Transparent
+        Me.hdrTraduccion.StateCommon.Border.Color1 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.hdrTraduccion.StateCommon.Border.Color2 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.hdrTraduccion.StateCommon.Border.Draw = ComponentFactory.Krypton.Toolkit.InheritBool.[False]
+        Me.hdrTraduccion.StateCommon.Border.DrawBorders = CType((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top Or ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) _
             Or ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Left) _
             Or ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Right), ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)
-        Me.hdrProyecto.StateCommon.HeaderPrimary.Back.Color1 = System.Drawing.Color.Transparent
-        Me.hdrProyecto.StateCommon.HeaderPrimary.Back.Color2 = System.Drawing.Color.Transparent
-        Me.hdrProyecto.StateCommon.HeaderPrimary.Border.DrawBorders = ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom
-        Me.hdrProyecto.StateCommon.HeaderPrimary.Content.LongText.Color1 = System.Drawing.Color.FromArgb(CType(CType(38, Byte), Integer), CType(CType(130, Byte), Integer), CType(CType(214, Byte), Integer))
-        Me.hdrProyecto.StateCommon.HeaderPrimary.Content.LongText.Color2 = System.Drawing.Color.FromArgb(CType(CType(38, Byte), Integer), CType(CType(130, Byte), Integer), CType(CType(214, Byte), Integer))
-        Me.hdrProyecto.StateCommon.HeaderPrimary.Content.ShortText.Color1 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
-        Me.hdrProyecto.StateCommon.HeaderPrimary.Content.ShortText.Color2 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
-        Me.hdrProyecto.StateCommon.HeaderPrimary.Content.ShortText.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.hdrProyecto.TabIndex = 42
-        Me.hdrProyecto.ValuesPrimary.Heading = "Datos de la traducción"
-        Me.hdrProyecto.ValuesPrimary.Image = Global.traductorAplicaciones.My.Resources.Resources.page_bold_16_gris_66
+        Me.hdrTraduccion.StateCommon.HeaderPrimary.Back.Color1 = System.Drawing.Color.Transparent
+        Me.hdrTraduccion.StateCommon.HeaderPrimary.Back.Color2 = System.Drawing.Color.Transparent
+        Me.hdrTraduccion.StateCommon.HeaderPrimary.Border.DrawBorders = ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom
+        Me.hdrTraduccion.StateCommon.HeaderPrimary.Content.LongText.Color1 = System.Drawing.Color.FromArgb(CType(CType(38, Byte), Integer), CType(CType(130, Byte), Integer), CType(CType(214, Byte), Integer))
+        Me.hdrTraduccion.StateCommon.HeaderPrimary.Content.LongText.Color2 = System.Drawing.Color.FromArgb(CType(CType(38, Byte), Integer), CType(CType(130, Byte), Integer), CType(CType(214, Byte), Integer))
+        Me.hdrTraduccion.StateCommon.HeaderPrimary.Content.ShortText.Color1 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.hdrTraduccion.StateCommon.HeaderPrimary.Content.ShortText.Color2 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.hdrTraduccion.StateCommon.HeaderPrimary.Content.ShortText.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.hdrTraduccion.TabIndex = 42
+        Me.hdrTraduccion.ValuesPrimary.Heading = "Datos de la traducción"
+        Me.hdrTraduccion.ValuesPrimary.Image = Global.traductorAplicaciones.My.Resources.Resources.cog_16_gris_66
         '
-        'tblProyecto
+        'tblTraduccion
         '
-        Me.tblProyecto.BackColor = System.Drawing.Color.Transparent
-        Me.tblProyecto.ColumnCount = 3
-        Me.tblProyecto.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
-        Me.tblProyecto.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
-        Me.tblProyecto.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.tblProyecto.Controls.Add(Me.lblDescripcion, 0, 1)
-        Me.tblProyecto.Controls.Add(Me.lblNombre, 0, 0)
-        Me.tblProyecto.Controls.Add(Me.txtNombre, 2, 0)
-        Me.tblProyecto.Controls.Add(Me.txtDescripcion, 0, 2)
-        Me.tblProyecto.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.tblProyecto.Location = New System.Drawing.Point(0, 10)
-        Me.tblProyecto.Name = "tblProyecto"
-        Me.tblProyecto.RowCount = 3
-        Me.tblProyecto.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me.tblProyecto.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me.tblProyecto.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
-        Me.tblProyecto.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
-        Me.tblProyecto.Size = New System.Drawing.Size(290, 316)
-        Me.tblProyecto.TabIndex = 0
+        Me.tblTraduccion.BackColor = System.Drawing.Color.Transparent
+        Me.tblTraduccion.ColumnCount = 3
+        Me.tblTraduccion.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
+        Me.tblTraduccion.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
+        Me.tblTraduccion.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.tblTraduccion.Controls.Add(Me.lblTraduccionDescripcion, 0, 1)
+        Me.tblTraduccion.Controls.Add(Me.lblTraduccionNombre, 0, 0)
+        Me.tblTraduccion.Controls.Add(Me.txtTraduccionNombre, 2, 0)
+        Me.tblTraduccion.Controls.Add(Me.txtTraduccionDescripcion, 0, 2)
+        Me.tblTraduccion.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.tblTraduccion.Location = New System.Drawing.Point(24, 5)
+        Me.tblTraduccion.Name = "tblTraduccion"
+        Me.tblTraduccion.RowCount = 3
+        Me.tblTraduccion.RowStyles.Add(New System.Windows.Forms.RowStyle())
+        Me.tblTraduccion.RowStyles.Add(New System.Windows.Forms.RowStyle())
+        Me.tblTraduccion.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
+        Me.tblTraduccion.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
+        Me.tblTraduccion.Size = New System.Drawing.Size(565, 113)
+        Me.tblTraduccion.TabIndex = 0
         '
-        'lblDescripcion
+        'lblTraduccionDescripcion
         '
-        Me.lblDescripcion.Dock = System.Windows.Forms.DockStyle.Right
-        Me.lblDescripcion.Location = New System.Drawing.Point(1, 23)
-        Me.lblDescripcion.Margin = New System.Windows.Forms.Padding(1)
-        Me.lblDescripcion.Name = "lblDescripcion"
-        Me.lblDescripcion.Size = New System.Drawing.Size(72, 16)
-        Me.lblDescripcion.StateCommon.ShortText.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblDescripcion.TabIndex = 0
-        Me.lblDescripcion.Values.Text = "Descripción"
+        Me.lblTraduccionDescripcion.Dock = System.Windows.Forms.DockStyle.Right
+        Me.lblTraduccionDescripcion.Location = New System.Drawing.Point(1, 23)
+        Me.lblTraduccionDescripcion.Margin = New System.Windows.Forms.Padding(1)
+        Me.lblTraduccionDescripcion.Name = "lblTraduccionDescripcion"
+        Me.lblTraduccionDescripcion.Size = New System.Drawing.Size(72, 16)
+        Me.lblTraduccionDescripcion.StateCommon.ShortText.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblTraduccionDescripcion.TabIndex = 0
+        Me.lblTraduccionDescripcion.Values.Text = "Descripción"
         '
-        'lblNombre
+        'lblTraduccionNombre
         '
-        Me.lblNombre.Dock = System.Windows.Forms.DockStyle.Right
-        Me.lblNombre.Location = New System.Drawing.Point(21, 1)
-        Me.lblNombre.Margin = New System.Windows.Forms.Padding(1)
-        Me.lblNombre.Name = "lblNombre"
-        Me.lblNombre.Size = New System.Drawing.Size(52, 20)
-        Me.lblNombre.StateCommon.ShortText.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblNombre.TabIndex = 18
-        Me.lblNombre.Values.Text = "Nombre"
+        Me.lblTraduccionNombre.Dock = System.Windows.Forms.DockStyle.Right
+        Me.lblTraduccionNombre.Location = New System.Drawing.Point(21, 1)
+        Me.lblTraduccionNombre.Margin = New System.Windows.Forms.Padding(1)
+        Me.lblTraduccionNombre.Name = "lblTraduccionNombre"
+        Me.lblTraduccionNombre.Size = New System.Drawing.Size(52, 20)
+        Me.lblTraduccionNombre.StateCommon.ShortText.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblTraduccionNombre.TabIndex = 18
+        Me.lblTraduccionNombre.Values.Text = "Nombre"
         '
-        'txtNombre
+        'txtTraduccionNombre
         '
-        Me.txtNombre.controlarBotonBorrar = True
-        Me.txtNombre.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.txtNombre.limpiarAlPulsarBoton = True
-        Me.txtNombre.Location = New System.Drawing.Point(95, 1)
-        Me.txtNombre.Margin = New System.Windows.Forms.Padding(1)
-        Me.txtNombre.mostrarSiempreBotonBorrar = False
-        Me.txtNombre.Name = "txtNombre"
-        Me.txtNombre.seleccionarTodo = True
-        Me.txtNombre.Size = New System.Drawing.Size(194, 20)
-        Me.txtNombre.TabIndex = 21
+        Me.txtTraduccionNombre.controlarBotonBorrar = True
+        Me.txtTraduccionNombre.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.txtTraduccionNombre.limpiarAlPulsarBoton = True
+        Me.txtTraduccionNombre.Location = New System.Drawing.Point(95, 1)
+        Me.txtTraduccionNombre.Margin = New System.Windows.Forms.Padding(1)
+        Me.txtTraduccionNombre.mostrarSiempreBotonBorrar = False
+        Me.txtTraduccionNombre.Name = "txtTraduccionNombre"
+        Me.txtTraduccionNombre.seleccionarTodo = True
+        Me.txtTraduccionNombre.Size = New System.Drawing.Size(469, 20)
+        Me.txtTraduccionNombre.TabIndex = 21
         '
-        'txtDescripcion
+        'txtTraduccionDescripcion
         '
-        Me.tblProyecto.SetColumnSpan(Me.txtDescripcion, 3)
-        Me.txtDescripcion.controlarBotonBorrar = False
-        Me.txtDescripcion.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.txtDescripcion.limpiarAlPulsarBoton = True
-        Me.txtDescripcion.Location = New System.Drawing.Point(1, 41)
-        Me.txtDescripcion.Margin = New System.Windows.Forms.Padding(1)
-        Me.txtDescripcion.mostrarSiempreBotonBorrar = False
-        Me.txtDescripcion.Multiline = True
-        Me.txtDescripcion.Name = "txtDescripcion"
-        Me.txtDescripcion.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.txtDescripcion.seleccionarTodo = True
-        Me.txtDescripcion.Size = New System.Drawing.Size(288, 274)
-        Me.txtDescripcion.TabIndex = 21
+        Me.tblTraduccion.SetColumnSpan(Me.txtTraduccionDescripcion, 3)
+        Me.txtTraduccionDescripcion.controlarBotonBorrar = False
+        Me.txtTraduccionDescripcion.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.txtTraduccionDescripcion.limpiarAlPulsarBoton = True
+        Me.txtTraduccionDescripcion.Location = New System.Drawing.Point(1, 41)
+        Me.txtTraduccionDescripcion.Margin = New System.Windows.Forms.Padding(1)
+        Me.txtTraduccionDescripcion.mostrarSiempreBotonBorrar = False
+        Me.txtTraduccionDescripcion.Multiline = True
+        Me.txtTraduccionDescripcion.Name = "txtTraduccionDescripcion"
+        Me.txtTraduccionDescripcion.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
+        Me.txtTraduccionDescripcion.seleccionarTodo = True
+        Me.txtTraduccionDescripcion.Size = New System.Drawing.Size(563, 71)
+        Me.txtTraduccionDescripcion.TabIndex = 21
         '
         'hdrConexion
         '
         Me.hdrConexion.Dock = System.Windows.Forms.DockStyle.Fill
         Me.hdrConexion.HeaderVisibleSecondary = False
-        Me.hdrConexion.Location = New System.Drawing.Point(301, 3)
+        Me.hdrConexion.Location = New System.Drawing.Point(3, 256)
         Me.hdrConexion.Name = "hdrConexion"
         '
         'hdrConexion.Panel
         '
-        Me.hdrConexion.Panel.Controls.Add(Me.tblConexion)
-        Me.hdrConexion.Panel.Padding = New System.Windows.Forms.Padding(0, 10, 0, 0)
-        Me.hdrConexion.Size = New System.Drawing.Size(293, 349)
+        Me.hdrConexion.Panel.Controls.Add(Me.tblConfiguracionConexion)
+        Me.hdrConexion.Panel.Padding = New System.Windows.Forms.Padding(24, 5, 0, 0)
+        Me.hdrConexion.Size = New System.Drawing.Size(591, 166)
         Me.hdrConexion.StateCommon.Back.Color1 = System.Drawing.Color.Transparent
         Me.hdrConexion.StateCommon.Back.Color2 = System.Drawing.Color.Transparent
         Me.hdrConexion.StateCommon.Border.Color1 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
@@ -241,298 +245,337 @@ Partial Class ctrWizard_01
         Me.hdrConexion.StateCommon.HeaderPrimary.Content.ShortText.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.hdrConexion.TabIndex = 43
         Me.hdrConexion.ValuesPrimary.Heading = "Configuración FTP/HTTP"
-        Me.hdrConexion.ValuesPrimary.Image = Global.traductorAplicaciones.My.Resources.Resources.page_bold_16_gris_66
+        Me.hdrConexion.ValuesPrimary.Image = Global.traductorAplicaciones.My.Resources.Resources.connect_16_gris_66
         '
-        'tblConexion
+        'tblConfiguracionConexion
         '
-        Me.tblConexion.BackColor = System.Drawing.Color.Transparent
-        Me.tblConexion.ColumnCount = 3
-        Me.tblConexion.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
-        Me.tblConexion.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
-        Me.tblConexion.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.tblConexion.Controls.Add(Me.lblFTPServidor, 0, 0)
-        Me.tblConexion.Controls.Add(Me.lblFTPUsuario, 0, 2)
-        Me.tblConexion.Controls.Add(Me.lblFTPClave, 0, 3)
-        Me.tblConexion.Controls.Add(Me.lblFTPRuta, 0, 4)
-        Me.tblConexion.Controls.Add(Me.lblFTPURL, 0, 5)
-        Me.tblConexion.Controls.Add(Me.txtFTPServidor, 2, 0)
-        Me.tblConexion.Controls.Add(Me.txtFTPUsuario, 2, 2)
-        Me.tblConexion.Controls.Add(Me.txtFTPContrasenha, 2, 3)
-        Me.tblConexion.Controls.Add(Me.txtFTPRuta, 2, 4)
-        Me.tblConexion.Controls.Add(Me.txtURI, 2, 5)
-        Me.tblConexion.Controls.Add(Me.lblFTPPuerto, 0, 1)
-        Me.tblConexion.Controls.Add(Me.txtFTPPuerto, 2, 1)
-        Me.tblConexion.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.tblConexion.Location = New System.Drawing.Point(0, 10)
-        Me.tblConexion.Name = "tblConexion"
-        Me.tblConexion.RowCount = 7
-        Me.tblConexion.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me.tblConexion.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me.tblConexion.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me.tblConexion.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me.tblConexion.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me.tblConexion.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me.tblConexion.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.tblConexion.Size = New System.Drawing.Size(291, 316)
-        Me.tblConexion.TabIndex = 3
+        Me.tblConfiguracionConexion.BackColor = System.Drawing.Color.Transparent
+        Me.tblConfiguracionConexion.ColumnCount = 3
+        Me.tblConfiguracionConexion.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
+        Me.tblConfiguracionConexion.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
+        Me.tblConfiguracionConexion.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.tblConfiguracionConexion.Controls.Add(Me.lblConexionFTPServidor, 0, 0)
+        Me.tblConfiguracionConexion.Controls.Add(Me.lblConexionFTPUsuario, 0, 2)
+        Me.tblConfiguracionConexion.Controls.Add(Me.lblConexionFTPClave, 0, 3)
+        Me.tblConfiguracionConexion.Controls.Add(Me.lblConexionFTPRuta, 0, 4)
+        Me.tblConfiguracionConexion.Controls.Add(Me.lblConexionHTTP, 0, 5)
+        Me.tblConfiguracionConexion.Controls.Add(Me.txtConexionFTPServidor, 2, 0)
+        Me.tblConfiguracionConexion.Controls.Add(Me.txtConexionFTPUsuario, 2, 2)
+        Me.tblConfiguracionConexion.Controls.Add(Me.txtConexionFTPClave, 2, 3)
+        Me.tblConfiguracionConexion.Controls.Add(Me.txtConexionFTPRuta, 2, 4)
+        Me.tblConfiguracionConexion.Controls.Add(Me.txtConexionHTTP, 2, 5)
+        Me.tblConfiguracionConexion.Controls.Add(Me.lblConexionFTPPuerto, 0, 1)
+        Me.tblConfiguracionConexion.Controls.Add(Me.txtConexionFTPPuerto, 2, 1)
+        Me.tblConfiguracionConexion.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.tblConfiguracionConexion.Location = New System.Drawing.Point(24, 5)
+        Me.tblConfiguracionConexion.Name = "tblConfiguracionConexion"
+        Me.tblConfiguracionConexion.RowCount = 7
+        Me.tblConfiguracionConexion.RowStyles.Add(New System.Windows.Forms.RowStyle())
+        Me.tblConfiguracionConexion.RowStyles.Add(New System.Windows.Forms.RowStyle())
+        Me.tblConfiguracionConexion.RowStyles.Add(New System.Windows.Forms.RowStyle())
+        Me.tblConfiguracionConexion.RowStyles.Add(New System.Windows.Forms.RowStyle())
+        Me.tblConfiguracionConexion.RowStyles.Add(New System.Windows.Forms.RowStyle())
+        Me.tblConfiguracionConexion.RowStyles.Add(New System.Windows.Forms.RowStyle())
+        Me.tblConfiguracionConexion.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.tblConfiguracionConexion.Size = New System.Drawing.Size(565, 138)
+        Me.tblConfiguracionConexion.TabIndex = 3
         '
-        'lblFTPServidor
+        'lblConexionFTPServidor
         '
-        Me.lblFTPServidor.Dock = System.Windows.Forms.DockStyle.Right
-        Me.lblFTPServidor.Location = New System.Drawing.Point(1, 1)
-        Me.lblFTPServidor.Margin = New System.Windows.Forms.Padding(1)
-        Me.lblFTPServidor.Name = "lblFTPServidor"
-        Me.lblFTPServidor.Size = New System.Drawing.Size(79, 20)
-        Me.lblFTPServidor.StateCommon.ShortText.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblFTPServidor.TabIndex = 4
-        Me.lblFTPServidor.Values.Text = "Servidor FTP"
+        Me.lblConexionFTPServidor.Dock = System.Windows.Forms.DockStyle.Right
+        Me.lblConexionFTPServidor.Location = New System.Drawing.Point(1, 1)
+        Me.lblConexionFTPServidor.Margin = New System.Windows.Forms.Padding(1)
+        Me.lblConexionFTPServidor.Name = "lblConexionFTPServidor"
+        Me.lblConexionFTPServidor.Size = New System.Drawing.Size(79, 20)
+        Me.lblConexionFTPServidor.StateCommon.ShortText.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblConexionFTPServidor.TabIndex = 4
+        Me.lblConexionFTPServidor.Values.Text = "Servidor FTP"
         '
-        'lblFTPUsuario
+        'lblConexionFTPUsuario
         '
-        Me.lblFTPUsuario.Dock = System.Windows.Forms.DockStyle.Right
-        Me.lblFTPUsuario.Location = New System.Drawing.Point(4, 45)
-        Me.lblFTPUsuario.Margin = New System.Windows.Forms.Padding(1)
-        Me.lblFTPUsuario.Name = "lblFTPUsuario"
-        Me.lblFTPUsuario.Size = New System.Drawing.Size(76, 20)
-        Me.lblFTPUsuario.StateCommon.ShortText.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblFTPUsuario.TabIndex = 4
-        Me.lblFTPUsuario.Values.Text = "Usuario FTP"
+        Me.lblConexionFTPUsuario.Dock = System.Windows.Forms.DockStyle.Right
+        Me.lblConexionFTPUsuario.Location = New System.Drawing.Point(4, 45)
+        Me.lblConexionFTPUsuario.Margin = New System.Windows.Forms.Padding(1)
+        Me.lblConexionFTPUsuario.Name = "lblConexionFTPUsuario"
+        Me.lblConexionFTPUsuario.Size = New System.Drawing.Size(76, 20)
+        Me.lblConexionFTPUsuario.StateCommon.ShortText.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblConexionFTPUsuario.TabIndex = 4
+        Me.lblConexionFTPUsuario.Values.Text = "Usuario FTP"
         '
-        'lblFTPClave
+        'lblConexionFTPClave
         '
-        Me.lblFTPClave.Dock = System.Windows.Forms.DockStyle.Right
-        Me.lblFTPClave.Location = New System.Drawing.Point(14, 67)
-        Me.lblFTPClave.Margin = New System.Windows.Forms.Padding(1)
-        Me.lblFTPClave.Name = "lblFTPClave"
-        Me.lblFTPClave.Size = New System.Drawing.Size(66, 20)
-        Me.lblFTPClave.StateCommon.ShortText.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblFTPClave.TabIndex = 4
-        Me.lblFTPClave.Values.Text = "Clave FTP"
+        Me.lblConexionFTPClave.Dock = System.Windows.Forms.DockStyle.Right
+        Me.lblConexionFTPClave.Location = New System.Drawing.Point(14, 67)
+        Me.lblConexionFTPClave.Margin = New System.Windows.Forms.Padding(1)
+        Me.lblConexionFTPClave.Name = "lblConexionFTPClave"
+        Me.lblConexionFTPClave.Size = New System.Drawing.Size(66, 20)
+        Me.lblConexionFTPClave.StateCommon.ShortText.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblConexionFTPClave.TabIndex = 4
+        Me.lblConexionFTPClave.Values.Text = "Clave FTP"
         '
-        'lblFTPRuta
+        'lblConexionFTPRuta
         '
-        Me.lblFTPRuta.Dock = System.Windows.Forms.DockStyle.Right
-        Me.lblFTPRuta.Location = New System.Drawing.Point(20, 89)
-        Me.lblFTPRuta.Margin = New System.Windows.Forms.Padding(1)
-        Me.lblFTPRuta.Name = "lblFTPRuta"
-        Me.lblFTPRuta.Size = New System.Drawing.Size(60, 20)
-        Me.lblFTPRuta.StateCommon.ShortText.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblFTPRuta.TabIndex = 4
-        Me.lblFTPRuta.Values.Text = "Ruta FTP"
+        Me.lblConexionFTPRuta.Dock = System.Windows.Forms.DockStyle.Right
+        Me.lblConexionFTPRuta.Location = New System.Drawing.Point(20, 89)
+        Me.lblConexionFTPRuta.Margin = New System.Windows.Forms.Padding(1)
+        Me.lblConexionFTPRuta.Name = "lblConexionFTPRuta"
+        Me.lblConexionFTPRuta.Size = New System.Drawing.Size(60, 20)
+        Me.lblConexionFTPRuta.StateCommon.ShortText.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblConexionFTPRuta.TabIndex = 4
+        Me.lblConexionFTPRuta.Values.Text = "Ruta FTP"
         '
-        'lblFTPURL
+        'lblConexionHTTP
         '
-        Me.lblFTPURL.Dock = System.Windows.Forms.DockStyle.Right
-        Me.lblFTPURL.Location = New System.Drawing.Point(6, 111)
-        Me.lblFTPURL.Margin = New System.Windows.Forms.Padding(1)
-        Me.lblFTPURL.Name = "lblFTPURL"
-        Me.lblFTPURL.Size = New System.Drawing.Size(74, 20)
-        Me.lblFTPURL.StateCommon.ShortText.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblFTPURL.TabIndex = 4
-        Me.lblFTPURL.Values.Text = "URL acceso"
+        Me.lblConexionHTTP.Dock = System.Windows.Forms.DockStyle.Right
+        Me.lblConexionHTTP.Location = New System.Drawing.Point(6, 111)
+        Me.lblConexionHTTP.Margin = New System.Windows.Forms.Padding(1)
+        Me.lblConexionHTTP.Name = "lblConexionHTTP"
+        Me.lblConexionHTTP.Size = New System.Drawing.Size(74, 20)
+        Me.lblConexionHTTP.StateCommon.ShortText.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblConexionHTTP.TabIndex = 4
+        Me.lblConexionHTTP.Values.Text = "URL acceso"
         '
-        'txtFTPServidor
+        'txtConexionFTPServidor
         '
-        Me.txtFTPServidor.controlarBotonBorrar = True
-        Me.txtFTPServidor.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.txtFTPServidor.limpiarAlPulsarBoton = True
-        Me.txtFTPServidor.Location = New System.Drawing.Point(102, 1)
-        Me.txtFTPServidor.Margin = New System.Windows.Forms.Padding(1)
-        Me.txtFTPServidor.mostrarSiempreBotonBorrar = False
-        Me.txtFTPServidor.Name = "txtFTPServidor"
-        Me.txtFTPServidor.seleccionarTodo = True
-        Me.txtFTPServidor.Size = New System.Drawing.Size(188, 20)
-        Me.txtFTPServidor.TabIndex = 0
+        Me.txtConexionFTPServidor.controlarBotonBorrar = True
+        Me.txtConexionFTPServidor.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.txtConexionFTPServidor.limpiarAlPulsarBoton = True
+        Me.txtConexionFTPServidor.Location = New System.Drawing.Point(102, 1)
+        Me.txtConexionFTPServidor.Margin = New System.Windows.Forms.Padding(1)
+        Me.txtConexionFTPServidor.mostrarSiempreBotonBorrar = False
+        Me.txtConexionFTPServidor.Name = "txtConexionFTPServidor"
+        Me.txtConexionFTPServidor.seleccionarTodo = True
+        Me.txtConexionFTPServidor.Size = New System.Drawing.Size(462, 20)
+        Me.txtConexionFTPServidor.TabIndex = 0
         '
-        'txtFTPUsuario
+        'txtConexionFTPUsuario
         '
-        Me.txtFTPUsuario.controlarBotonBorrar = True
-        Me.txtFTPUsuario.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.txtFTPUsuario.limpiarAlPulsarBoton = True
-        Me.txtFTPUsuario.Location = New System.Drawing.Point(102, 45)
-        Me.txtFTPUsuario.Margin = New System.Windows.Forms.Padding(1)
-        Me.txtFTPUsuario.mostrarSiempreBotonBorrar = False
-        Me.txtFTPUsuario.Name = "txtFTPUsuario"
-        Me.txtFTPUsuario.seleccionarTodo = True
-        Me.txtFTPUsuario.Size = New System.Drawing.Size(188, 20)
-        Me.txtFTPUsuario.TabIndex = 2
+        Me.txtConexionFTPUsuario.controlarBotonBorrar = True
+        Me.txtConexionFTPUsuario.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.txtConexionFTPUsuario.limpiarAlPulsarBoton = True
+        Me.txtConexionFTPUsuario.Location = New System.Drawing.Point(102, 45)
+        Me.txtConexionFTPUsuario.Margin = New System.Windows.Forms.Padding(1)
+        Me.txtConexionFTPUsuario.mostrarSiempreBotonBorrar = False
+        Me.txtConexionFTPUsuario.Name = "txtConexionFTPUsuario"
+        Me.txtConexionFTPUsuario.seleccionarTodo = True
+        Me.txtConexionFTPUsuario.Size = New System.Drawing.Size(462, 20)
+        Me.txtConexionFTPUsuario.TabIndex = 2
         '
-        'txtFTPContrasenha
+        'txtConexionFTPClave
         '
-        Me.txtFTPContrasenha.controlarBotonBorrar = True
-        Me.txtFTPContrasenha.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.txtFTPContrasenha.limpiarAlPulsarBoton = True
-        Me.txtFTPContrasenha.Location = New System.Drawing.Point(102, 67)
-        Me.txtFTPContrasenha.Margin = New System.Windows.Forms.Padding(1)
-        Me.txtFTPContrasenha.mostrarSiempreBotonBorrar = False
-        Me.txtFTPContrasenha.Name = "txtFTPContrasenha"
-        Me.txtFTPContrasenha.PasswordChar = Global.Microsoft.VisualBasic.ChrW(9679)
-        Me.txtFTPContrasenha.seleccionarTodo = True
-        Me.txtFTPContrasenha.Size = New System.Drawing.Size(188, 20)
-        Me.txtFTPContrasenha.TabIndex = 3
-        Me.txtFTPContrasenha.UseSystemPasswordChar = True
+        Me.txtConexionFTPClave.controlarBotonBorrar = True
+        Me.txtConexionFTPClave.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.txtConexionFTPClave.limpiarAlPulsarBoton = True
+        Me.txtConexionFTPClave.Location = New System.Drawing.Point(102, 67)
+        Me.txtConexionFTPClave.Margin = New System.Windows.Forms.Padding(1)
+        Me.txtConexionFTPClave.mostrarSiempreBotonBorrar = False
+        Me.txtConexionFTPClave.Name = "txtConexionFTPClave"
+        Me.txtConexionFTPClave.PasswordChar = Global.Microsoft.VisualBasic.ChrW(9679)
+        Me.txtConexionFTPClave.seleccionarTodo = True
+        Me.txtConexionFTPClave.Size = New System.Drawing.Size(462, 20)
+        Me.txtConexionFTPClave.TabIndex = 3
+        Me.txtConexionFTPClave.UseSystemPasswordChar = True
         '
-        'txtFTPRuta
+        'txtConexionFTPRuta
         '
-        Me.txtFTPRuta.controlarBotonBorrar = True
-        Me.txtFTPRuta.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.txtFTPRuta.limpiarAlPulsarBoton = True
-        Me.txtFTPRuta.Location = New System.Drawing.Point(102, 89)
-        Me.txtFTPRuta.Margin = New System.Windows.Forms.Padding(1)
-        Me.txtFTPRuta.mostrarSiempreBotonBorrar = False
-        Me.txtFTPRuta.Name = "txtFTPRuta"
-        Me.txtFTPRuta.seleccionarTodo = True
-        Me.txtFTPRuta.Size = New System.Drawing.Size(188, 20)
-        Me.txtFTPRuta.TabIndex = 4
-        Me.txtFTPRuta.Text = "/"
+        Me.txtConexionFTPRuta.controlarBotonBorrar = True
+        Me.txtConexionFTPRuta.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.txtConexionFTPRuta.limpiarAlPulsarBoton = True
+        Me.txtConexionFTPRuta.Location = New System.Drawing.Point(102, 89)
+        Me.txtConexionFTPRuta.Margin = New System.Windows.Forms.Padding(1)
+        Me.txtConexionFTPRuta.mostrarSiempreBotonBorrar = False
+        Me.txtConexionFTPRuta.Name = "txtConexionFTPRuta"
+        Me.txtConexionFTPRuta.seleccionarTodo = True
+        Me.txtConexionFTPRuta.Size = New System.Drawing.Size(462, 20)
+        Me.txtConexionFTPRuta.TabIndex = 4
+        Me.txtConexionFTPRuta.Text = "/"
         '
-        'txtURI
+        'txtConexionHTTP
         '
-        Me.txtURI.controlarBotonBorrar = True
-        Me.txtURI.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.txtURI.limpiarAlPulsarBoton = True
-        Me.txtURI.Location = New System.Drawing.Point(102, 111)
-        Me.txtURI.Margin = New System.Windows.Forms.Padding(1)
-        Me.txtURI.mostrarSiempreBotonBorrar = False
-        Me.txtURI.Name = "txtURI"
-        Me.txtURI.seleccionarTodo = True
-        Me.txtURI.Size = New System.Drawing.Size(188, 20)
-        Me.txtURI.TabIndex = 5
+        Me.txtConexionHTTP.controlarBotonBorrar = True
+        Me.txtConexionHTTP.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.txtConexionHTTP.limpiarAlPulsarBoton = True
+        Me.txtConexionHTTP.Location = New System.Drawing.Point(102, 111)
+        Me.txtConexionHTTP.Margin = New System.Windows.Forms.Padding(1)
+        Me.txtConexionHTTP.mostrarSiempreBotonBorrar = False
+        Me.txtConexionHTTP.Name = "txtConexionHTTP"
+        Me.txtConexionHTTP.seleccionarTodo = True
+        Me.txtConexionHTTP.Size = New System.Drawing.Size(462, 20)
+        Me.txtConexionHTTP.TabIndex = 5
         '
-        'lblFTPPuerto
+        'lblConexionFTPPuerto
         '
-        Me.lblFTPPuerto.Dock = System.Windows.Forms.DockStyle.Right
-        Me.lblFTPPuerto.Location = New System.Drawing.Point(10, 23)
-        Me.lblFTPPuerto.Margin = New System.Windows.Forms.Padding(1)
-        Me.lblFTPPuerto.Name = "lblFTPPuerto"
-        Me.lblFTPPuerto.Size = New System.Drawing.Size(70, 20)
-        Me.lblFTPPuerto.StateCommon.ShortText.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblFTPPuerto.TabIndex = 4
-        Me.lblFTPPuerto.Values.Text = "Puerto FTP"
+        Me.lblConexionFTPPuerto.Dock = System.Windows.Forms.DockStyle.Right
+        Me.lblConexionFTPPuerto.Location = New System.Drawing.Point(10, 23)
+        Me.lblConexionFTPPuerto.Margin = New System.Windows.Forms.Padding(1)
+        Me.lblConexionFTPPuerto.Name = "lblConexionFTPPuerto"
+        Me.lblConexionFTPPuerto.Size = New System.Drawing.Size(70, 20)
+        Me.lblConexionFTPPuerto.StateCommon.ShortText.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblConexionFTPPuerto.TabIndex = 4
+        Me.lblConexionFTPPuerto.Values.Text = "Puerto FTP"
         '
-        'txtFTPPuerto
+        'txtConexionFTPPuerto
         '
-        Me.txtFTPPuerto.controlarBotonBorrar = True
-        Me.txtFTPPuerto.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.txtFTPPuerto.limpiarAlPulsarBoton = True
-        Me.txtFTPPuerto.Location = New System.Drawing.Point(102, 23)
-        Me.txtFTPPuerto.Margin = New System.Windows.Forms.Padding(1)
-        Me.txtFTPPuerto.mostrarSiempreBotonBorrar = False
-        Me.txtFTPPuerto.Name = "txtFTPPuerto"
-        Me.txtFTPPuerto.seleccionarTodo = True
-        Me.txtFTPPuerto.Size = New System.Drawing.Size(188, 20)
-        Me.txtFTPPuerto.TabIndex = 1
-        Me.txtFTPPuerto.Text = "21"
+        Me.txtConexionFTPPuerto.controlarBotonBorrar = True
+        Me.txtConexionFTPPuerto.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.txtConexionFTPPuerto.limpiarAlPulsarBoton = True
+        Me.txtConexionFTPPuerto.Location = New System.Drawing.Point(102, 23)
+        Me.txtConexionFTPPuerto.Margin = New System.Windows.Forms.Padding(1)
+        Me.txtConexionFTPPuerto.mostrarSiempreBotonBorrar = False
+        Me.txtConexionFTPPuerto.Name = "txtConexionFTPPuerto"
+        Me.txtConexionFTPPuerto.seleccionarTodo = True
+        Me.txtConexionFTPPuerto.Size = New System.Drawing.Size(462, 20)
+        Me.txtConexionFTPPuerto.TabIndex = 1
+        Me.txtConexionFTPPuerto.Text = "21"
         '
-        'tblConfiguracion
+        'tblControles
         '
-        Me.tblConfiguracion.ColumnCount = 2
-        Me.tblConfiguracion.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.tblConfiguracion.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.tblConfiguracion.Controls.Add(Me.hdrProyecto, 0, 0)
-        Me.tblConfiguracion.Controls.Add(Me.hdrConexion, 1, 0)
-        Me.tblConfiguracion.Location = New System.Drawing.Point(1, 143)
-        Me.tblConfiguracion.Name = "tblConfiguracion"
-        Me.tblConfiguracion.RowCount = 1
-        Me.tblConfiguracion.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.tblConfiguracion.Size = New System.Drawing.Size(597, 355)
-        Me.tblConfiguracion.TabIndex = 44
-        Me.tblConfiguracion.Visible = False
+        Me.tblControles.ColumnCount = 1
+        Me.tblControles.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.tblControles.Controls.Add(Me.hdrOperacion, 0, 0)
+        Me.tblControles.Controls.Add(Me.hdrConexion, 0, 2)
+        Me.tblControles.Controls.Add(Me.hdrTraduccion, 0, 1)
+        Me.tblControles.Location = New System.Drawing.Point(3, 41)
+        Me.tblControles.Name = "tblControles"
+        Me.tblControles.RowCount = 3
+        Me.tblControles.RowStyles.Add(New System.Windows.Forms.RowStyle())
+        Me.tblControles.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.tblControles.RowStyles.Add(New System.Windows.Forms.RowStyle())
+        Me.tblControles.Size = New System.Drawing.Size(597, 425)
+        Me.tblControles.TabIndex = 44
         '
-        'txtRutaProyecto
+        'hdrOperacion
         '
-        Me.txtRutaProyecto.Apertura = Recompila.Controles.rTextOpenFile.AperturaTipo.OpenFile
-        Me.txtRutaProyecto.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.txtRutaProyecto.ExtensionesArchivo = "*.rtrad|*.rtrad"
-        Me.txtRutaProyecto.IconoApertura = Global.traductorAplicaciones.My.Resources.Resources.folder_open_16_gris_66
-        Me.txtRutaProyecto.Location = New System.Drawing.Point(27, 36)
-        Me.txtRutaProyecto.Margin = New System.Windows.Forms.Padding(1)
-        Me.txtRutaProyecto.Name = "txtRutaProyecto"
-        Me.txtRutaProyecto.NombreArchivo = ""
-        Me.txtRutaProyecto.RutaInicial = "C:\Users\link3z\Documents"
-        Me.txtRutaProyecto.Size = New System.Drawing.Size(518, 24)
-        Me.txtRutaProyecto.TabIndex = 7
+        Me.hdrOperacion.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.hdrOperacion.HeaderVisibleSecondary = False
+        Me.hdrOperacion.Location = New System.Drawing.Point(3, 3)
+        Me.hdrOperacion.Name = "hdrOperacion"
+        '
+        'hdrOperacion.Panel
+        '
+        Me.hdrOperacion.Panel.Controls.Add(Me.tblOperacion)
+        Me.hdrOperacion.Panel.Padding = New System.Windows.Forms.Padding(24, 5, 0, 0)
+        Me.hdrOperacion.Size = New System.Drawing.Size(591, 100)
+        Me.hdrOperacion.StateCommon.Back.Color1 = System.Drawing.Color.Transparent
+        Me.hdrOperacion.StateCommon.Back.Color2 = System.Drawing.Color.Transparent
+        Me.hdrOperacion.StateCommon.Border.Color1 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.hdrOperacion.StateCommon.Border.Color2 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.hdrOperacion.StateCommon.Border.Draw = ComponentFactory.Krypton.Toolkit.InheritBool.[False]
+        Me.hdrOperacion.StateCommon.Border.DrawBorders = CType((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top Or ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) _
+            Or ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Left) _
+            Or ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Right), ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)
+        Me.hdrOperacion.StateCommon.HeaderPrimary.Back.Color1 = System.Drawing.Color.Transparent
+        Me.hdrOperacion.StateCommon.HeaderPrimary.Back.Color2 = System.Drawing.Color.Transparent
+        Me.hdrOperacion.StateCommon.HeaderPrimary.Border.DrawBorders = ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom
+        Me.hdrOperacion.StateCommon.HeaderPrimary.Content.LongText.Color1 = System.Drawing.Color.FromArgb(CType(CType(38, Byte), Integer), CType(CType(130, Byte), Integer), CType(CType(214, Byte), Integer))
+        Me.hdrOperacion.StateCommon.HeaderPrimary.Content.LongText.Color2 = System.Drawing.Color.FromArgb(CType(CType(38, Byte), Integer), CType(CType(130, Byte), Integer), CType(CType(214, Byte), Integer))
+        Me.hdrOperacion.StateCommon.HeaderPrimary.Content.ShortText.Color1 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.hdrOperacion.StateCommon.HeaderPrimary.Content.ShortText.Color2 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.hdrOperacion.StateCommon.HeaderPrimary.Content.ShortText.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.hdrOperacion.TabIndex = 46
+        Me.hdrOperacion.ValuesPrimary.Heading = "Abrir/Crear una nueva traducción"
+        Me.hdrOperacion.ValuesPrimary.Image = Global.traductorAplicaciones.My.Resources.Resources.page_bold_16_gris_66
+        '
+        'tblOperacion
+        '
+        Me.tblOperacion.BackColor = System.Drawing.Color.Transparent
+        Me.tblOperacion.ColumnCount = 2
+        Me.tblOperacion.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4.868914!))
+        Me.tblOperacion.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 95.13109!))
+        Me.tblOperacion.Controls.Add(Me.radOperacionAbrir, 0, 0)
+        Me.tblOperacion.Controls.Add(Me.txtOperacionRuta, 1, 1)
+        Me.tblOperacion.Controls.Add(Me.radOperacionNuevo, 0, 2)
+        Me.tblOperacion.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.tblOperacion.Location = New System.Drawing.Point(24, 5)
+        Me.tblOperacion.Name = "tblOperacion"
+        Me.tblOperacion.RowCount = 4
+        Me.tblOperacion.RowStyles.Add(New System.Windows.Forms.RowStyle())
+        Me.tblOperacion.RowStyles.Add(New System.Windows.Forms.RowStyle())
+        Me.tblOperacion.RowStyles.Add(New System.Windows.Forms.RowStyle())
+        Me.tblOperacion.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.tblOperacion.Size = New System.Drawing.Size(565, 72)
+        Me.tblOperacion.TabIndex = 45
+        '
+        'txtOperacionRuta
+        '
+        Me.txtOperacionRuta.Apertura = Recompila.Controles.rTextOpenFile.AperturaTipo.OpenFile
+        Me.txtOperacionRuta.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.txtOperacionRuta.ExtensionesArchivo = "*.rtrad|*.rtrad"
+        Me.txtOperacionRuta.IconoApertura = Global.traductorAplicaciones.My.Resources.Resources.folder_open_16_gris_66
+        Me.txtOperacionRuta.Location = New System.Drawing.Point(28, 23)
+        Me.txtOperacionRuta.Margin = New System.Windows.Forms.Padding(1)
+        Me.txtOperacionRuta.Name = "txtOperacionRuta"
+        Me.txtOperacionRuta.NombreArchivo = ""
+        Me.txtOperacionRuta.RutaInicial = "C:\Users\link3z\Documents"
+        Me.txtOperacionRuta.Size = New System.Drawing.Size(536, 24)
+        Me.txtOperacionRuta.TabIndex = 7
         '
         'gestorErrores
         '
         Me.gestorErrores.Alineacion = System.Windows.Forms.ErrorIconAlignment.MiddleLeft
         Me.gestorErrores.ContainerControl = Me
         '
-        'TableLayoutPanel1
-        '
-        Me.TableLayoutPanel1.ColumnCount = 2
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4.868914!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 95.13109!))
-        Me.TableLayoutPanel1.Controls.Add(Me.radAbrirProyectoExistente, 0, 0)
-        Me.TableLayoutPanel1.Controls.Add(Me.txtRutaProyecto, 1, 1)
-        Me.TableLayoutPanel1.Controls.Add(Me.radNuevoProyecto, 0, 2)
-        Me.TableLayoutPanel1.Location = New System.Drawing.Point(52, 38)
-        Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
-        Me.TableLayoutPanel1.RowCount = 4
-        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.TableLayoutPanel1.Size = New System.Drawing.Size(546, 99)
-        Me.TableLayoutPanel1.TabIndex = 45
-        '
         'ctrWizard_01
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.Transparent
-        Me.Controls.Add(Me.TableLayoutPanel1)
-        Me.Controls.Add(Me.tblConfiguracion)
+        Me.Controls.Add(Me.tblControles)
         Me.Controls.Add(Me.lblTitulo)
         Me.Margin = New System.Windows.Forms.Padding(0)
         Me.Name = "ctrWizard_01"
         Me.Size = New System.Drawing.Size(600, 500)
-        CType(Me.hdrProyecto.Panel, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.hdrProyecto.Panel.ResumeLayout(False)
-        CType(Me.hdrProyecto, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.hdrProyecto.ResumeLayout(False)
-        Me.tblProyecto.ResumeLayout(False)
-        Me.tblProyecto.PerformLayout()
+        CType(Me.hdrTraduccion.Panel, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.hdrTraduccion.Panel.ResumeLayout(False)
+        CType(Me.hdrTraduccion, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.hdrTraduccion.ResumeLayout(False)
+        Me.tblTraduccion.ResumeLayout(False)
+        Me.tblTraduccion.PerformLayout()
         CType(Me.hdrConexion.Panel, System.ComponentModel.ISupportInitialize).EndInit()
         Me.hdrConexion.Panel.ResumeLayout(False)
         CType(Me.hdrConexion, System.ComponentModel.ISupportInitialize).EndInit()
         Me.hdrConexion.ResumeLayout(False)
-        Me.tblConexion.ResumeLayout(False)
-        Me.tblConexion.PerformLayout()
-        Me.tblConfiguracion.ResumeLayout(False)
+        Me.tblConfiguracionConexion.ResumeLayout(False)
+        Me.tblConfiguracionConexion.PerformLayout()
+        Me.tblControles.ResumeLayout(False)
+        CType(Me.hdrOperacion.Panel, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.hdrOperacion.Panel.ResumeLayout(False)
+        CType(Me.hdrOperacion, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.hdrOperacion.ResumeLayout(False)
+        Me.tblOperacion.ResumeLayout(False)
+        Me.tblOperacion.PerformLayout()
         CType(Me.gestorErrores, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.TableLayoutPanel1.ResumeLayout(False)
-        Me.TableLayoutPanel1.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
     End Sub
     Friend WithEvents lblTitulo As ComponentFactory.Krypton.Toolkit.KryptonLabel
     Friend WithEvents gestorErrores As Recompila.Controles.rGestorErrores
-    Friend WithEvents radNuevoProyecto As ComponentFactory.Krypton.Toolkit.KryptonRadioButton
-    Friend WithEvents radAbrirProyectoExistente As ComponentFactory.Krypton.Toolkit.KryptonRadioButton
-    Friend WithEvents txtRutaProyecto As Recompila.Controles.rTextOpenFile
-    Friend WithEvents hdrProyecto As ComponentFactory.Krypton.Toolkit.KryptonHeaderGroup
-    Friend WithEvents tblProyecto As System.Windows.Forms.TableLayoutPanel
-    Friend WithEvents lblDescripcion As ComponentFactory.Krypton.Toolkit.KryptonLabel
-    Friend WithEvents lblNombre As ComponentFactory.Krypton.Toolkit.KryptonLabel
+    Friend WithEvents radOperacionNuevo As ComponentFactory.Krypton.Toolkit.KryptonRadioButton
+    Friend WithEvents radOperacionAbrir As ComponentFactory.Krypton.Toolkit.KryptonRadioButton
+    Friend WithEvents txtOperacionRuta As Recompila.Controles.rTextOpenFile
+    Friend WithEvents hdrTraduccion As ComponentFactory.Krypton.Toolkit.KryptonHeaderGroup
+    Friend WithEvents tblTraduccion As System.Windows.Forms.TableLayoutPanel
+    Friend WithEvents lblTraduccionDescripcion As ComponentFactory.Krypton.Toolkit.KryptonLabel
+    Friend WithEvents lblTraduccionNombre As ComponentFactory.Krypton.Toolkit.KryptonLabel
     Friend WithEvents hdrConexion As ComponentFactory.Krypton.Toolkit.KryptonHeaderGroup
-    Friend WithEvents tblConexion As System.Windows.Forms.TableLayoutPanel
-    Friend WithEvents lblFTPServidor As ComponentFactory.Krypton.Toolkit.KryptonLabel
-    Friend WithEvents lblFTPUsuario As ComponentFactory.Krypton.Toolkit.KryptonLabel
-    Friend WithEvents lblFTPClave As ComponentFactory.Krypton.Toolkit.KryptonLabel
-    Friend WithEvents lblFTPRuta As ComponentFactory.Krypton.Toolkit.KryptonLabel
-    Friend WithEvents lblFTPURL As ComponentFactory.Krypton.Toolkit.KryptonLabel
-    Friend WithEvents txtFTPServidor As Recompila.Controles.rTextBox
-    Friend WithEvents txtFTPUsuario As Recompila.Controles.rTextBox
-    Friend WithEvents txtFTPContrasenha As Recompila.Controles.rTextBox
-    Friend WithEvents txtFTPRuta As Recompila.Controles.rTextBox
-    Friend WithEvents txtURI As Recompila.Controles.rTextBox
-    Friend WithEvents lblFTPPuerto As ComponentFactory.Krypton.Toolkit.KryptonLabel
-    Friend WithEvents txtFTPPuerto As Recompila.Controles.rTextBox
-    Friend WithEvents txtNombre As Recompila.Controles.rTextBox
-    Friend WithEvents txtDescripcion As Recompila.Controles.rTextBox
-    Friend WithEvents tblConfiguracion As System.Windows.Forms.TableLayoutPanel
-    Friend WithEvents TableLayoutPanel1 As System.Windows.Forms.TableLayoutPanel
+    Friend WithEvents tblConfiguracionConexion As System.Windows.Forms.TableLayoutPanel
+    Friend WithEvents lblConexionFTPServidor As ComponentFactory.Krypton.Toolkit.KryptonLabel
+    Friend WithEvents lblConexionFTPUsuario As ComponentFactory.Krypton.Toolkit.KryptonLabel
+    Friend WithEvents lblConexionFTPClave As ComponentFactory.Krypton.Toolkit.KryptonLabel
+    Friend WithEvents lblConexionFTPRuta As ComponentFactory.Krypton.Toolkit.KryptonLabel
+    Friend WithEvents lblConexionHTTP As ComponentFactory.Krypton.Toolkit.KryptonLabel
+    Friend WithEvents txtConexionFTPServidor As Recompila.Controles.rTextBox
+    Friend WithEvents txtConexionFTPUsuario As Recompila.Controles.rTextBox
+    Friend WithEvents txtConexionFTPClave As Recompila.Controles.rTextBox
+    Friend WithEvents txtConexionFTPRuta As Recompila.Controles.rTextBox
+    Friend WithEvents txtConexionHTTP As Recompila.Controles.rTextBox
+    Friend WithEvents lblConexionFTPPuerto As ComponentFactory.Krypton.Toolkit.KryptonLabel
+    Friend WithEvents txtConexionFTPPuerto As Recompila.Controles.rTextBox
+    Friend WithEvents txtTraduccionNombre As Recompila.Controles.rTextBox
+    Friend WithEvents txtTraduccionDescripcion As Recompila.Controles.rTextBox
+    Friend WithEvents tblControles As System.Windows.Forms.TableLayoutPanel
+    Friend WithEvents tblOperacion As System.Windows.Forms.TableLayoutPanel
+    Friend WithEvents hdrOperacion As ComponentFactory.Krypton.Toolkit.KryptonHeaderGroup
 
 End Class

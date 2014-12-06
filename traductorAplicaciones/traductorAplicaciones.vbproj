@@ -160,8 +160,10 @@
     <Import Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="2.Base del programa\Enumerados\OperacionTraductor.vb" />
     <Compile Include="2.Base del programa\Interfaces\ICBase.vb" />
     <Compile Include="2.Base del programa\Sistema\Sistema.Configuracion.vb" />
+    <Compile Include="2.Base del programa\Sistema\Sistema.Traduccion.vb" />
     <Compile Include="3.Modulos del programa\Wizard\ctrWizard_05.designer.vb">
       <DependentUpon>ctrWizard_05.vb</DependentUpon>
     </Compile>
@@ -313,6 +315,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\page.bold_16.gris.66.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cog_16.gris.66.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\connect_16.gris.66.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\add_16.gris.66.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

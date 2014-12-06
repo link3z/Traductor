@@ -25,9 +25,10 @@
         epErrores.Clear()
     End Sub
 
-    Public Sub PrepararCierre() Implements ICBase.PrepararCierre
+    Public Function PrepararCierre() As Boolean Implements ICBase.PrepararCierre
 
-    End Sub
+        Return True
+    End Function
 
     Public Function Cargar(eObjeto As Object) As Boolean Implements IControlWizard.Cargar
 
@@ -47,7 +48,7 @@
         Return (epErrores.HasErrors)
     End Function
 
-    Public Function Guardar(eObjeto As Object) As Object Implements IControlWizard.Guardar
+    Public Function Guardar(ByRef eObjeto As Object) As Object Implements IControlWizard.Guardar
 
         Return True
     End Function

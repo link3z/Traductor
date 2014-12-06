@@ -63,6 +63,16 @@ Namespace My.Resources
         '''<summary>
         '''  Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         '''</summary>
+        Friend ReadOnly Property add_16_gris_66() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("add_16.gris.66", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        '''</summary>
         Friend ReadOnly Property add_32_gris_66() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("add_32.gris.66", resourceCulture)
@@ -106,6 +116,26 @@ Namespace My.Resources
         Friend ReadOnly Property close_16_gris_66() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("close_16.gris.66", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property cog_16_gris_66() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("cog_16.gris.66", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property connect_16_gris_66() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("connect_16.gris.66", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
             End Get
         End Property

@@ -1,5 +1,5 @@
 ﻿Public MustInherit Class cMotorBase
-#Region " DECLARACIONES "
+#Region " PROPIEDADES "
     ''' <summary>
     ''' Tipo del motor utilizado para identificarlo
     ''' </summary>
