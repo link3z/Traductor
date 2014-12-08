@@ -66,9 +66,11 @@ Public Class ctrWizard_04
         escribirMensaje("Configurando parámetros para la traducción.")
 
         ' Se crea el objeto traductor
-        Dim elTraductor As cGeneradorPO = New cGeneradorPO(Sistema.Traduccion._PROYECTO_VB, _
-                                                           Sistema.Traduccion._CONFIGURACION_TRADUCTOR,
-                                                           Sistema.Traduccion._CONFIGURACION_CONEXION)
+        Dim elTraductor As cGeneradorPO = New cGeneradorPO(Sistema.Traduccion._CONFIGURACION_CONEXION, _
+                                                           Sistema.Traduccion._PROYECTO_NET, _
+                                                           Sistema.Traduccion._CONFIGURACION_TRADUCTOR, _
+                                                           Sistema.Traduccion._MOTOR, _
+                                                           True)
 
         ' Se añaden los manejadores para recibir información del estado de la traducción
         AddHandler elTraductor.notificarMensaje, AddressOf manejadorNotificarMensaje

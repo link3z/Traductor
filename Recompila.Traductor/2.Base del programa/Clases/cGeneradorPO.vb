@@ -23,32 +23,40 @@ Public Class cGeneradorPO
 
 #Region " DECLARACIONES "
     ''' <summary>
-    ''' Gestor de subidas al FTP
+    ''' Gestor de subidas al FTP. Este objeto se encargará de subir los archivos necesarios
+    ''' para realizar la traducción al servidor FTP para poder acceder mediante HTTP para 
+    ''' la realización de la traducción
     ''' </summary>
-    Private WithEvents fileUploader As Net.WebClient = Nothing
+    Private WithEvents fileUploader As System.Net.WebClient = Nothing
 
     ''' <summary>
-    ''' Controla si se están subiendo ficheros al FTP
+    ''' Flag que controla si se están subiendo ficheros al FTP
     ''' </summary>
     Private iSubiendo As Boolean = False
 
     ''' <summary>
+    ''' Determina si el objeto generador debe lanzar eventos para informar del progreso 
+    ''' </summary>
+    Private iConEventos As Boolean = True
+
+    ''' <summary>
     ''' Tag que se añade al final del HTML que se va a traducir para detectar el final
-    ''' de la traducción o el fichero
+    ''' de la traducción o el fichero ya que algunos traductores OnLine no muestran la 
+    ''' página completa con la traducción sino un 'Loading'.
     ''' </summary>
     Private Const _END_OF_FILE As String = "<b>__999__</b>"
 #End Region
 
 #Region " PROPIEDADES "
     ''' <summary>
-    ''' Proyecto VB.NET que se va a traducir
+    ''' Proyecto .NET con el que se va a trabajar
     ''' </summary>
-    Private ReadOnly Property ProyectoVB As cProyectoVB
+    Private ReadOnly Property ProyectoNET As NET.cProyectoNET
         Get
             Return iProyectoVB
         End Get
     End Property
-    Private iProyectoVB As cProyectoVB = Nothing
+    Private iProyectoVB As NET.cProyectoVB = Nothing
 
     ''' <summary>
     ''' Proyecto Traductor con toda la configuración necesaria para realizar la traducción
@@ -73,12 +81,12 @@ Public Class cGeneradorPO
     ''' <summary>
     ''' Motor de traducción que se va a utilizar para realizar las traducciones
     ''' </summary>
-    Private ReadOnly Property Motor As IMotorTraduccion
+    Private ReadOnly Property Motor As Motor.IMotorTraduccion
         Get
             Return iMotor
         End Get
     End Property
-    Private iMotor As IMotorTraduccion = Nothing
+    Private iMotor As Motor.IMotorTraduccion = Nothing
 
     ''' <summary>
     ''' Versión de la traducción que se va a realizar
@@ -143,34 +151,23 @@ Public Class cGeneradorPO
     ''' </summary>
     ''' <param name="eMensaje">Mensaje devuelto por el motor</param>
     Private Sub manejadorNotificacionesMotor(eMensaje As String)
-        RaiseEvent notificarMensaje(eMensaje)
+        If iConEventos Then RaiseEvent notificarMensaje(eMensaje)
     End Sub
 #End Region
 
 #Region " CONSTRUCTORES "
-    Public Sub New(ByVal eProyectoVB As cProyectoVB, _
+    Public Sub New(ByVal eConfiguracionNetwork As cConfiguracionNetwork, _
+                   ByVal eProyectoNET As NET.cProyectoNET, _
                    ByVal eProyectoTraductor As cProyectoTraductor, _
-                   ByVal eConfiguracionNetwork As cConfiguracionNetwork)
+                   ByVal eMotor As Motor.cMotorBase, _
+                   Optional ByVal eConEventos As Boolean = True)
 
         ' Se guardan los objetos con las configuraciones
-        iProyectoVB = eProyectoVB
+        iProyectoVB = eProyectoNET
         iProyectoTraductor = eProyectoTraductor
         iConfiguracionNetwork = eConfiguracionNetwork
-
-        ' Se crea el motor de traducción seleccionado por el usuario
-        Select Case ProyectoTraductor.Motor
-            Case motorTraduccion.GoogleTranslate
-                iMotor = New cMotorGoogle
-
-            Case motorTraduccion.OpenTrad
-                iMotor = New cMotorOpenTrad
-
-            Case motorTraduccion.Intertran
-                iMotor = New cMotorIntertran
-
-            Case motorTraduccion.OnlineTranslator
-                iMotor = New cMotorOnlineTranslator
-        End Select
+        iMotor = eMotor
+        iConEventos = eConEventos
 
         ' Se añade el manejador para capturar los mensajes enviados por el
         ' motor y poder mostrarlos en el proceso
@@ -195,7 +192,7 @@ Public Class cGeneradorPO
         If Not seAnhadioIdiomaUso Then Idiomas.Add(IdiomaUso)
 
         ' Se guarda la versión de traducción a generar
-        iVersionTraduccion = ProyectoVB.versionTraduccion
+        iVersionTraduccion = ProyectoNET.versionTraduccion
     End Sub
 #End Region
 
@@ -213,78 +210,105 @@ Public Class cGeneradorPO
 
         ' Se inicializa el traductor y se lanzan los eventos iniciales
         ' -----------------------------------------------------------------------------------
-        RaiseEvent notificarMensaje("Iniciando proceso de traducción...")
-        RaiseEvent notificarFinalizacion(TipoBarraProgreso.Primaria)
-        RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
+        If iConEventos Then RaiseEvent notificarMensaje("Iniciando proceso de traducción...")
+        If iConEventos Then RaiseEvent notificarFinalizacion(TipoBarraProgreso.Primaria)
+        If iConEventos Then RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
 
         ' Se crea la carpeta para los lenguajes si todavía no existe
         ' -----------------------------------------------------------------------------------
-        RaiseEvent notificarMensaje("Creando estructura de carpetas de salida...")
-        RaiseEvent notificarMensaje("+ " & ProyectoVB.carpetaLanguages)
-        If Not IO.Directory.Exists(ProyectoVB.carpetaLanguages) Then IO.Directory.CreateDirectory(ProyectoVB.carpetaLanguages)
+        If iConEventos Then RaiseEvent notificarMensaje("Creando estructura de carpetas de salida...")
+        If iConEventos Then RaiseEvent notificarMensaje("+ " & ProyectoNET.carpetaLanguages)
+        If Not IO.Directory.Exists(ProyectoNET.carpetaLanguages) Then
+            Try
+                IO.Directory.CreateDirectory(ProyectoNET.carpetaLanguages)
+            Catch ex As Exception
+                elMensaje = "! ERROR al crear la carpeta " & ProyectoNET.carpetaLanguages
+                If iConEventos Then RaiseEvent notificarMensaje(elMensaje)
+                Throw New Exception(elMensaje, ex)
+            End Try
+        End If
 
-        RaiseEvent notificarMensaje("+ " & ProyectoVB.carpetaTraducciones)
-        If Not IO.Directory.Exists(ProyectoVB.carpetaTraducciones) Then IO.Directory.CreateDirectory(ProyectoVB.carpetaTraducciones)
+        If iConEventos Then RaiseEvent notificarMensaje("+ " & ProyectoNET.carpetaTraducciones)
+        If Not IO.Directory.Exists(ProyectoNET.carpetaTraducciones) Then
+            Try
+                IO.Directory.CreateDirectory(ProyectoNET.carpetaTraducciones)
+            Catch ex As Exception
+                elMensaje = "! ERROR al crear la carpeta " & ProyectoNET.carpetaLanguages
+                If iConEventos Then RaiseEvent notificarMensaje(elMensaje)
+                Throw New Exception(elMensaje, ex)
+            End Try
+        End If
 
         ' Se guarda la anterior versión de traducción
         ' -----------------------------------------------------------------------------------
-        RaiseEvent notificarMensaje("Cambiando versión de traducción a " & VersionTraduccion & "...")
+        If iConEventos Then RaiseEvent notificarMensaje("Cambiando versión de traducción a " & VersionTraduccion & "...")
         ' Se copian los ficheros actuales en la versión de generación, los cuales serán
         ' utilizados para comprobar si el texto ya está traducido o no. 
+        ' Al copiar los ficheros antiguos estos sirven como copia de seguridad de las traducciones anteriores
+        ' evitando perder traducciones que se pudieran haber realizado a mano
         Dim rutaOrigen As String = ""
         Dim rutaDestino As String = ""
 
-        RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, iIdiomas.Count + 1)
-        For Each UnIdioma As cIdioma In iIdiomas
-            Try
-                rutaOrigen = ProyectoVB.carpetaTraducciones & UnIdioma.strCodigoLocalizacion & ".po"
-                rutaDestino = ProyectoVB.carpetaTraducciones & UnIdioma.strCodigoLocalizacion & "_" & VersionTraduccion & ".po"
+        Dim lasTraduccionesAntiguas = My.Computer.FileSystem.GetFiles(ProyectoNET.carpetaLanguages, FileIO.SearchOption.SearchTopLevelOnly, "*.po")
+        If lasTraduccionesAntiguas IsNot Nothing AndAlso lasTraduccionesAntiguas.Count > 0 Then
+            If iConEventos Then RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, lasTraduccionesAntiguas.Count + 1)
+            For Each unArchivo As String In lasTraduccionesAntiguas
+                Try
+                    ' Solamente se van a copiar las traducciones que no contengan el caracter _, las cuales
+                    ' se corresponden a la última traducción realizada o utilizada
+                    If Not unArchivo.Contains("_") Then
+                        rutaOrigen = unArchivo
+                        rutaDestino = ProyectoNET.carpetaTraducciones & Ficheros.extraerNombreFicheroSinExtension(rutaOrigen).Split("_")(0) & "_" & VersionTraduccion & ".po"
 
-                elMensaje = ("> " & Ficheros.extraerNombreFichero(rutaOrigen) & " -> " & Ficheros.extraerNombreFichero(rutaDestino))
-                RaiseEvent notificarMensaje(elMensaje)
-                RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, 0)
+                        elMensaje = ("> " & Ficheros.extraerNombreFichero(rutaOrigen) & " -> " & Ficheros.extraerNombreFichero(rutaDestino))
+                        If iConEventos Then RaiseEvent notificarMensaje(elMensaje)
 
-                If IO.File.Exists(rutaDestino) Then IO.File.Delete(rutaDestino)
-                If IO.File.Exists(rutaOrigen) Then IO.File.Move(rutaOrigen, rutaDestino)
-            Catch ex As Exception
-                RaiseEvent notificarMensaje("! ERROR - Al guardar " & Ficheros.extraerNombreFichero(rutaDestino))
-            End Try
-        Next
-        RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
+                        If IO.File.Exists(rutaDestino) Then IO.File.Delete(rutaDestino)
+                        If IO.File.Exists(rutaOrigen) Then IO.File.Move(rutaOrigen, rutaDestino)
+                    End If
+                Catch ex As Exception
+                    If iConEventos Then RaiseEvent notificarMensaje("! ERROR - Al guardar " & Ficheros.extraerNombreFichero(rutaDestino))
+                End Try
+
+                If iConEventos Then RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, 0)
+            Next
+            If iConEventos Then RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
+        End If
 
         ' Se crean todos los ficheros PO de salida con la cabecera de cada fichero
         ' -----------------------------------------------------------------------------------        
-        RaiseEvent notificarMensaje("Creando cabeceras de ficheros PO de la versión " & VersionTraduccion & "...")
+        If iConEventos Then RaiseEvent notificarMensaje("Creando cabeceras de ficheros PO de la versión " & VersionTraduccion & "...")
 
-        RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, iIdiomas.Count + 1)
+        If iConEventos Then RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, iIdiomas.Count + 1)
         For Each UnIdioma As cIdioma In iIdiomas
             Try
-                rutaDestino = ProyectoVB.carpetaTraducciones & UnIdioma.strCodigoLocalizacion & ".po"
+                rutaDestino = ProyectoNET.carpetaTraducciones & UnIdioma.strCodigoLocalizacion & ".po"
 
                 elMensaje = ("> Generando cabecera PO de " & Ficheros.extraerNombreFichero(rutaDestino))
-                RaiseEvent notificarMensaje(elMensaje)
-                RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, 0)
+                If iConEventos Then RaiseEvent notificarMensaje(elMensaje)
+                If iConEventos Then RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, 0)
 
                 If IO.File.Exists(rutaDestino) Then IO.File.Delete(rutaDestino)
                 Dim elEscritorPO As New StreamWriter(rutaDestino, False, System.Text.Encoding.UTF8)
                 EscribirCabeceraPO(elEscritorPO, UnIdioma.strCodigoLocalizacion)
                 elEscritorPO.Close()
             Catch ex As Exception
-                RaiseEvent notificarMensaje("! ERROR - Al crear la cabecera PO de " & Ficheros.extraerNombreFichero(rutaDestino))
+                If iConEventos Then RaiseEvent notificarMensaje("! ERROR - Al crear la cabecera PO de " & Ficheros.extraerNombreFichero(rutaDestino))
             End Try
         Next
-        RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
+        If iConEventos Then RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
 
         ' Se recorren todos los objetos a traducir seleccionados por el usuario
-        RaiseEvent notificarMaximo(TipoBarraProgreso.Primaria, iProyectoTraductor.ArchivosVB.Count + 1)
-        For Each unArchivo As cArchivoVB In iProyectoTraductor.ArchivosVB
+        ' -----------------------------------------------------------------------------------        
+        If iConEventos Then RaiseEvent notificarMaximo(TipoBarraProgreso.Primaria, iProyectoTraductor.ArchivosNET.Count + 1)
+        For Each unArchivo As NET.cFormulario In iProyectoTraductor.ArchivosNET
             elMensaje = ("* Traduciendo " & unArchivo.NombreFichero)
-            RaiseEvent notificarMensaje(elMensaje)
-            RaiseEvent notificarProgreso(TipoBarraProgreso.Primaria, 0)
+            If iConEventos Then RaiseEvent notificarMensaje(elMensaje)
+            If iConEventos Then RaiseEvent notificarProgreso(TipoBarraProgreso.Primaria, 0)
 
-            ArchivoVB2ArchivoPO(unArchivo)
+            ArchivoNET2ArchivoPO(unArchivo)
         Next
-        RaiseEvent notificarFinalizacion(TipoBarraProgreso.Primaria)
+        If iConEventos Then RaiseEvent notificarFinalizacion(TipoBarraProgreso.Primaria)
 
         Return paraDevolver
     End Function
@@ -294,22 +318,25 @@ Public Class cGeneradorPO
     ''' Genera los ficheros PO con las traducciones del proyecto utilizando los idiomas
     ''' configurados en el objeto
     ''' </summary>
-    Public Function ArchivoVB2ArchivoPO(ByVal eArchivoVB As cArchivoVB) As Boolean
+    Public Function ArchivoNET2ArchivoPO(ByVal eArchivoNET As NET.cFormulario) As Boolean
+        ' Mensaje utilizado para enviar información mediante los eventos
+        Dim elMensaje As String = ""
+
         ' Se lee el contenido de fichero con la versión antigua de la traducción, para utilizarla como
         ' base de traducción y evitar volver a traducir el texto ya traducido o el texto que fué
-        ' corregido posteriormente por otra persona
-        RaiseEvent notificarMensaje("? Analizando traducciones previas de " & eArchivoVB.NombreFichero & "...")
+        ' corregido posteriormente
+        If iConEventos Then RaiseEvent notificarMensaje("? Analizando traducciones previas de " & eArchivoNET.NombreFichero & "...")
 
         ' Diccionario donde se va a guardar el idioma y el contenido del fichero PO previo
         Dim traduccionesAntiguas As New Dictionary(Of idiomaLocalizacion, String)
 
         ' Se recorre cada uno de los idiomas de salida configurados y se carga en el diccionario
         ' de traducciones antiguas
-        RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, iIdiomas.Count + 1)
+        If iConEventos Then RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, iIdiomas.Count + 1)
         For Each unIdioma As cIdioma In iIdiomas
             Try
-                RaiseEvent notificarMensaje("< Obteniendo traducciones de la versión " & VersionTraduccion & " para " & unIdioma.strNombre & "[" & unIdioma.codigoLocalizacion & "]...")
-                RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, 0)
+                If iConEventos Then RaiseEvent notificarMensaje("< Obteniendo traducciones de la versión " & VersionTraduccion & " para " & unIdioma.strNombre & "[" & unIdioma.codigoLocalizacion & "]...")
+                If iConEventos Then RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, 0)
 
                 Dim rutaVersionAntigua As String = iProyectoVB.carpetaTraducciones & unIdioma.strCodigoLocalizacion & "_" & VersionTraduccion & ".po"
                 If File.Exists(rutaVersionAntigua) Then
@@ -321,39 +348,43 @@ Public Class cGeneradorPO
 
                     ' Se añade la traduccin al diccionario
                     traduccionesAntiguas.Add(unIdioma.codigoLocalizacion, contenidoVersionAntigua)
+                Else
+                    If iConEventos Then RaiseEvent notificarMensaje("! ADVERTENCIA, no existe traducción previa a la versión " & VersionTraduccion & " para " & unIdioma.strNombre & " [" & unIdioma.strCodigoLocalizacion & "]...")
                 End If
             Catch ex As Exception
-                RaiseEvent notificarMensaje("! ERROR al obtenerlas traducciones de la versión" & VersionTraduccion & " para " & unIdioma.strNombre & " [" & unIdioma.strCodigoLocalizacion & "]...")
+                If iConEventos Then RaiseEvent notificarMensaje("! ERROR al obtenerlas traducciones de la versión " & VersionTraduccion & " para " & unIdioma.strNombre & " [" & unIdioma.strCodigoLocalizacion & "]...")
             End Try
         Next
-        RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
+        If iConEventos Then RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
 
         ' Se convierte todo el proyecto a UTF8 para evitar problemas de traduccion, para ello, se van
         ' leyendo todos los componentes del proyecto, se escriben en UTF8 en un fichero temporal, y se vuelven
         ' a copiar en el proyecto, guardando una copia del documento original en la carpeta _BACKUP en
         ' la misma carpeta donde se encuentra el proyecto.
-        RaiseEvent notificarMensaje("# Realizando copia de seguridad de " & eArchivoVB.NombreFichero & "...")
+        If iConEventos Then RaiseEvent notificarMensaje("# Realizando copia de seguridad de " & eArchivoNET.NombreFichero & "...")
         Try
             Dim rutaBackup As String = iProyectoVB.carpetaProyecto & "\_BACKUP\"
             If Not IO.Directory.Exists(rutaBackup) Then IO.Directory.CreateDirectory(rutaBackup)
 
-            If eArchivoVB.RutaCompleta.Contains("\..\") Then
-                rutaBackup = eArchivoVB.RutaCompleta & ".bak"
+            If eArchivoNET.RutaFormulario.Contains("\..\") Then
+                rutaBackup = eArchivoNET.RutaFormulario & ".bak"
             Else
-                rutaBackup &= eArchivoVB.RutaCompleta.Substring(iProyectoVB.carpetaProyecto.Length + 1) & ".bak"
+                rutaBackup &= eArchivoNET.RutaFormulario.Substring(iProyectoVB.carpetaProyecto.Length + 1) & ".bak"
             End If
-            Ficheros.Copiar.copiarArchivo(eArchivoVB.RutaCompleta, rutaBackup, True, True)
+            Ficheros.Copiar.copiarArchivo(eArchivoNET.RutaFormulario, rutaBackup, True, True)
         Catch ex As Exception
-            RaiseEvent notificarMensaje("! ERROR al realizar la copia de seguridad de " & eArchivoVB.NombreFichero & "...")
+            elMensaje = "! ERROR al realizar la copia de seguridad de " & eArchivoNET.NombreFichero & "..."
+            If iConEventos Then RaiseEvent notificarMensaje(elMensaje)
+            Throw New Exception(elMensaje, ex)
         End Try
 
         ' Cambio del fichero a UTF-8, además, se crea el objeto Components para poder acceder a estos a la hora de traducir los objetos
-        ' que no tiene representación sobre el formulario, accediendo a ellos mediante esta nueva propiedad
-        RaiseEvent notificarMensaje("# Convirtiendo " & eArchivoVB.NombreFichero & " a UFT-8...")
+        ' que no tiene representación sobre el formulario, accediendo a ellos mediante esta nueva propiedad (losComponentes)
+        If iConEventos Then RaiseEvent notificarMensaje("# Convirtiendo " & eArchivoNET.NombreFichero & " a UFT-8...")
         Try
             Dim archivoTemporal As String = Ficheros.obtenerFicheroTemporal
             If IO.File.Exists(archivoTemporal) Then IO.File.Delete(archivoTemporal)
-            Dim contenidoOriginal As String = File.ReadAllText(eArchivoVB.RutaCompleta, System.Text.Encoding.Default)
+            Dim contenidoOriginal As String = File.ReadAllText(eArchivoNET.RutaFormulario, System.Text.Encoding.Default)
 
             ' Se realizan ajustes sobre el objeto Comonents para poder acceder a estos,
             ' cambiando la linean "End Class" por la nueva linea de componentes
@@ -378,39 +409,44 @@ Public Class cGeneradorPO
 
             ' Se copia el fichero en UTF sobreescribiendo el fichero origienal            
             File.WriteAllText(archivoTemporal, contenidoOriginal, System.Text.Encoding.UTF8)
-            IO.File.Copy(archivoTemporal, eArchivoVB.RutaCompleta, True)
+            IO.File.Copy(archivoTemporal, eArchivoNET.RutaFormulario, True)
+
+            ' Se elimina el archivo temporal utilizado para la conversión
+            Try
+                IO.File.Delete(archivoTemporal)
+            Catch ex As Exception
+            End Try
         Catch ex As Exception
-            RaiseEvent notificarMensaje("# Error al convertir " & eArchivoVB.NombreFichero & " a UFT-8...")
+            elMensaje = "# Error al convertir " & eArchivoNET.NombreFichero & " a UFT-8..."
+            If iConEventos Then RaiseEvent notificarMensaje(elMensaje)
+            Throw New Exception(elMensaje, ex)
         End Try
 
         ' Se cuentan cuantos elementos se van a procesar
-        RaiseEvent notificarMensaje(vbTab & "? Obteniendo controles/cadneas a traducir...")
+        If iConEventos Then RaiseEvent notificarMensaje(vbTab & "? Obteniendo controles/cadneas a traducir...")
 
         ' + CONTAR CONTROLES
-        Dim losControles As Dictionary(Of String, String) = obtenerControles(eArchivoVB)
+        Dim losControles As Dictionary(Of String, String) = obtenerControles(eArchivoNET, ProyectoTraductor.ControlesNET)
         Dim totalControles As Integer = losControles.Count
 
         ' + CONTAR MENSAJES
-        Dim lasCadenas As Dictionary(Of String, String) = obtenerCadenas(eArchivoVB)
+        Dim lasCadenas As Dictionary(Of String, String) = obtenerCadenas(eArchivoNET)
         Dim totalMensajes As Integer = lasCadenas.Count
 
         ' CONTAR IDIOMAS
         Dim totalIdiomas As Integer = iIdiomas.Count
 
-        ' Se obtiene el nombre del formulario para la generación de los nombres de los objetos
-        ' a insertar el fichero PO. Los nombres de los formularios son únicos por proyecto, por
-        ' lo que esta será la base del objeto que se añadirá al fichero PO para identificar 
-        ' los controles y mensajes traducidos
-        Dim NombreFormulario As String = eArchivoVB.NombreFichero
-        If NombreFormulario.Contains(".designer.vb") Then NombreFormulario = NombreFormulario.Replace(".designer.vb", "")
-        If NombreFormulario.Contains(".Designer.vb") Then NombreFormulario = NombreFormulario.Replace(".Designer.vb", "")
-        If NombreFormulario.Contains(".vb") Then NombreFormulario = NombreFormulario.Replace(".vb", "")
-
         ' Solamente se realiza la traducción si hay algo que traducir
-        If totalControles > 0 Or totalIdiomas > 0 AndAlso IO.File.Exists(eArchivoVB.RutaCompleta) Then
+        If totalControles > 0 Or totalIdiomas > 0 AndAlso IO.File.Exists(eArchivoNET.RutaFormulario) Then
+            ' Se obtiene el nombre del formulario para la generación de los nombres de los objetos
+            ' a insertar el fichero PO. Los nombres de los formularios son únicos por proyecto, por
+            ' lo que esta será la base del objeto que se añadirá al fichero PO para identificar 
+            ' los controles y mensajes traducidos
+            Dim NombreFormulario As String = eArchivoNET.NombreFormulario
+
             ' Se lee el contenido del formulario. Este formulario ya está convertido a UTF-8
             ' por lo que el Encodig se fija a este formato
-            Dim elLector As StreamReader = New System.IO.StreamReader(eArchivoVB.RutaCompleta, System.Text.Encoding.UTF8)
+            Dim elLector As StreamReader = New System.IO.StreamReader(eArchivoNET.RutaFormulario, System.Text.Encoding.UTF8)
             Dim elFicheroDesignerCompleto As String = elLector.ReadToEnd
             elLector.Close()
 
@@ -426,16 +462,16 @@ Public Class cGeneradorPO
             ' y el texto original, siempre y cuando este no se encuentre ya en la versión antigua de la
             ' traducción con el mismo texto, lo que significaría que la traducción no cambia y sigue siendo
             ' la misma, en caso contrario, se tiene que volver a traducir.
-            RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, iIdiomas.Count + 1)
+            If iConEventos Then RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, iIdiomas.Count + 1)
             Dim DiccionarioTraducciones As New Dictionary(Of idiomaLocalizacion, List(Of cTraduccionIntermedia))
             For Each UnIdioma As cIdioma In iIdiomas
-                RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, 0)
+                If iConEventos Then RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, 0)
                 Try
                     DiccionarioTraducciones.Add(UnIdioma.codigoLocalizacion, New List(Of cTraduccionIntermedia))
                 Catch ex As Exception
                 End Try
             Next
-            RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
+            If iConEventos Then RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
 
             ' Controla el numero de elementos que se están traduciendo y si se encontró el propio formulario
             Dim elIndice As Long = 0
@@ -456,7 +492,7 @@ Public Class cGeneradorPO
                 .Add("ComponentFactory.Krypton.Toolkit.KryptonManager.UniqueName =", "_KryptonManager")
             End With
 
-            RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, losControles.Count + 1)
+            If iConEventos Then RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, losControles.Count + 1)
             For Each parControles As KeyValuePair(Of String, String) In losControles
                 Dim posInicio As Integer = 0
                 Dim posFin As Integer = 0
@@ -525,9 +561,9 @@ Public Class cGeneradorPO
                     AnhadirControl(elFicheroDesignerCompleto, parControles, elPatron, elSufijo, elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
                 Next
 
-                RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, 0)
+                If iConEventos Then RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, 0)
             Next
-            RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
+            If iConEventos Then RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
 
             ' Si no encontró el formulario se fuerza la búsqueda.
             ' A veces el propio formulario no se crea con New System.Windows.Forms.Form() 
@@ -537,14 +573,14 @@ Public Class cGeneradorPO
                 AnhadirControl(elFicheroDesignerCompleto, elPar, ".Text = ", "_Form_Text", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, "")
             End If
 
-            RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, lasCadenas.Count + 1)
+            If iConEventos Then RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, lasCadenas.Count + 1)
             For Each parCadenas As KeyValuePair(Of String, String) In lasCadenas
                 elEscritor.Write("<tr>")
                 elEscritor.Write("<td>_" & elIndice & "_</td>")
                 elEscritor.Write("<td>" & Web.HTML.UTF2HTML(parCadenas.Value) & "</td>")
                 elEscritor.WriteLine("</tr>")
 
-                RaiseEvent notificarMensaje("[" & parCadenas.Key & "] <" & parCadenas.Value & ">")
+                If iConEventos Then RaiseEvent notificarMensaje("[" & parCadenas.Key & "] <" & parCadenas.Value & ">")
 
                 ' Se añadio el row a la tabla, por lo que se añade a la lista de controles coincidiendo con el índice
                 For Each unIdioma As cIdioma In iIdiomas
@@ -558,9 +594,9 @@ Public Class cGeneradorPO
 
                 Next
                 elIndice += 1
-                RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, 0)
+                If iConEventos Then RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, 0)
             Next
-            RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
+            If iConEventos Then RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
 
             elEscritor.WriteLine("</table>")
 
@@ -568,13 +604,13 @@ Public Class cGeneradorPO
             elEscritor.WriteLine(_END_OF_FILE)
             elEscritor.Close()
 
-            RaiseEvent notificarMensaje("~ Enviando HTML al servidor FTP...")
+            If iConEventos Then RaiseEvent notificarMensaje("~ Enviando HTML al servidor FTP...")
             Dim NombreFicheroServidor As String = Aleatorios.cadenaAleatoria(8, True) & ".html"
             Dim ErrorSubida As Boolean = False
             Dim ContadorIntentos As Integer = 1
             Do
-                RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, 100)
-                RaiseEvent notificarMensaje("~ Intento " & ContadorIntentos & " de 10...")
+                If iConEventos Then RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, 100)
+                If iConEventos Then RaiseEvent notificarMensaje("~ Intento " & ContadorIntentos & " de 10...")
                 System.Threading.Thread.Sleep(500)
                 Try
                     'ToDo: Arreglar el upload file par amostrar el progreso
@@ -586,13 +622,13 @@ Public Class cGeneradorPO
                 End Try
                 ContadorIntentos += 1
             Loop While (ContadorIntentos <= 10) And ErrorSubida
-            RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
+            If iConEventos Then RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
 
             ' Una vez que se ha subido el fichero al servidor, se recorre cada uno de los lenguaje sde salida
             ' pora completar los diccionarios con las traducciones que realiza el parseador            
-            RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, iIdiomas.Count + 1)
+            If iConEventos Then RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, iIdiomas.Count + 1)
             For Each UnIdioma As cIdioma In iIdiomas
-                RaiseEvent notificarMensaje("@ Realizando traducción de " & eArchivoVB.NombreFichero & " a " & UnIdioma.strNombre & " [" & UnIdioma.strCodigoLocalizacion & "]...")
+                If iConEventos Then RaiseEvent notificarMensaje("@ Realizando traducción de " & eArchivoNET.NombreFichero & " a " & UnIdioma.strNombre & " [" & UnIdioma.strCodigoLocalizacion & "]...")
 
                 ' Se obtiene el body de la página traducido
                 Dim url_Original As String = ConfiguracionNetwork.URLBase & NombreFicheroServidor
@@ -600,18 +636,18 @@ Public Class cGeneradorPO
 
                 ' Se espera el tiempo configurado para el motor para evitar uso excesivo
                 ' de CPU y del propio servicio
-                System.Threading.Thread.Sleep(CType(Motor, cMotorBase).SleepTime)
+                System.Threading.Thread.Sleep(CType(Motor, Motor.cMotorBase).SleepTime)
 
                 ' Se añaden las traducciones obtenidas al diccionario de traducciones para 
                 ' exportarlos al fichero PO asociado al idioma traducido
                 If lasTraducciones IsNot Nothing AndAlso lasTraducciones.Count > 0 Then
-                    RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, lasTraducciones.Count)
+                    If iConEventos Then RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, lasTraducciones.Count)
                     For Each unaTraduccion As KeyValuePair(Of Long, String) In lasTraducciones
                         DiccionarioTraducciones(UnIdioma.codigoLocalizacion)(unaTraduccion.Key).Traduccion = unaTraduccion.Value
 
-                        RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, 0)
+                        If iConEventos Then RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, 0)
                     Next
-                    RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
+                    If iConEventos Then RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
                 End If
             Next
 
@@ -641,8 +677,8 @@ Public Class cGeneradorPO
                         elEscritorPO.WriteLine("msgstr """ & Web.HTML.HTML2UTF(Web.HTML.ANSI2UTF8(UnaEntrada.Traduccion)) & """")
                         elEscritorPO.WriteLine()
 
-                        RaiseEvent notificarMensaje("* [" & IdiomaUso.strCodigoLocalizacion & "] -> [" & UnIdioma.strCodigoLocalizacion & "] " & UnaEntrada.Original & " -> " & UnaEntrada.Traduccion)
-                        RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, 0)
+                        If iConEventos Then RaiseEvent notificarMensaje("* [" & IdiomaUso.strCodigoLocalizacion & "] -> [" & UnIdioma.strCodigoLocalizacion & "] " & UnaEntrada.Original & " -> " & UnaEntrada.Traduccion)
+                        If iConEventos Then RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, 0)
                     Next
 
                     ' Se escribe un texto de final de documento para evitar problemas de EOF cuando se trabaja con el fichero
@@ -666,7 +702,7 @@ Public Class cGeneradorPO
                 elEscritorPOOriginal.WriteLine("msgstr """ & Web.HTML.ANSI2UTF8(UnaEntrada.Original) & """")
                 elEscritorPOOriginal.WriteLine()
 
-                RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, 0)
+                If iConEventos Then RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, 0)
             Next
 
             elEscritorPOOriginal.Close()
@@ -681,7 +717,7 @@ Public Class cGeneradorPO
         End If
 
         ' Se avisa que se finalió la conversión del fichero
-        RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
+        If iConEventos Then RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
         Return True
     End Function
 #End Region
@@ -729,8 +765,8 @@ Public Class cGeneradorPO
     Public Sub UploadFile(ByVal eLocal As String, _
                           ByVal eRemoto As String)
         Try
-            RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, 100)
-            Me.fileUploader = New Net.WebClient
+            If iConEventos Then RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, 100)
+            Me.fileUploader = New System.Net.WebClient
 
 
             Dim Credenciales As New NetworkCredential(iConfiguracionNetwork.Usuario, iConfiguracionNetwork.Clave)
@@ -742,12 +778,12 @@ Public Class cGeneradorPO
     End Sub
 
     Public Sub UpdateProgressBar(ByVal sender As Object, ByVal e As UploadProgressChangedEventArgs) Handles fileUploader.UploadProgressChanged
-        RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, CInt(Math.Round(e.ProgressPercentage)) * 2)
+        If iConEventos Then RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, CInt(Math.Round(e.ProgressPercentage)) * 2)
     End Sub
 
     Public Sub UploadComplete(ByVal sender As Object, ByVal e As System.ComponentModel.AsyncCompletedEventArgs) Handles fileUploader.UploadFileCompleted
         Try
-            RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
+            If iConEventos Then RaiseEvent notificarFinalizacion(TipoBarraProgreso.Secundaria)
 
             Do
                 Application.DoEvents()
@@ -825,7 +861,7 @@ Public Class cGeneradorPO
                     End If
                 End If
 
-                RaiseEvent notificarMensaje("[" & nombreControl & " : " & S.Value & "] <" & elTextoTraducir & ">")
+                If iConEventos Then RaiseEvent notificarMensaje("[" & nombreControl & " : " & S.Value & "] <" & elTextoTraducir & ">")
 
                 ' Se añadio el row a la tabla, por lo que se añade a la lista de controles coincidiendo con el índice
                 For Each unIdioma As cIdioma In iIdiomas
@@ -855,124 +891,134 @@ Public Class cGeneradorPO
 
 
     ''' <summary>
-    ''' Obitiene los controles que se pueden traducir o el sistema reconoce
+    ''' Obitiene los controles que se pueden traducir o el sistema de traducción automática puede traducir
+    ''' a partir de la configuración de los controles que se quieren traducir
     ''' </summary>
-    Private Function obtenerControles(ByVal eArchivoVB As cArchivoVB) As Dictionary(Of String, String)
-        ' ToDo: Cambiar el sistema de traducción del ribbon y utilizar el mismo que se usar par alos bottonspec            
-
+    ''' <remarks>Diccionario utilizando el Key como el nombre del control y el Value como el tipo del control</remarks>
+    Private Function obtenerControles(ByVal eArchivoNET As NET.cFormulario, _
+                                      ByVal eObjetosNET As List(Of NET.cControl)) As Dictionary(Of String, String)
         Dim paraDevolver As New Dictionary(Of String, String)
 
-        If IO.File.Exists(eArchivoVB.RutaCompleta) Then
-            Dim elLector As New System.IO.StreamReader(eArchivoVB.RutaCompleta, System.Text.Encoding.UTF8)
+        If IO.File.Exists(eArchivoNET.RutaFormulario) Then
+            Dim elLector As New System.IO.StreamReader(eArchivoNET.RutaFormulario, System.Text.Encoding.UTF8)
             Dim laCadena As String = ""
 
-            ' Se obtienen todos los controles a traducir
+            ' Se recorre todo el contenido del archiov NET para tratar de localizar todos los objetos
+            ' que se pueden traducir. A medida que se van detectando se añaden al diccionario
             Do
                 laCadena = elLector.ReadLine.Trim
 
-                If (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonWrapLabel()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonWrapLabel")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonLabel()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonLabel")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonButton()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonButton")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonCheckBox()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonCheckBox")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonRadioButton()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonRadioButton")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonGroupBox()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonGroupBox")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonPanel()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonPanel")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonForm()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonForm")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonHeaderGroup()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonHeaderGroup")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonSplitContainer")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonSplitContainer()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonManager")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonManager()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonManager(Me.components)")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.ButtonSpecAny")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.ButtonSpecAny()")) Or _
- _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Docking.KryptonDockableNavigator")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Docking.KryptonDockableNavigator()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Navigator.KryptonNavigator")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Navigator.KryptonNavigator()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Navigator.KryptonPage")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Navigator.KryptonPage()")) Or _
- _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Label()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Label")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.LinkLabel()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.LinkLabel")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Button()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Button")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.CheckBox()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.CheckBox")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.RadioButton()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.RadioButton")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.GroupBox()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.GroupBox")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.CheckedListBox()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.CheckedListBox")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.TreeNode()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.TreeNode")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Form()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Form")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.SplitContainer()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.SplitContainer")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.FlowLayoutPanel()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.FlowLayoutPanel")) Or _
- _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.MenuStrip()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.MenuStrip(Me.components)")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.MenuStrip")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStrip()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStrip")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripDropDownButton()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripDropDownButton")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripSplitButton()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripSplitButton")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripStatusLabel()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripStatusLabel")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripButton()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripButton")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripTextBox()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripTextBox")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.StatusStrip()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.StatusStrip")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ContextMenuStrip()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ContextMenuStrip(Me.components)")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ContextMenuStrip")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripMenuItem()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripMenuItem")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripDropDownItem()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripDropDownItem")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripLabel()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripLabel")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripComboBox()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripComboBox")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.TabPage()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.TabPage")) Or _
- _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonTab()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonTab")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonGroup()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonGroup")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonGroupButton()")) Or _
-                  (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonGroupButton")) Then
+                If Not String.IsNullOrEmpty(laCadena) AndAlso laCadena.Contains(" = New ") Then
+                    For Each unObjetoNet As NET.cControl In eObjetosNET
+                        If laCadena.EndsWith(unObjetoNet.Tipo) Or laCadena.EndsWith(unObjetoNet.Tipo & "()") Then
+                            Try
+                                Dim nombreControl As String = laCadena.Substring(0, laCadena.IndexOf("=")).Trim
+                                Dim tipoComponente As String = laCadena.Substring(laCadena.IndexOf("=") + 5).Trim
+                                tipoComponente = tipoComponente.Replace("Me.components", "")
 
-                    Try
-                        Dim nombreControl As String = laCadena.Substring(0, laCadena.IndexOf("=")).Trim
-                        Dim tipoComponente As String = laCadena.Substring(laCadena.IndexOf("=") + 5).Trim
-                        tipoComponente = tipoComponente.Replace("Me.components", "")
-
-                        paraDevolver.Add(nombreControl, tipoComponente)
-                    Catch ex As Exception
-                    End Try
+                                paraDevolver.Add(nombreControl, tipoComponente)
+                            Catch ex As Exception
+                                Debugger.Break()
+                            End Try
+                        End If
+                    Next
                 End If
+
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonRadioButton()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonRadioButton")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonGroupBox()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonGroupBox")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonPanel()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonPanel")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonForm()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonForm")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonHeaderGroup()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonHeaderGroup")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonSplitContainer")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonSplitContainer()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonManager")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonManager()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonManager(Me.components)")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.ButtonSpecAny")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.ButtonSpecAny()")) Or _
+                '_
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Docking.KryptonDockableNavigator")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Docking.KryptonDockableNavigator()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Navigator.KryptonNavigator")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Navigator.KryptonNavigator()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Navigator.KryptonPage")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Navigator.KryptonPage()")) Or _
+                '_
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Label()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Label")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.LinkLabel()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.LinkLabel")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Button()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Button")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.CheckBox()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.CheckBox")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.RadioButton()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.RadioButton")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.GroupBox()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.GroupBox")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.CheckedListBox()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.CheckedListBox")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.TreeNode()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.TreeNode")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Form()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Form")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.SplitContainer()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.SplitContainer")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.FlowLayoutPanel()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.FlowLayoutPanel")) Or _
+                '_
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.MenuStrip()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.MenuStrip(Me.components)")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.MenuStrip")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStrip()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStrip")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripDropDownButton()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripDropDownButton")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripSplitButton()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripSplitButton")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripStatusLabel()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripStatusLabel")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripButton()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripButton")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripTextBox()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripTextBox")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.StatusStrip()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.StatusStrip")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ContextMenuStrip()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ContextMenuStrip(Me.components)")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ContextMenuStrip")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripMenuItem()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripMenuItem")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripDropDownItem()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripDropDownItem")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripLabel()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripLabel")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripComboBox()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripComboBox")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.TabPage()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.TabPage")) Or _
+                '_
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonTab()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonTab")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonGroup()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonGroup")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonGroupButton()")) Or _
+                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonGroupButton")) Then
+
+                '                   Try
+                '                       Dim nombreControl As String = laCadena.Substring(0, laCadena.IndexOf("=")).Trim
+                '                       Dim tipoComponente As String = laCadena.Substring(laCadena.IndexOf("=") + 5).Trim
+                '                       tipoComponente = tipoComponente.Replace("Me.components", "")
+
+                '                       paraDevolver.Add(nombreControl, tipoComponente)
+                '                   Catch ex As Exception
+                '                   End Try
+                'End If
             Loop Until elLector.EndOfStream
             elLector.Close()
         End If
@@ -983,11 +1029,11 @@ Public Class cGeneradorPO
     ''' <summary>
     ''' Obitnene las cadenas de texto que el sistema es capaz de traducir
     ''' </summary>
-    Private Function obtenerCadenas(ByVal eArchivoVB As cArchivoVB) As Dictionary(Of String, String)
+    Private Function obtenerCadenas(ByVal eArchivoVB As NET.cFormulario) As Dictionary(Of String, String)
         Dim paraDevolver As New Dictionary(Of String, String)
         Dim encontroInicio As Boolean = False
 
-        Dim laRutaCodigoFuente As String = eArchivoVB.RutaCompleta.Substring(0, eArchivoVB.RutaCompleta.Length - 11) & "vb"
+        Dim laRutaCodigoFuente As String = eArchivoVB.RutaFormulario.Substring(0, eArchivoVB.RutaFormulario.Length - 11) & "vb"
         If System.IO.File.Exists(laRutaCodigoFuente) Then
             Dim elReader As New System.IO.StreamReader(laRutaCodigoFuente, System.Text.Encoding.UTF8)
             Dim laCadena As String

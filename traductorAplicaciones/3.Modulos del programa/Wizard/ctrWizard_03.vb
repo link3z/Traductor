@@ -48,8 +48,8 @@ Public Class ctrWizard_03
         If Sistema.Traduccion._CONFIGURACION_TRADUCTOR IsNot Nothing Then
             With Sistema.Traduccion._CONFIGURACION_TRADUCTOR
                 ' Carga el motor utilizado para la traducción
-                Dim elMotor As cMotorBase = Nothing
-                elMotor = (From it As cMotorBase In cmbMotorTraduccion.Items _
+                Dim elMotor As Motor.cMotorBase = Nothing
+                elMotor = (From it As Motor.cMotorBase In cmbMotorTraduccion.Items _
                            Where it.Tipo = .Motor _
                            Select it).FirstOrDefault
                 If elMotor IsNot Nothing Then cmbMotorTraduccion.SelectedItem = elMotor
@@ -93,8 +93,9 @@ Public Class ctrWizard_03
 
     Public Function Guardar(ByRef eObjeto As Object) As Object Implements IControlWizard.Guardar
         Dim elIdiomaOrigen As cIdioma = cmbIdiomaOriginal.SelectedItemReal
-        Dim elMotor As cMotorBase = cmbMotorTraduccion.SelectedItem
+        Dim elMotor As Motor.cMotorBase = cmbMotorTraduccion.SelectedItem
 
+        ' Se actualiza la configuración del proyecto de traducción
         With Sistema.Traduccion._CONFIGURACION_TRADUCTOR
             .IdiomaOrigen = elIdiomaOrigen.codigoLocalizacion
             .Motor = elMotor.Tipo
@@ -110,6 +111,9 @@ Public Class ctrWizard_03
                 End If
             Next
         End With
+
+        ' Se guarda el motor a utilizar para la traducción
+        Sistema.Traduccion._MOTOR = elMotor
 
         Return True
     End Function
@@ -158,7 +162,7 @@ Public Class ctrWizard_03
 
         ' Se obtienen los valores del motor e idioma de origen seleccionado, si estos parámetros
         ' no están cargados no se pueden cargar los idiomas de destino
-        Dim elMotorSeleccionado As IMotorTraduccion = cmbMotorTraduccion.SelectedItem
+        Dim elMotorSeleccionado As Motor.IMotorTraduccion = cmbMotorTraduccion.SelectedItem
         Dim elIdiomaSeleccionado As cIdioma = cmbIdiomaOriginal.SelectedItemReal
         If elMotorSeleccionado Is Nothing Or elIdiomaSeleccionado Is Nothing Then Exit Sub
 
@@ -189,10 +193,10 @@ Public Class ctrWizard_03
     Private Sub cargarMotoresTraduccion()
         With cmbMotorTraduccion.Items
             .Clear()
-            .Add(New cMotorGoogle)
-            .Add(New cMotorOpenTrad)
-            .Add(New cMotorIntertran)
-            .Add(New cMotorOnlineTranslator)
+            .Add(New Motor.cMotorGoogle)
+            .Add(New Motor.cMotorOpenTrad)
+            .Add(New Motor.cMotorIntertran)
+            .Add(New Motor.cMotorOnlineTranslator)
         End With
         cmbMotorTraduccion.SelectedIndex = 0
     End Sub

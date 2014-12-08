@@ -39,16 +39,16 @@ Public Class ctrWizard_02
 
     Public Function Cargar(eObjeto As Object) As Boolean Implements IControlWizard.Cargar
         ' Si ya estaba establecido un proyecto o se cargó, se cargan los datos
-        If Sistema.Traduccion._PROYECTO_VB IsNot Nothing Then
-            txtRutaProyecto.Text = Sistema.Traduccion._PROYECTO_VB.rutaProyecto
-            txtRutaProyecto_CambioRuta(Sistema.Traduccion._PROYECTO_VB.rutaProyecto)
+        If Sistema.Traduccion._PROYECTO_NET IsNot Nothing Then
+            txtRutaProyecto.Text = Sistema.Traduccion._PROYECTO_NET.rutaProyecto
+            txtRutaProyecto_CambioRuta(Sistema.Traduccion._PROYECTO_NET.rutaProyecto)
 
-            If Sistema.Traduccion._CONFIGURACION_TRADUCTOR.ArchivosVB IsNot Nothing AndAlso Sistema.Traduccion._CONFIGURACION_TRADUCTOR.ArchivosVB.Count > 0 Then
+            If Sistema.Traduccion._CONFIGURACION_TRADUCTOR.ArchivosNET IsNot Nothing AndAlso Sistema.Traduccion._CONFIGURACION_TRADUCTOR.ArchivosNET.Count > 0 Then
                 For i As Integer = 0 To chklObjetos.Items.Count - 1
                     Dim estabaMarcado As Boolean = False
-                    Dim laRutaCompleta As String = CType(chklObjetos.Items(i), cArchivoVB).RutaCompleta
-                    estabaMarcado = ((From it As cArchivoVB In Sistema.Traduccion._CONFIGURACION_TRADUCTOR.ArchivosVB _
-                                      Where it.RutaCompleta = laRutaCompleta _
+                    Dim laRutaCompleta As String = CType(chklObjetos.Items(i), NET.cFormulario).RutaFormulario
+                    estabaMarcado = ((From it As NET.cFormulario In Sistema.Traduccion._CONFIGURACION_TRADUCTOR.ArchivosNET _
+                                      Where it.RutaFormulario = laRutaCompleta _
                                       Select it).Count > 0)
                     chklObjetos.SetItemChecked(i, estabaMarcado)
                 Next
@@ -74,7 +74,7 @@ Public Class ctrWizard_02
     Public Function ExistenErrores() As Boolean Implements IControlWizard.ExistenErrores
         ' Se verifica que el proyecto cargado sea válido, en caso contrario no se puede
         ' continuar
-        If Sistema.Traduccion._PROYECTO_VB Is Nothing Then
+        If Sistema.Traduccion._PROYECTO_NET Is Nothing Then
             gestorErrores.SetError(txtRutaProyecto, "El proyecto seleccionado no parece ser válido.")
             Return True
         End If
@@ -85,11 +85,11 @@ Public Class ctrWizard_02
 
     Public Function Guardar(ByRef eObjeto As Object) As Object Implements IControlWizard.Guardar
         ' Se guardan todos los objetos que se van a traducir
-        Sistema.Traduccion._CONFIGURACION_TRADUCTOR.ArchivosVB = New List(Of cArchivoVB)
+        Sistema.Traduccion._CONFIGURACION_TRADUCTOR.ArchivosNET = New List(Of NET.cFormulario)
 
-        For Each unObjeto As cArchivoVB In chklObjetos.CheckedItems
-            If Not Sistema.Traduccion._CONFIGURACION_TRADUCTOR.ArchivosVB.Contains(unObjeto) Then
-                Sistema.Traduccion._CONFIGURACION_TRADUCTOR.ArchivosVB.Add(unObjeto)
+        For Each unObjeto As NET.cFormulario In chklObjetos.CheckedItems
+            If Not Sistema.Traduccion._CONFIGURACION_TRADUCTOR.ArchivosNET.Contains(unObjeto) Then
+                Sistema.Traduccion._CONFIGURACION_TRADUCTOR.ArchivosNET.Add(unObjeto)
             End If
         Next
 
@@ -121,11 +121,11 @@ Public Class ctrWizard_02
         chklObjetos.Items.Clear()
 
         If IO.File.Exists(eRuta) Then
-            Sistema.Traduccion._PROYECTO_VB = New cProyectoVB(txtRutaProyecto.Text)
+            Sistema.Traduccion._PROYECTO_NET = New NET.cProyectoVB(txtRutaProyecto.Text)
 
             ' Se obtienen todos los formularios disponibles en el proyecto
             If Log._LOG_ACTIVO Then Log.escribirLog("Obteniendo los objetos NET a traducir...", , New StackTrace(0, True))
-            Dim losObjetosNet As List(Of cArchivoVB) = Sistema.Traduccion._PROYECTO_VB.Formularios
+            Dim losObjetosNet As List(Of NET.cFormulario) = Sistema.Traduccion._PROYECTO_NET.Formularios
             If losObjetosNet IsNot Nothing AndAlso losObjetosNet.Count > 0 Then
                 chklObjetos.Items.AddRange(losObjetosNet.ToArray)
             Else
@@ -134,17 +134,17 @@ Public Class ctrWizard_02
 
             ' Se obtiene el nombre del ensamblado
             If Log._LOG_ACTIVO Then Log.escribirLog("Obteniendo el nombre del ensamblado a traducir...", , New StackTrace(0, True))
-            txtNombreEnsamblado.Text = Sistema.Traduccion._PROYECTO_VB.Ensamblado
+            txtNombreEnsamblado.Text = Sistema.Traduccion._PROYECTO_NET.Ensamblado
 
             ' Se obtiene la siguiente versión de traducción
             If Log._LOG_ACTIVO Then Log.escribirLog("Oteniendo la versión de traducción disponible del proyecto...", , New StackTrace(0, True))
-            txtVersion.Text = Sistema.Traduccion._PROYECTO_VB.versionTraduccion
+            txtVersion.Text = Sistema.Traduccion._PROYECTO_NET.versionTraduccion
 
             ' Se seleccionan todos los formuarios
             cmbOpcionesSeleccion.SelectedIndex = 0
             cmbOpcionesSeleccion_SelectedIndexChanged(Nothing, Nothing)
         Else
-            Sistema.Traduccion._PROYECTO_VB = Nothing
+            Sistema.Traduccion._PROYECTO_NET = Nothing
             If Log._LOG_ACTIVO Then Log.escribirLog("No se puede cagar el proyecto '" & eRuta & "' ya que no existe la ruta...", , New StackTrace(0, True))
         End If
     End Sub

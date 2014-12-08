@@ -27,6 +27,15 @@ Namespace Sistema
             Private i_CONFIGURACION_CONEXION As cConfiguracionNetwork = Nothing
 
             ''' <summary>
+            ''' Proyecto VB con el que se va a trabajar para realizar la traducción.
+            ''' Este objeto devuelve toda la información que se necesita obtener del código
+            ''' fuente del proyecto para realzar los cambios y operaciones necesarias
+            ''' para el correcto funcionamiento del traductor tanto a la hora de
+            ''' traducir como a la hora de utilizar los archivos PO generados
+            ''' </summary>
+            Public Property _PROYECTO_NET As NET.cProyectoNET = Nothing
+
+            ''' <summary>
             ''' Tipo de opración que se está realizando, o ejecutando un proyecto de traducción
             ''' que ya existía o creando uno nuevo
             ''' </summary>
@@ -45,13 +54,9 @@ Namespace Sistema
             Public Property _CONFIGURACION_TRADUCTOR As cProyectoTraductor = Nothing
 
             ''' <summary>
-            ''' Proyecto VB con el que se va a trabajar para realizar la traducción.
-            ''' Este objeto devuelve toda la información que se necesita obtener del código
-            ''' fuente del proyecto para realzar los cambios y operaciones necesarias
-            ''' para el correcto funcionamiento del traductor tanto a la hora de
-            ''' traducir como a la hora de utilizar los archivos PO generados
+            ''' Motor que se está utilizando para realizar la traducción
             ''' </summary>
-            Public Property _PROYECTO_VB As cProyectoVB = Nothing
+            Public Property _MOTOR As Motor.cMotorBase = Nothing
 
             ''' <summary>
             ''' Guarda de forma automática la configuración del proyecto de traducción al

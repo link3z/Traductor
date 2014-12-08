@@ -28,6 +28,30 @@ Namespace Sistema
                     Return Application.StartupPath & "\network.config"
                 End Get
             End Property
+
+            ''' <summary>
+            ''' Ruta con la configuración de los controles/objetos predeterminados que el sistema
+            ''' de traducción es capaz de traducir
+            ''' </summary>
+            Public ReadOnly Property _CONTROLS_DEFAULT_PATH As String
+                Get
+                    Return Application.StartupPath & "\controls.default.config"
+                End Get
+            End Property
+
+            Public Property _DEFAULT_CONTROLS As New List(Of NET.cControl)
+
+            Public Property _USER_CONTROLS As New List(Of NET.cControl)
+
+            ''' <summary>
+            ''' Ruta con la configuración de los controles/objetos que el usuario añadió o modificó
+            ''' al sistema de traducción
+            ''' </summary>
+            Public ReadOnly Property _CONTROLS_USER_PATH As String
+                Get
+                    Return Application.StartupPath & "\controls.user.config"
+                End Get
+            End Property
 #End Region
         End Module
     End Namespace

@@ -337,6 +337,11 @@
   <ItemGroup>
     <None Include="Resources\undo.point_16.gris.66.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="controls.default.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,6 +1,5 @@
 ﻿''' <summary>
-''' Distintos motores de traducción que se pueden utilizar para realizar la traducción de los
-''' proyectos
+''' Distintos motores de traducción que se pueden utilizar para realizar las traducciones
 ''' </summary>
 Public Enum motorTraduccion
     GoogleTranslate = 0

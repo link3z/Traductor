@@ -1,6 +1,8 @@
 Imports Recompila.Helper
 Imports Recompila.Controles
 Imports ComponentFactory.Krypton.Toolkit
+Imports System.IO
+Imports System.Xml.Serialization
 
 Public Class frmWizard
 
@@ -247,6 +249,21 @@ Public Class frmWizard
 
         ' Se añaden los manejadores de arrastre al formulario
         anhadirManejadoresArrastre(Me)
+
+        ' Se cargan los controles que se pueden traducir de los archivos de configuración
+        If IO.File.Exists(Sistema.Configuracion._CONTROLS_DEFAULT_PATH) Then
+            Dim elLector As New StreamReader(Sistema.Configuracion._CONTROLS_DEFAULT_PATH)
+            Dim elSerializador As New XmlSerializer(GetType(List(Of Recompila.Traductor.NET.cControl)))
+            Sistema.Configuracion._DEFAULT_CONTROLS = elSerializador.Deserialize(elLector)
+            elLector.Close()
+        End If
+
+        If IO.File.Exists(Sistema.Configuracion._CONTROLS_USER_PATH) Then
+            Dim elLector As New StreamReader(Sistema.Configuracion._CONTROLS_DEFAULT_PATH)
+            Dim elSerializador As New XmlSerializer(GetType(List(Of Recompila.Traductor.NET.cControl)))
+            Sistema.Configuracion._DEFAULT_CONTROLS = elSerializador.Deserialize(elLector)
+            elLector.Close()
+        End If
 
         pasoActual = 1
         cargarPaso(pasoActual)

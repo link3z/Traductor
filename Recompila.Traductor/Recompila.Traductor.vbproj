@@ -136,9 +136,12 @@
     <Compile Include="2.Base del programa\Clases\cConsumidorPO.vb" />
     <Compile Include="2.Base del programa\Clases\cGeneradorPO.vb" />
     <Compile Include="2.Base del programa\Clases\cIdioma.vb" />
-    <Compile Include="2.Base del programa\Clases\cArchivoNet.vb" />
+    <Compile Include="3.Modulos\NET\Clases\NET.cFormulario.vb" />
     <Compile Include="2.Base del programa\Clases\cProyectoTraductor.vb" />
-    <Compile Include="2.Base del programa\Clases\cProyectoVB.vb" />
+    <Compile Include="3.Modulos\NET\Clases\NET.cControl.vb" />
+    <Compile Include="3.Modulos\NET\Clases\NET.cPropiedad.vb" />
+    <Compile Include="3.Modulos\NET\Clases\NET.cProyectoNET.vb" />
+    <Compile Include="3.Modulos\NET\Clases\NET.cProyectoVB.vb" />
     <Compile Include="2.Base del programa\Clases\cTraduccionIntermedia.vb" />
     <Compile Include="2.Base del programa\Clases\cTraductorPO.vb" />
     <Compile Include="2.Base del programa\Enumerados\idiomaLocalizacion.vb" />
@@ -147,12 +150,12 @@
     <Compile Include="2.Base del programa\Enumerados\idiomaISO639_3.vb" />
     <Compile Include="2.Base del programa\Enumerados\motorTraduccion.vb" />
     <Compile Include="2.Base del programa\Modulos\Traductor.vb" />
-    <Compile Include="3.Modulos\Traductores\Interfaces\IMotorTraduccion.vb" />
-    <Compile Include="3.Modulos\Traductores\Motores\cMotorBase.vb" />
-    <Compile Include="3.Modulos\Traductores\Motores\cMotorGoogle.vb" />
-    <Compile Include="3.Modulos\Traductores\Motores\cMotorIntertran.vb" />
-    <Compile Include="3.Modulos\Traductores\Motores\cMotorOnlineTranslator.vb" />
-    <Compile Include="3.Modulos\Traductores\Motores\cMotorOpenTrad.vb" />
+    <Compile Include="3.Modulos\Motor\Interfaces\Motor.IMotorTraduccion.vb" />
+    <Compile Include="3.Modulos\Motor\Motores\Motor.cMotorBase.vb" />
+    <Compile Include="3.Modulos\Motor\Motores\Motor.cMotorGoogle.vb" />
+    <Compile Include="3.Modulos\Motor\Motores\Motor.cMotorIntertran.vb" />
+    <Compile Include="3.Modulos\Motor\Motores\Motor.cMotorOnlineTranslator.vb" />
+    <Compile Include="3.Modulos\Motor\Motores\Motor.cMotorOpenTrad.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -190,6 +193,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="0.Informacion\Códigos idiomas.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="2.Base del programa\Sistema\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

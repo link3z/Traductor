@@ -28,9 +28,14 @@ Public Class cProyectoTraductor
     Public Property IdiomasDestino As New List(Of idiomaLocalizacion)
 
     ''' <summary>
-    ''' Objetos VB que fueron traducidos en la última traducción
+    ''' Archivos NET que fueron traducidos en la última traducción
     ''' </summary>
-    Public Property ArchivosVB As New List(Of cArchivoVB)
+    Public Property ArchivosNET As New List(Of NET.cFormulario)
+
+    ''' <summary>
+    ''' Objetos NET que fueron traducidos en la última traducción
+    ''' </summary>
+    Public Property ControlesNET As New List(Of NET.cControl)
 #End Region
 
 #Region " METODOS "
