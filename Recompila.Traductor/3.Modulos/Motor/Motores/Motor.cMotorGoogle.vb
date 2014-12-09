@@ -197,11 +197,13 @@ Namespace Motor
                                             Traduccion = Web.HTML.HTML2UTF(laColumna2)
                                         End If
 
-                                        If IndiceDiccionario > 0 AndAlso Not paraDevolver.Keys.Contains(IndiceDiccionario) Then
+                                        If IndiceDiccionario >= 0 AndAlso Not paraDevolver.Keys.Contains(IndiceDiccionario) Then
                                             paraDevolver.Add(IndiceDiccionario, Traduccion)
                                         End If
                                     Catch ex As Exception
+#If DEBUG Then
                                         Debugger.Break()
+#End If
                                     End Try
                                 End If
                             Next

@@ -36,6 +36,11 @@ Public Class cProyectoTraductor
     ''' Objetos NET que fueron traducidos en la última traducción
     ''' </summary>
     Public Property ControlesNET As New List(Of NET.cControl)
+
+    ''' <summary>
+    ''' Determina si se tienen que traducir los mensajes del formulario
+    ''' </summary>
+    Public Property TraducirMensajes As Boolean = True
 #End Region
 
 #Region " METODOS "

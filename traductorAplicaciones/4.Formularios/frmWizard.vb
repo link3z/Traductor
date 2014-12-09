@@ -7,7 +7,7 @@ Imports System.Xml.Serialization
 Public Class frmWizard
 
 #Region " DECLARACIONES "
-    Private Const _TOTAL_PASOS = 5
+    Private Const _TOTAL_PASOS = 6
 
     Private pasoActual As Integer = 1
 
@@ -65,16 +65,21 @@ Public Class frmWizard
             mostrarAnterior = True
             _PASO_ACTUAL = New ctrWizard_03
         ElseIf pasoActual = 4 Then
-            marcarPaso(paso4)
+            marcarPaso(paso3)
             mostrarSiguiente = True
             mostrarAnterior = True
             _PASO_ACTUAL = New ctrWizard_04
-            btnSiguiente.Values.Image = My.Resources.arrow_right_16_gris_66
         ElseIf pasoActual = 5 Then
             marcarPaso(paso5)
             mostrarSiguiente = True
-            mostrarAnterior = False
+            mostrarAnterior = True
             _PASO_ACTUAL = New ctrWizard_05
+            btnSiguiente.Values.Image = My.Resources.arrow_right_16_gris_66
+        ElseIf pasoActual = 6 Then
+            marcarPaso(paso5)
+            mostrarSiguiente = True
+            mostrarAnterior = False
+            _PASO_ACTUAL = New ctrWizard_06
             btnSiguiente.Text = "Cerrar"
             btnSiguiente.Values.Image = Nothing
         End If
@@ -233,6 +238,12 @@ Public Class frmWizard
 #End Region
 
 #Region " FORMULARIO "
+    Private Sub mostrarErrorConfiguracion()
+        _KryptonForms.MostrarMensaje("No se ha podido leer el archivo de configuración '" & Sistema.Configuracion._CONTROLS_DEFAULT_PATH & "'." & vbCrLf & "Este archivo de configuración es necesario para la ejecución del programa.", _
+                                     "Error de configuración", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+        End
+    End Sub
+
     Private Sub frmPostInstalador_Load(sender As Object, e As System.EventArgs) Handles Me.Load
         CheckForIllegalCrossThreadCalls = False
         Me.SetStyle(ControlStyles.AllPaintingInWmPaint Or ControlStyles.UserPaint Or ControlStyles.DoubleBuffer, True)
@@ -252,17 +263,30 @@ Public Class frmWizard
 
         ' Se cargan los controles que se pueden traducir de los archivos de configuración
         If IO.File.Exists(Sistema.Configuracion._CONTROLS_DEFAULT_PATH) Then
-            Dim elLector As New StreamReader(Sistema.Configuracion._CONTROLS_DEFAULT_PATH)
-            Dim elSerializador As New XmlSerializer(GetType(List(Of Recompila.Traductor.NET.cControl)))
-            Sistema.Configuracion._DEFAULT_CONTROLS = elSerializador.Deserialize(elLector)
-            elLector.Close()
+            Try
+                Dim elLector As New StreamReader(Sistema.Configuracion._CONTROLS_DEFAULT_PATH)
+                Dim elSerializador As New XmlSerializer(GetType(List(Of Recompila.Traductor.NET.cControl)))
+                Sistema.Configuracion._DEFAULT_CONTROLS = elSerializador.Deserialize(elLector)
+                elLector.Close()
+            Catch ex As Exception
+                mostrarerrorconfiguracion()
+            End Try
+        Else
+            mostrarErrorConfiguracion()
         End If
 
+
         If IO.File.Exists(Sistema.Configuracion._CONTROLS_USER_PATH) Then
-            Dim elLector As New StreamReader(Sistema.Configuracion._CONTROLS_DEFAULT_PATH)
-            Dim elSerializador As New XmlSerializer(GetType(List(Of Recompila.Traductor.NET.cControl)))
-            Sistema.Configuracion._DEFAULT_CONTROLS = elSerializador.Deserialize(elLector)
-            elLector.Close()
+            Try
+                Dim elLector As New StreamReader(Sistema.Configuracion._CONTROLS_DEFAULT_PATH)
+                Dim elSerializador As New XmlSerializer(GetType(List(Of Recompila.Traductor.NET.cControl)))
+                Sistema.Configuracion._DEFAULT_CONTROLS = elSerializador.Deserialize(elLector)
+                elLector.Close()
+            Catch ex As Exception
+                _KryptonForms.MostrarMensaje("Se ha producido un error al tratar de leer la configuración de los controles del usuario, revise la configuración del archivo de configuración.", _
+                                             "Error de configuración", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+                Sistema.Configuracion._USER_CONTROLS = Nothing
+            End Try
         End If
 
         pasoActual = 1

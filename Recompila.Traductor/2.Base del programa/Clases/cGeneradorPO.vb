@@ -233,7 +233,7 @@ Public Class cGeneradorPO
             Try
                 IO.Directory.CreateDirectory(ProyectoNET.carpetaTraducciones)
             Catch ex As Exception
-                elMensaje = "! ERROR al crear la carpeta " & ProyectoNET.carpetaLanguages
+                elMensaje = "! ERROR al crear la carpeta " & ProyectoNET.carpetaTraducciones
                 If iConEventos Then RaiseEvent notificarMensaje(elMensaje)
                 Throw New Exception(elMensaje, ex)
             End Try
@@ -249,7 +249,7 @@ Public Class cGeneradorPO
         Dim rutaOrigen As String = ""
         Dim rutaDestino As String = ""
 
-        Dim lasTraduccionesAntiguas = My.Computer.FileSystem.GetFiles(ProyectoNET.carpetaLanguages, FileIO.SearchOption.SearchTopLevelOnly, "*.po")
+        Dim lasTraduccionesAntiguas = My.Computer.FileSystem.GetFiles(ProyectoNET.carpetaTraducciones, FileIO.SearchOption.SearchTopLevelOnly, "*.po")
         If lasTraduccionesAntiguas IsNot Nothing AndAlso lasTraduccionesAntiguas.Count > 0 Then
             If iConEventos Then RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, lasTraduccionesAntiguas.Count + 1)
             For Each unArchivo As String In lasTraduccionesAntiguas
@@ -477,23 +477,40 @@ Public Class cGeneradorPO
             Dim elIndice As Long = 0
             Dim encontroFormulario As Boolean = False
 
-            ' TODO: Meter en un XML
-            Dim patronesFormulario As New List(Of String)
-            With patronesFormulario
-                .Add("System.Windows.Forms.Form")
-                .Add("System.Windows.Forms.Form()")
-            End With
+            ' Se obitenen los patrones de controles que identifican a los formularios
+            Dim patronesFormulario As List(Of String) = (From it As NET.cControl In ProyectoTraductor.ControlesNET _
+                                                         Where it.esFormulario = True _
+                                                         Select it.Tipo).ToList
 
-            ' ToDo: Meter en un XML
-            ' Si el UniqueName queda en blanco, se obtiene, en caso contrario es el que se guarda
+            ' Se obitenen los patrones de controles que necesitan un UniqueName para identificarlos
             Dim patronesUniqueName As New Dictionary(Of String, String)
-            With patronesUniqueName
-                .Add("ComponentFactory.Krypton.Toolkit.ButtonSpecAny.UniqueName =", "_ButtonSpecAny")
-                .Add("ComponentFactory.Krypton.Toolkit.KryptonManager.UniqueName =", "_KryptonManager")
-            End With
+            Dim patronesAux = (From it As NET.cControl In ProyectoTraductor.ControlesNET _
+                               Where it.conUniqueName = True _
+                               Select it).ToList
+            If patronesAux IsNot Nothing AndAlso patronesAux.Count > 0 Then
+                For Each unPatron As NET.cControl In patronesAux
+                    If Not String.IsNullOrEmpty(unPatron.rutaUniqueName) AndAlso Not patronesUniqueName.Keys.Contains(unPatron.rutaUniqueName) Then
+                        patronesUniqueName.Add(unPatron.rutaUniqueName, unPatron.sufijoUniqueName)
+                    End If
+                Next
+            End If
 
             If iConEventos Then RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, losControles.Count + 1)
             For Each parControles As KeyValuePair(Of String, String) In losControles
+                ' Nombre y tipo del control que se está analizando
+                Dim nombreControl As String = parControles.Key
+                Dim tipoControl As String = parControles.Value
+
+                ' Se obtiene la información de las propiedades a traducir dependiendo del tipo del
+                ' control. Si esta no se pudiera localizar se continua con el siguiente control
+                Dim auxTipoControl As String = tipoControl
+                If auxTipoControl.EndsWith("()") Then auxTipoControl = auxTipoControl.Substring(0, auxTipoControl.Length - 2)
+                Dim infoControl As NET.cControl = (From it As NET.cControl In ProyectoTraductor.ControlesNET _
+                                                   Where it.Tipo = auxTipoControl _
+                                                   Select it).FirstOrDefault
+                If infoControl Is Nothing Then Continue For
+
+                ' Variables para el trabajo con el nombre y tipo
                 Dim posInicio As Integer = 0
                 Dim posFin As Integer = 0
                 Dim uniqueName As String = ""
@@ -529,36 +546,8 @@ Public Class cGeneradorPO
                     End If
                 Next
 
-                ' Se realizan las búsquedas de patrones para crear los nombres únicos
-                ' a los distintos controles del formulario
-
-                ' ToDo: Meter en un XML
-                Dim losPatrones As New Dictionary(Of String, String)
-                With losPatrones
-                    .Add(".TextLine1 = ", "_TextLine1")
-                    .Add(".TextLine2 = ", "_TextLine2")
-                    .Add(".Text = ", "_Text")
-                    .Add(".Values.Text = ", "_Values_Text")
-                    .Add(".ExtraText = ", "_ExtraText")
-                    .Add(".ToolTipBody = ", "_ToolTipBody")
-                    .Add(".ToolTipTitle = ", "_ToolTipTitle")
-                    .Add(".ToolTipText = ", "_ToolTipText")
-                    .Add(".GlobalStrings.Abort = ", "_GlobalStrings_Abort")
-                    .Add(".GlobalStrings.Cancel = ", "_GlobalStrings_Cancel")
-                    .Add(".GlobalStrings.Close = ", "_GlobalStrings_Close")
-                    .Add(".GlobalStrings.Ignore = ", "_GlobalStrings_Ignore")
-                    .Add(".GlobalStrings.No = ", "_GlobalStrings_No")
-                    .Add(".GlobalStrings.OK = ", "_GlobalStrings_OK")
-                    .Add(".GlobalStrings.Retry = ", "_GlobalStrings_Retry")
-                    .Add(".GlobalStrings.Today = ", "_GlobaStrings_Today")
-                    .Add(".GlobalStrings.Yes = ", "_GlobalStrings_Yes")
-                End With
-
-                For Each unPatron As KeyValuePair(Of String, String) In losPatrones
-                    Dim elPatron As String = unPatron.Key
-                    Dim elSufijo As String = unPatron.Value
-
-                    AnhadirControl(elFicheroDesignerCompleto, parControles, elPatron, elSufijo, elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
+                For Each unaPropiedad As NET.cPropiedad In infoControl.Propiedades
+                    AnhadirControl(elFicheroDesignerCompleto, parControles, unaPropiedad, elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, uniqueName)
                 Next
 
                 If iConEventos Then RaiseEvent notificarProgreso(TipoBarraProgreso.Secundaria, 0)
@@ -570,7 +559,11 @@ Public Class cGeneradorPO
             ' y el Texto aparece directamente bajo el patrón .Text = 
             If Not encontroFormulario Then
                 Dim elPar As New KeyValuePair(Of String, String)("Me", "System.Windows.Forms.Form()")
-                AnhadirControl(elFicheroDesignerCompleto, elPar, ".Text = ", "_Form_Text", elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, "")
+                Dim laPropiedad As New NET.cPropiedad With {
+                    .Propiedad = ".Text = ", _
+                    .Sufijo = "_Form_Text"
+                }
+                AnhadirControl(elFicheroDesignerCompleto, elPar, laPropiedad, elEscritor, elIndice, NombreFormulario, DiccionarioTraducciones, traduccionesAntiguas, "")
             End If
 
             If iConEventos Then RaiseEvent notificarMaximo(TipoBarraProgreso.Secundaria, lasCadenas.Count + 1)
@@ -806,36 +799,35 @@ Public Class cGeneradorPO
     ''' <summary>
     ''' Se encarga de añadir un control/componente/texto a la lista de controles 
     ''' </summary>
-    Private Function AnhadirControl(ByVal elFicheroDesignerCompleto As String, _
-                                    ByVal S As KeyValuePair(Of String, String), _
-                                    ByVal ePatronBusqueda As String, _
-                                    ByVal ePostNombre As String, _
-                                    ByVal elEscritor As StreamWriter, _
-                                    ByRef elIndice As Long, _
-                                    ByVal NombreFormulario As String, _
-                                    ByRef DiccionarioTraducciones As Dictionary(Of idiomaLocalizacion, List(Of cTraduccionIntermedia)), _
+    Private Function AnhadirControl(ByVal eFicheroDesignerCompleto As String, _
+                                    ByVal eParControles As KeyValuePair(Of String, String), _
+                                    ByVal ePropiedad As NET.cPropiedad, _
+                                    ByVal eEscritor As StreamWriter, _
+                                    ByRef eIndice As Long, _
+                                    ByVal eFormulario As String, _
+                                    ByRef eDiccionarioTraducciones As Dictionary(Of idiomaLocalizacion, List(Of cTraduccionIntermedia)), _
                                     ByVal eContenidoAntiguo As Dictionary(Of idiomaLocalizacion, String), _
-                                    Optional ByVal eNombreControl As String = "") As Boolean
+                                    Optional ByVal eUniqueName As String = "") As Boolean
         Dim posInicio As Integer = -1
         Dim posFin As Integer = -1
         Dim elTextoTraducir As String = ""
         Dim PostNombre As String = ""
 
-        posInicio = elFicheroDesignerCompleto.IndexOf(S.Key & ePatronBusqueda)
-        If posInicio > 0 Then PostNombre = ePostNombre
+        posInicio = eFicheroDesignerCompleto.IndexOf(eParControles.Key & ePropiedad.Propiedad)
+        If posInicio > 0 Then PostNombre = ePropiedad.Sufijo
 
         If posInicio >= 0 Then
             Dim arrayIdiomas(Idiomas.Count) As String
-            posFin = elFicheroDesignerCompleto.IndexOf(vbCrLf, posInicio + 1)
+            posFin = eFicheroDesignerCompleto.IndexOf(vbCrLf, posInicio + 1)
 
-            Dim laSubCadena As String = elFicheroDesignerCompleto.Substring(posInicio, posFin - posInicio)
+            Dim laSubCadena As String = eFicheroDesignerCompleto.Substring(posInicio, posFin - posInicio)
             laSubCadena = laSubCadena.Trim
 
             While laSubCadena.EndsWith(" & _")
                 laSubCadena = laSubCadena.Replace(""" & _", "")
                 posInicio = posFin + 1
-                posFin = elFicheroDesignerCompleto.IndexOf(vbCrLf, posInicio + 1)
-                Dim SiguienteTrozo As String = elFicheroDesignerCompleto.Substring(posInicio, posFin - posInicio).Trim
+                posFin = eFicheroDesignerCompleto.IndexOf(vbCrLf, posInicio + 1)
+                Dim SiguienteTrozo As String = eFicheroDesignerCompleto.Substring(posInicio, posFin - posInicio).Trim
                 If SiguienteTrozo.StartsWith("""") Then SiguienteTrozo = SiguienteTrozo.Substring(1, SiguienteTrozo.Length - 1)
                 laSubCadena &= SiguienteTrozo
             End While
@@ -847,36 +839,38 @@ Public Class cGeneradorPO
 
                 Dim resultadoTraduccion As String = ""
 
-                elEscritor.Write("<tr>")
-                elEscritor.Write("<td>" & elIndice & "</td>")
-                elEscritor.Write("<td>" & Web.HTML.UTF2HTML(elTextoTraducir) & "</td>")
-                elEscritor.WriteLine("</tr>")
+                With eEscritor
+                    .Write("<tr>")
+                    .Write("<td>" & eIndice & "</td>")
+                    .Write("<td>" & Web.HTML.UTF2HTML(elTextoTraducir) & "</td>")
+                    .WriteLine("</tr>")
+                End With
 
-                Dim nombreControl As String = eNombreControl
+                Dim nombreControl As String = eUniqueName
                 If String.IsNullOrEmpty(nombreControl) Then
-                    If S.Key <> "Me" Then
-                        nombreControl = S.Key.Substring(3)
+                    If eParControles.Key <> "Me" Then
+                        nombreControl = eParControles.Key.Substring(3)
                     Else
-                        nombreControl = NombreFormulario
+                        nombreControl = eFormulario
                     End If
                 End If
 
-                If iConEventos Then RaiseEvent notificarMensaje("[" & nombreControl & " : " & S.Value & "] <" & elTextoTraducir & ">")
+                If iConEventos Then RaiseEvent notificarMensaje("[" & nombreControl & " : " & eParControles.Value & "] <" & elTextoTraducir & ">")
 
                 ' Se añadio el row a la tabla, por lo que se añade a la lista de controles coincidiendo con el índice
                 For Each unIdioma As cIdioma In iIdiomas
                     Dim LaTraduccion As New cTraduccionIntermedia With {
-                        .Indice = elIndice,
-                        .NombreControl = NombreFormulario & "." & nombreControl & PostNombre,
+                        .Indice = eIndice,
+                        .NombreControl = eFormulario & "." & nombreControl & PostNombre,
                         .Original = elTextoTraducir,
                         .Traduccion = ""
                 }
-                    DiccionarioTraducciones(unIdioma.codigoLocalizacion).Add(LaTraduccion)
+                    eDiccionarioTraducciones(unIdioma.codigoLocalizacion).Add(LaTraduccion)
                 Next
 
                 ' Se pasa al siguiente control y se devuelve un True indicando que 
                 ' se encontró el patrón y se añadió al ficheor de traducciones
-                elIndice += 1
+                eIndice += 1
                 Return True
             End If
         End If
@@ -916,109 +910,17 @@ Public Class cGeneradorPO
                                 Dim tipoComponente As String = laCadena.Substring(laCadena.IndexOf("=") + 5).Trim
                                 tipoComponente = tipoComponente.Replace("Me.components", "")
 
-                                paraDevolver.Add(nombreControl, tipoComponente)
+                                If Not String.IsNullOrEmpty(nombreControl) AndAlso Not String.IsNullOrEmpty(tipoComponente) AndAlso Not paraDevolver.Keys.Contains(nombreControl) Then
+                                    paraDevolver.Add(nombreControl, tipoComponente)
+                                End If
                             Catch ex As Exception
+#If DEBUG Then
                                 Debugger.Break()
+#End If
                             End Try
                         End If
                     Next
                 End If
-
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonRadioButton()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonRadioButton")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonGroupBox()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonGroupBox")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonPanel()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonPanel")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonForm()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonForm")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonHeaderGroup()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonHeaderGroup")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonSplitContainer")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonSplitContainer()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonManager")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonManager()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.KryptonManager(Me.components)")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.ButtonSpecAny")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Toolkit.ButtonSpecAny()")) Or _
-                '_
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Docking.KryptonDockableNavigator")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Docking.KryptonDockableNavigator()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Navigator.KryptonNavigator")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Navigator.KryptonNavigator()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Navigator.KryptonPage")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Navigator.KryptonPage()")) Or _
-                '_
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Label()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Label")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.LinkLabel()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.LinkLabel")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Button()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Button")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.CheckBox()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.CheckBox")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.RadioButton()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.RadioButton")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.GroupBox()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.GroupBox")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.CheckedListBox()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.CheckedListBox")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.TreeNode()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.TreeNode")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Form()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.Form")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.SplitContainer()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.SplitContainer")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.FlowLayoutPanel()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.FlowLayoutPanel")) Or _
-                '_
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.MenuStrip()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.MenuStrip(Me.components)")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.MenuStrip")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStrip()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStrip")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripDropDownButton()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripDropDownButton")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripSplitButton()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripSplitButton")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripStatusLabel()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripStatusLabel")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripButton()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripButton")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripTextBox()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripTextBox")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.StatusStrip()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.StatusStrip")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ContextMenuStrip()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ContextMenuStrip(Me.components)")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ContextMenuStrip")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripMenuItem()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripMenuItem")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripDropDownItem()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripDropDownItem")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripLabel()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripLabel")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripComboBox()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.ToolStripComboBox")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.TabPage()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("System.Windows.Forms.TabPage")) Or _
-                '_
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonTab()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonTab")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonGroup()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonGroup")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonGroupButton()")) Or _
-                '                 (laCadena.Contains(" = New ") And laCadena.EndsWith("ComponentFactory.Krypton.Ribbon.KryptonRibbonGroupButton")) Then
-
-                '                   Try
-                '                       Dim nombreControl As String = laCadena.Substring(0, laCadena.IndexOf("=")).Trim
-                '                       Dim tipoComponente As String = laCadena.Substring(laCadena.IndexOf("=") + 5).Trim
-                '                       tipoComponente = tipoComponente.Replace("Me.components", "")
-
-                '                       paraDevolver.Add(nombreControl, tipoComponente)
-                '                   Catch ex As Exception
-                '                   End Try
-                'End If
             Loop Until elLector.EndOfStream
             elLector.Close()
         End If

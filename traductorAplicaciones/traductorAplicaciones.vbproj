@@ -164,6 +164,18 @@
     <Compile Include="2.Base del programa\Interfaces\ICBase.vb" />
     <Compile Include="2.Base del programa\Sistema\Sistema.Configuracion.vb" />
     <Compile Include="2.Base del programa\Sistema\Sistema.Traduccion.vb" />
+    <Compile Include="3.Modulos del programa\Wizard\ctrWizard_03.designer.vb">
+      <DependentUpon>ctrWizard_03.vb</DependentUpon>
+    </Compile>
+    <Compile Include="3.Modulos del programa\Wizard\ctrWizard_03.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="3.Modulos del programa\Wizard\ctrWizard_06.designer.vb">
+      <DependentUpon>ctrWizard_06.vb</DependentUpon>
+    </Compile>
+    <Compile Include="3.Modulos del programa\Wizard\ctrWizard_06.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="3.Modulos del programa\Wizard\ctrWizard_05.designer.vb">
       <DependentUpon>ctrWizard_05.vb</DependentUpon>
     </Compile>
@@ -174,12 +186,6 @@
       <DependentUpon>ctrWizard_04.vb</DependentUpon>
     </Compile>
     <Compile Include="3.Modulos del programa\Wizard\ctrWizard_04.vb">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="3.Modulos del programa\Wizard\ctrWizard_03.designer.vb">
-      <DependentUpon>ctrWizard_03.vb</DependentUpon>
-    </Compile>
-    <Compile Include="3.Modulos del programa\Wizard\ctrWizard_03.vb">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="3.Modulos del programa\Wizard\ctrWizard_02.designer.vb">
@@ -225,14 +231,17 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="3.Modulos del programa\Wizard\ctrWizard_03.resx">
+      <DependentUpon>ctrWizard_03.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="3.Modulos del programa\Wizard\ctrWizard_06.resx">
+      <DependentUpon>ctrWizard_06.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="3.Modulos del programa\Wizard\ctrWizard_05.resx">
       <DependentUpon>ctrWizard_05.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="3.Modulos del programa\Wizard\ctrWizard_04.resx">
       <DependentUpon>ctrWizard_04.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="3.Modulos del programa\Wizard\ctrWizard_03.resx">
-      <DependentUpon>ctrWizard_03.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="3.Modulos del programa\Wizard\ctrWizard_02.resx">
       <DependentUpon>ctrWizard_02.vb</DependentUpon>

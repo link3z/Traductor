@@ -44,5 +44,11 @@
 
         End Sub
 #End Region
+
+#Region " SOBRECARGAS "
+        Public Overrides Function ToString() As String
+            Return Me.Tipo
+        End Function
+#End Region
     End Class
 End Namespace

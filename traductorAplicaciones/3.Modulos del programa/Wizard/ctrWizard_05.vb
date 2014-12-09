@@ -1,5 +1,6 @@
-﻿Imports Recompila.Traductor
+﻿Imports Recompila
 Imports Recompila.Helper
+Imports Recompila.Traductor
 
 Public Class ctrWizard_05
     Implements IControlWizard
@@ -25,7 +26,7 @@ Public Class ctrWizard_05
     End Sub
 
     Public Sub LimpiarCampos() Implements ICBase.LimpiarCampos
-        epErrores.Clear()
+        gestorErrores.Clear()
     End Sub
 
     Public Function PrepararCierre() As Boolean Implements ICBase.PrepararCierre
@@ -43,12 +44,12 @@ Public Class ctrWizard_05
     End Sub
 
     Public Sub DarFoco() Implements IControlWizard.DarFoco
-
+        tInicio.Start()
     End Sub
 
     Public Function ExistenErrores() As Boolean Implements IControlWizard.ExistenErrores
         Me.ValidateChildren()
-        Return (epErrores.HasErrors)
+        Return (gestorErrores.HasErrors)
     End Function
 
     Public Function Guardar(ByRef eObjeto As Object) As Object Implements IControlWizard.Guardar
@@ -57,70 +58,100 @@ Public Class ctrWizard_05
     End Function
 #End Region
 
-#Region " FORMULARIO "
-    Private Sub ctrWizard_1_Load(sender As Object, e As System.EventArgs) Handles Me.Load
-        Me.SetStyle(ControlStyles.AllPaintingInWmPaint Or ControlStyles.UserPaint Or ControlStyles.DoubleBuffer, True)
+#Region " TRADUCCION "
+    Private Sub tInicio_Tick(sender As Object, e As EventArgs) Handles tInicio.Tick
+        tInicio.Stop()
 
-        ' Lo primero que se hace es guardar una copia del proyecto de traducción
-        ' si se activó la opción de guardado automático
-        If Sistema.Traduccion._GUARDAR_AL_FINALIZAR Then
-            Dim laRuta As String = Sistema.Traduccion._PROYECTO_NET.carpetaProyecto & "\" & Sistema.Traduccion._PROYECTO_NET.Ensamblado & Sistema.Configuracion._EXTENSION_TRADUCTOR
-            Sistema.Traduccion._CONFIGURACION_TRADUCTOR.guardar(laRuta)
-        End If
+        ' + Se crean los objetos necesarios para la realización de la traducción
+        escribirMensaje("Configurando parámetros para la traducción.")
 
-        iCargando = False
+        ' Se crea el objeto traductor
+        Dim elTraductor As cGeneradorPO = New cGeneradorPO(Sistema.Traduccion._CONFIGURACION_CONEXION, _
+                                                           Sistema.Traduccion._PROYECTO_NET, _
+                                                           Sistema.Traduccion._CONFIGURACION_TRADUCTOR, _
+                                                           Sistema.Traduccion._MOTOR, _
+                                                           True)
+
+        ' Se añaden los manejadores para recibir información del estado de la traducción
+        AddHandler elTraductor.notificarMensaje, AddressOf manejadorNotificarMensaje
+        AddHandler elTraductor.notificarMaximo, AddressOf manejadorNotificarMaximo
+        AddHandler elTraductor.notificarProgreso, AddressOf manejadorNotificarProgreso
+        AddHandler elTraductor.notificarFinalizacion, AddressOf manejadorNotificarFinalizacion
+
+
+        ' Una vez que el código llega hasta este punto, se puede realizar la traducción 
+        ' recorriendo todos los archivos seleccionados
+        elTraductor.Traducir()
+
+        frmWizard.btnAnterior.Enabled = True
         frmWizard.btnSiguiente.Enabled = True
+        frmWizard.btnSiguiente.PerformClick()
+    End Sub
+#End Region
+
+#Region " MANEJADORES "
+    Private Sub manejadorNotificarMensaje(ByVal eMensaje As String)
+        escribirMensaje(eMensaje)
     End Sub
 
-    Private Sub lnkInformacionUso_LinkClicked(sender As Object, e As EventArgs) Handles lnkInformacionUso.LinkClicked
-        ' ToDo: Meter la página real
-        Try
-            Shell("explorer ""http://recompila.com/""", AppWinStyle.NormalFocus)
-        Catch ex As Exception
-        End Try
-    End Sub
-
-    Private Sub lnkAbrirCarpetaPO_LinkClicked(sender As Object, e As EventArgs) Handles lnkAbrirCarpetaPO.LinkClicked
-        Try
-            Shell("explorer """ & Sistema.Traduccion._PROYECTO_NET.carpetaTraducciones & "", AppWinStyle.NormalFocus)
-        Catch ex As Exception
-        End Try
-    End Sub
-
-    Private Sub lnkDescargarPoedit_LinkClicked(sender As Object, e As EventArgs) Handles lnkDescargarPoedit.LinkClicked
-        Try
-            Shell("explorer ""http://poedit.net/""", AppWinStyle.NormalFocus)
-        Catch ex As Exception
-        End Try
-    End Sub
-
-    Private Sub lnkGuardarProyecto_LinkClicked(sender As Object, e As EventArgs) Handles lnkGuardarProyecto.LinkClicked        
-        Dim laRuta As String = Ficheros.Buscar.BuscarArchivoGuardar("Guardar proyecto " & Sistema.Configuracion._NOMBRE_APLICACION, _
-                                                                     Sistema.Traduccion._PROYECTO_NET.carpetaProyecto, _
-                                                                     Sistema.Configuracion._EXTENSION_TRADUCTOR, _
-                                                                     Sistema.Traduccion._PROYECTO_NET.Ensamblado & Sistema.Configuracion._EXTENSION_TRADUCTOR)
-
-        If Not String.IsNullOrEmpty(laRuta) Then
-
+    Private Sub manejadorNotificarMaximo(ByVal eBarra As cGeneradorPO.TipoBarraProgreso, ByVal eValor As Long)
+        If eBarra = cGeneradorPO.TipoBarraProgreso.Primaria Then
+            WinForms.ProgressBar.fijarMinimoBarra(pbPrimaria, 0)
+            WinForms.ProgressBar.fijarMaximoBarra(pbPrimaria, eValor)
+            WinForms.ProgressBar.FijarBarra(pbPrimaria, 0)
+        ElseIf eBarra = cGeneradorPO.TipoBarraProgreso.Secundaria Then
+            WinForms.ProgressBar.fijarMinimoBarra(pbSecundaria, 0)
+            WinForms.ProgressBar.fijarMaximoBarra(pbSecundaria, eValor)
+            WinForms.ProgressBar.FijarBarra(pbSecundaria, 0)
         End If
     End Sub
 
-    Private Sub lnkReiniciarAsistente_LinkClicked(sender As Object, e As EventArgs) Handles lnkReiniciarAsistente.LinkClicked
-        If Sistema.Traduccion._GUARDAR_AL_FINALIZAR Then
-            Sistema.Traduccion._RUTA_RTRAD = Sistema.Traduccion._PROYECTO_NET.carpetaProyecto & "\" & Sistema.Traduccion._PROYECTO_NET.Ensamblado & Sistema.Configuracion._EXTENSION_TRADUCTOR
-        Else
-            Sistema.Traduccion._RUTA_RTRAD = ""
+    Private Sub manejadorNotificarProgreso(ByVal eBarra As cGeneradorPO.TipoBarraProgreso, _
+                                           ByVal eValor As Integer)
+        If eBarra = cGeneradorPO.TipoBarraProgreso.Primaria Then
+            If eValor = 0 Then
+                WinForms.ProgressBar.AumentarBarra(pbPrimaria)
+            Else
+                WinForms.ProgressBar.FijarBarra(pbPrimaria, eValor)
+            End If
+        ElseIf eBarra = cGeneradorPO.TipoBarraProgreso.Secundaria Then
+            If eValor = 0 Then
+                WinForms.ProgressBar.AumentarBarra(pbSecundaria)
+            Else
+                WinForms.ProgressBar.FijarBarra(pbSecundaria, eValor)
+            End If
         End If
-        Sistema.Traduccion._CONFIGURACION_TRADUCTOR = Nothing
-        Sistema.Traduccion._GUARDAR_AL_FINALIZAR = True
-        Sistema.Traduccion._OPERACION = Operacion.AbrirProyecto
-        Sistema.Traduccion._PROYECTO_NET = Nothing
+    End Sub
 
-        ' Se vuelve al paso inicial del Wizard
-        frmWizard.cargarPaso(1)
+    Private Sub manejadorNotificarFinalizacion(ByVal eBarra As cGeneradorPO.TipoBarraProgreso)
+        If eBarra = cGeneradorPO.TipoBarraProgreso.Primaria Then
+            WinForms.ProgressBar.FijarBarra(pbPrimaria, 0)
+        ElseIf eBarra = cGeneradorPO.TipoBarraProgreso.Secundaria Then
+            WinForms.ProgressBar.FijarBarra(pbSecundaria, 0)
+        End If
+    End Sub
+#End Region
+
+#Region " METODOS AUXILIARES "
+    Private Sub escribirMensaje(ByVal eMensaje As String)
+        Try
+            txtMensajes.AppendText(Format(Now, "mm:ss") & " " & eMensaje.Trim & vbCrLf)
+            txtMensajes.Refresh()
+            Application.DoEvents()
+        Catch ex As Exception
+        End Try
     End Sub
 
 #End Region
 
+#Region " FORMULARIO "
+    Private Sub ctrWizard_1_Load(sender As Object, e As System.EventArgs) Handles Me.Load
+        Me.SetStyle(ControlStyles.AllPaintingInWmPaint Or ControlStyles.UserPaint Or ControlStyles.DoubleBuffer, True)
+
+        iCargando = False
+        frmWizard.btnAnterior.Enabled = False
+        frmWizard.btnSiguiente.Enabled = False
+    End Sub
+#End Region
 
 End Class
