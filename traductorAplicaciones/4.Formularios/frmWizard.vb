@@ -327,4 +327,12 @@ Public Class frmWizard
         End If
     End Sub
 #End Region
+
+    Private Sub cmbIdioma_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cmbIdioma.SelectedIndexChanged
+        If cmbIdioma.SelectedIndex >= 0 Then
+            Dim elIdioma As cIdioma = CType(cmbIdioma.SelectedItemReal, cIdioma)
+            Sistema.Traductor._TRADUCTOR.Idioma = elIdioma.codigoLocalizacion
+            Sistema.Traductor._TRADUCTOR.traducir(Me)
+        End If
+    End Sub
 End Class

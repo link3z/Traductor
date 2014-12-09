@@ -24,6 +24,7 @@ Partial Class frmWizard
         Me.Estilos = New ComponentFactory.Krypton.Toolkit.KryptonManager(Me.components)
         Me.Paleta = New ComponentFactory.Krypton.Toolkit.KryptonPalette(Me.components)
         Me.pContenedor = New ComponentFactory.Krypton.Toolkit.KryptonGroup()
+        Me.cmbIdioma = New Recompila.Controles.rComboIcon()
         Me.krgNavegador = New ComponentFactory.Krypton.Toolkit.KryptonGroup()
         Me.webAyuda = New System.Windows.Forms.WebBrowser()
         Me.btnCerrar = New ComponentFactory.Krypton.Toolkit.KryptonButton()
@@ -36,17 +37,16 @@ Partial Class frmWizard
         Me.paso3 = New Recompila.Controles.rPosicion()
         Me.paso4 = New Recompila.Controles.rPosicion()
         Me.paso1 = New Recompila.Controles.rPosicion()
-        Me.cmbIdioma = New Recompila.Controles.rComboIcon()
         CType(Me.pContenedor, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.pContenedor.Panel, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.pContenedor.Panel.SuspendLayout()
         Me.pContenedor.SuspendLayout()
+        CType(Me.cmbIdioma, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.krgNavegador, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.krgNavegador.Panel, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.krgNavegador.Panel.SuspendLayout()
         Me.krgNavegador.SuspendLayout()
         CType(Me.kpnControles, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.cmbIdioma, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Estilos
@@ -142,6 +142,23 @@ Partial Class frmWizard
             Or ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Right), ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)
         Me.pContenedor.StateCommon.Border.Width = 2
         Me.pContenedor.TabIndex = 0
+        '
+        'cmbIdioma
+        '
+        Me.cmbIdioma.conBorde = True
+        Me.cmbIdioma.controlarBotonBorrar = True
+        Me.cmbIdioma.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cmbIdioma.DropDownWidth = 178
+        Me.cmbIdioma.limpiarAlPulsarBoton = True
+        Me.cmbIdioma.Location = New System.Drawing.Point(506, 615)
+        Me.cmbIdioma.mostrarSiempreBotonBorrar = False
+        Me.cmbIdioma.Name = "cmbIdioma"
+        Me.cmbIdioma.Size = New System.Drawing.Size(178, 21)
+        Me.cmbIdioma.StateCommon.ComboBox.Border.Draw = ComponentFactory.Krypton.Toolkit.InheritBool.[True]
+        Me.cmbIdioma.StateCommon.ComboBox.Border.DrawBorders = CType((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top Or ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) _
+            Or ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Left) _
+            Or ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Right), ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)
+        Me.cmbIdioma.TabIndex = 46
         '
         'krgNavegador
         '
@@ -316,23 +333,6 @@ Partial Class frmWizard
         Me.paso1.TabIndex = 0
         Me.paso1.Titulo = "Seleccionar operación"
         '
-        'cmbIdioma
-        '
-        Me.cmbIdioma.conBorde = True
-        Me.cmbIdioma.controlarBotonBorrar = True
-        Me.cmbIdioma.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbIdioma.DropDownWidth = 178
-        Me.cmbIdioma.limpiarAlPulsarBoton = True
-        Me.cmbIdioma.Location = New System.Drawing.Point(506, 615)
-        Me.cmbIdioma.mostrarSiempreBotonBorrar = False
-        Me.cmbIdioma.Name = "cmbIdioma"
-        Me.cmbIdioma.Size = New System.Drawing.Size(178, 21)
-        Me.cmbIdioma.StateCommon.ComboBox.Border.Draw = ComponentFactory.Krypton.Toolkit.InheritBool.[True]
-        Me.cmbIdioma.StateCommon.ComboBox.Border.DrawBorders = CType((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top Or ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) _
-            Or ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Left) _
-            Or ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Right), ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)
-        Me.cmbIdioma.TabIndex = 46
-        '
         'frmWizard
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -354,12 +354,12 @@ Partial Class frmWizard
         Me.pContenedor.Panel.PerformLayout()
         CType(Me.pContenedor, System.ComponentModel.ISupportInitialize).EndInit()
         Me.pContenedor.ResumeLayout(False)
+        CType(Me.cmbIdioma, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.krgNavegador.Panel, System.ComponentModel.ISupportInitialize).EndInit()
         Me.krgNavegador.Panel.ResumeLayout(False)
         CType(Me.krgNavegador, System.ComponentModel.ISupportInitialize).EndInit()
         Me.krgNavegador.ResumeLayout(False)
         CType(Me.kpnControles, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.cmbIdioma, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
