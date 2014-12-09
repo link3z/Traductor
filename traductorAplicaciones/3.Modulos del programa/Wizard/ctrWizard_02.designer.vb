@@ -261,4 +261,15 @@ Partial Class ctrWizard_02
     Friend WithEvents lblGuardar As ComponentFactory.Krypton.Toolkit.KryptonLabel
     Friend WithEvents chkGuardar As ComponentFactory.Krypton.Toolkit.KryptonCheckBox
 
+
+Public ReadOnly Property losComponentes As System.ComponentModel.ComponentCollection
+    Get
+        If Me.components IsNot Nothing Then
+            Return Me.components.Components
+        else
+            Return Nothing
+        End If
+    End Get
+End Property
+
 End Class

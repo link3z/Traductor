@@ -256,7 +256,7 @@ Public Class cGeneradorPO
                 Try
                     ' Solamente se van a copiar las traducciones que no contengan el caracter _, las cuales
                     ' se corresponden a la última traducción realizada o utilizada
-                    If Not unArchivo.Contains("_") Then
+                    If Not Ficheros.extraerNombreFichero(unArchivo).Contains("_") Then
                         rutaOrigen = unArchivo
                         rutaDestino = ProyectoNET.carpetaTraducciones & Ficheros.extraerNombreFicheroSinExtension(rutaOrigen).Split("_")(0) & "_" & VersionTraduccion & ".po"
 

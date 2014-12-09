@@ -164,6 +164,7 @@
     <Compile Include="2.Base del programa\Interfaces\ICBase.vb" />
     <Compile Include="2.Base del programa\Sistema\Sistema.Configuracion.vb" />
     <Compile Include="2.Base del programa\Sistema\Sistema.Traduccion.vb" />
+    <Compile Include="2.Base del programa\Sistema\Sistema.Traductor.vb" />
     <Compile Include="3.Modulos del programa\Wizard\ctrWizard_03.designer.vb">
       <DependentUpon>ctrWizard_03.vb</DependentUpon>
     </Compile>
@@ -264,6 +265,72 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="Languages\78e7990a575c30690dc856bc27f0913f\bg-BG.po">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Languages\78e7990a575c30690dc856bc27f0913f\ca-CA.po">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Languages\78e7990a575c30690dc856bc27f0913f\cz-CZ.po">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Languages\78e7990a575c30690dc856bc27f0913f\da-DA.po">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Languages\78e7990a575c30690dc856bc27f0913f\de-DE.po">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Languages\78e7990a575c30690dc856bc27f0913f\el-EL.po">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Languages\78e7990a575c30690dc856bc27f0913f\en-US.po">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Languages\78e7990a575c30690dc856bc27f0913f\es-ES.po">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Languages\78e7990a575c30690dc856bc27f0913f\eu-EU.po">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Languages\78e7990a575c30690dc856bc27f0913f\fi-FI.po">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Languages\78e7990a575c30690dc856bc27f0913f\fr-FR.po">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Languages\78e7990a575c30690dc856bc27f0913f\gl-GL.po">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Languages\78e7990a575c30690dc856bc27f0913f\hr-HR.po">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Languages\78e7990a575c30690dc856bc27f0913f\hu-HU.po">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Languages\78e7990a575c30690dc856bc27f0913f\it-IT.po">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Languages\78e7990a575c30690dc856bc27f0913f\ja-JA.po">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Languages\78e7990a575c30690dc856bc27f0913f\nl-NL.po">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Languages\78e7990a575c30690dc856bc27f0913f\pt-PT.po">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Languages\78e7990a575c30690dc856bc27f0913f\ro-RO.po">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Languages\78e7990a575c30690dc856bc27f0913f\ru-RU.po">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Languages\78e7990a575c30690dc856bc27f0913f\sv-SV.po">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Languages\78e7990a575c30690dc856bc27f0913f\tr-TR.po">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="My Project\app.manifest" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
@@ -298,9 +365,7 @@
       <Name>Recompila.Traductor</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Languages\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="Resources\check_16.gris.66.png" />
   </ItemGroup>

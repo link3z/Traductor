@@ -1,5 +1,6 @@
 Imports Recompila.Helper
 Imports Recompila.Controles
+Imports Recompila.Traductor
 Imports ComponentFactory.Krypton.Toolkit
 Imports System.IO
 Imports System.Xml.Serialization
@@ -12,11 +13,14 @@ Public Class frmWizard
     Private pasoActual As Integer = 1
 
     Private _PASO_ACTUAL As IControlWizard = Nothing
+#End Region
 
+#Region " PROPIEDADES "
     ''' <summary>
     ''' Desactiva el Intro como Tab en el formulario
     ''' </summary>
     Public Property DesactivarIntroComoTab As Boolean = True
+
 #End Region
 
 #Region " CONTROL PASOS "
@@ -258,6 +262,21 @@ Public Class frmWizard
         Log.iniciarSistemaLog(rutaDebug, True)
         Log._LOG_ACTIVO = True
 
+        ' Se crea el objeto traductor para realizar las traducciones
+        Sistema.Traductor._TRADUCTOR = New Recompila.Traductor.cConsumidorPO(Recompila.Traductor.idiomaLocalizacion.en_US)
+
+        ' Se cargan los idiomas disponibles para la traducción
+        If Sistema.Traductor._TRADUCTOR.IdiomasDisponibles IsNot Nothing AndAlso Sistema.Traductor._TRADUCTOR.IdiomasDisponibles.Count > 0 Then
+            For i As Integer = 0 To Sistema.Traductor._TRADUCTOR.IdiomasDisponibles.Count - 1
+                Dim elIdioma As cIdioma = Sistema.Traductor._TRADUCTOR.IdiomasDisponibles(i)
+                Dim laBandera As Image = imagenesBanderas(elIdioma.codigoLocalizacion)
+                cmbIdioma.ImageList.Images.Add(i, laBandera)
+                Dim nuevoImageItem As New Recompila.Controles.rComboBoxIconItem(elIdioma, i)
+                cmbIdioma.Items.Add(nuevoImageItem)
+            Next
+        End If
+
+
         ' Se añaden los manejadores de arrastre al formulario
         anhadirManejadoresArrastre(Me)
 
@@ -269,7 +288,7 @@ Public Class frmWizard
                 Sistema.Configuracion._DEFAULT_CONTROLS = elSerializador.Deserialize(elLector)
                 elLector.Close()
             Catch ex As Exception
-                mostrarerrorconfiguracion()
+                mostrarErrorConfiguracion()
             End Try
         Else
             mostrarErrorConfiguracion()

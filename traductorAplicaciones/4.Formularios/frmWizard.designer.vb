@@ -1,4 +1,4 @@
-<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+ï»¿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
 Partial Class frmWizard
     Inherits ComponentFactory.Krypton.Toolkit.KryptonForm
 
@@ -24,6 +24,8 @@ Partial Class frmWizard
         Me.Estilos = New ComponentFactory.Krypton.Toolkit.KryptonManager(Me.components)
         Me.Paleta = New ComponentFactory.Krypton.Toolkit.KryptonPalette(Me.components)
         Me.pContenedor = New ComponentFactory.Krypton.Toolkit.KryptonGroup()
+        Me.krgNavegador = New ComponentFactory.Krypton.Toolkit.KryptonGroup()
+        Me.webAyuda = New System.Windows.Forms.WebBrowser()
         Me.btnCerrar = New ComponentFactory.Krypton.Toolkit.KryptonButton()
         Me.btnAnterior = New ComponentFactory.Krypton.Toolkit.KryptonButton()
         Me.lblVersion = New ComponentFactory.Krypton.Toolkit.KryptonLabel()
@@ -34,17 +36,17 @@ Partial Class frmWizard
         Me.paso3 = New Recompila.Controles.rPosicion()
         Me.paso4 = New Recompila.Controles.rPosicion()
         Me.paso1 = New Recompila.Controles.rPosicion()
-        Me.krgNavegador = New ComponentFactory.Krypton.Toolkit.KryptonGroup()
-        Me.webAyuda = New System.Windows.Forms.WebBrowser()
+        Me.cmbIdioma = New Recompila.Controles.rComboIcon()
         CType(Me.pContenedor, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.pContenedor.Panel, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.pContenedor.Panel.SuspendLayout()
         Me.pContenedor.SuspendLayout()
-        CType(Me.kpnControles, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.krgNavegador, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.krgNavegador.Panel, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.krgNavegador.Panel.SuspendLayout()
         Me.krgNavegador.SuspendLayout()
+        CType(Me.kpnControles, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.cmbIdioma, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Estilos
@@ -120,6 +122,7 @@ Partial Class frmWizard
         '
         'pContenedor.Panel
         '
+        Me.pContenedor.Panel.Controls.Add(Me.cmbIdioma)
         Me.pContenedor.Panel.Controls.Add(Me.krgNavegador)
         Me.pContenedor.Panel.Controls.Add(Me.btnCerrar)
         Me.pContenedor.Panel.Controls.Add(Me.btnAnterior)
@@ -139,6 +142,34 @@ Partial Class frmWizard
             Or ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Right), ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)
         Me.pContenedor.StateCommon.Border.Width = 2
         Me.pContenedor.TabIndex = 0
+        '
+        'krgNavegador
+        '
+        Me.krgNavegador.Location = New System.Drawing.Point(611, 92)
+        Me.krgNavegador.Name = "krgNavegador"
+        '
+        'krgNavegador.Panel
+        '
+        Me.krgNavegador.Panel.Controls.Add(Me.webAyuda)
+        Me.krgNavegador.Size = New System.Drawing.Size(324, 499)
+        Me.krgNavegador.StateCommon.Border.Color1 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.krgNavegador.StateCommon.Border.DrawBorders = CType((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top Or ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) _
+            Or ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Left) _
+            Or ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Right), ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)
+        Me.krgNavegador.TabIndex = 12
+        '
+        'webAyuda
+        '
+        Me.webAyuda.AllowWebBrowserDrop = False
+        Me.webAyuda.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.webAyuda.IsWebBrowserContextMenuEnabled = False
+        Me.webAyuda.Location = New System.Drawing.Point(0, 0)
+        Me.webAyuda.Margin = New System.Windows.Forms.Padding(0)
+        Me.webAyuda.MinimumSize = New System.Drawing.Size(20, 20)
+        Me.webAyuda.Name = "webAyuda"
+        Me.webAyuda.ScriptErrorsSuppressed = True
+        Me.webAyuda.Size = New System.Drawing.Size(322, 497)
+        Me.webAyuda.TabIndex = 0
         '
         'btnCerrar
         '
@@ -195,7 +226,7 @@ Partial Class frmWizard
         Me.lblVersion.Size = New System.Drawing.Size(41, 14)
         Me.lblVersion.StateCommon.ShortText.Font = New System.Drawing.Font("Microsoft Sans Serif", 6.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblVersion.TabIndex = 8
-        Me.lblVersion.Values.Text = "Versión"
+        Me.lblVersion.Values.Text = "VersiÃ³n"
         Me.lblVersion.Visible = False
         '
         'kpnControles
@@ -231,7 +262,7 @@ Partial Class frmWizard
         Me.paso5.Numero = "5"
         Me.paso5.Size = New System.Drawing.Size(170, 75)
         Me.paso5.TabIndex = 4
-        Me.paso5.Titulo = "Traducción finalizada"
+        Me.paso5.Titulo = "TraducciÃ³n finalizada"
         '
         'paso2
         '
@@ -257,7 +288,7 @@ Partial Class frmWizard
         Me.paso3.Numero = "3"
         Me.paso3.Size = New System.Drawing.Size(170, 75)
         Me.paso3.TabIndex = 3
-        Me.paso3.Titulo = "Configurar traducción"
+        Me.paso3.Titulo = "Configurar traducciÃ³n"
         '
         'paso4
         '
@@ -270,7 +301,7 @@ Partial Class frmWizard
         Me.paso4.Numero = "4"
         Me.paso4.Size = New System.Drawing.Size(170, 75)
         Me.paso4.TabIndex = 1
-        Me.paso4.Titulo = "Realizar traducción"
+        Me.paso4.Titulo = "Realizar traducciÃ³n"
         '
         'paso1
         '
@@ -283,35 +314,24 @@ Partial Class frmWizard
         Me.paso1.Numero = "1"
         Me.paso1.Size = New System.Drawing.Size(170, 75)
         Me.paso1.TabIndex = 0
-        Me.paso1.Titulo = "Seleccionar operación"
+        Me.paso1.Titulo = "Seleccionar operaciÃ³n"
         '
-        'krgNavegador
+        'cmbIdioma
         '
-        Me.krgNavegador.Location = New System.Drawing.Point(611, 92)
-        Me.krgNavegador.Name = "krgNavegador"
-        '
-        'krgNavegador.Panel
-        '
-        Me.krgNavegador.Panel.Controls.Add(Me.webAyuda)
-        Me.krgNavegador.Size = New System.Drawing.Size(324, 499)
-        Me.krgNavegador.StateCommon.Border.Color1 = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(66, Byte), Integer))
-        Me.krgNavegador.StateCommon.Border.DrawBorders = CType((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top Or ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) _
+        Me.cmbIdioma.conBorde = True
+        Me.cmbIdioma.controlarBotonBorrar = True
+        Me.cmbIdioma.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cmbIdioma.DropDownWidth = 178
+        Me.cmbIdioma.limpiarAlPulsarBoton = True
+        Me.cmbIdioma.Location = New System.Drawing.Point(506, 615)
+        Me.cmbIdioma.mostrarSiempreBotonBorrar = False
+        Me.cmbIdioma.Name = "cmbIdioma"
+        Me.cmbIdioma.Size = New System.Drawing.Size(178, 21)
+        Me.cmbIdioma.StateCommon.ComboBox.Border.Draw = ComponentFactory.Krypton.Toolkit.InheritBool.[True]
+        Me.cmbIdioma.StateCommon.ComboBox.Border.DrawBorders = CType((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top Or ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) _
             Or ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Left) _
             Or ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Right), ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)
-        Me.krgNavegador.TabIndex = 12
-        '
-        'webAyuda
-        '
-        Me.webAyuda.AllowWebBrowserDrop = False
-        Me.webAyuda.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.webAyuda.IsWebBrowserContextMenuEnabled = False
-        Me.webAyuda.Location = New System.Drawing.Point(0, 0)
-        Me.webAyuda.Margin = New System.Windows.Forms.Padding(0)
-        Me.webAyuda.MinimumSize = New System.Drawing.Size(20, 20)
-        Me.webAyuda.Name = "webAyuda"
-        Me.webAyuda.ScriptErrorsSuppressed = True
-        Me.webAyuda.Size = New System.Drawing.Size(322, 497)
-        Me.webAyuda.TabIndex = 0
+        Me.cmbIdioma.TabIndex = 46
         '
         'frmWizard
         '
@@ -334,11 +354,12 @@ Partial Class frmWizard
         Me.pContenedor.Panel.PerformLayout()
         CType(Me.pContenedor, System.ComponentModel.ISupportInitialize).EndInit()
         Me.pContenedor.ResumeLayout(False)
-        CType(Me.kpnControles, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.krgNavegador.Panel, System.ComponentModel.ISupportInitialize).EndInit()
         Me.krgNavegador.Panel.ResumeLayout(False)
         CType(Me.krgNavegador, System.ComponentModel.ISupportInitialize).EndInit()
         Me.krgNavegador.ResumeLayout(False)
+        CType(Me.kpnControles, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.cmbIdioma, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -370,4 +391,16 @@ Partial Class frmWizard
     Friend WithEvents btnCerrar As ComponentFactory.Krypton.Toolkit.KryptonButton
     Friend WithEvents krgNavegador As ComponentFactory.Krypton.Toolkit.KryptonGroup
     Friend WithEvents webAyuda As System.Windows.Forms.WebBrowser
+    Friend WithEvents cmbIdioma As Recompila.Controles.rComboIcon
+
+Public ReadOnly Property losComponentes As System.ComponentModel.ComponentCollection
+    Get
+        If Me.components IsNot Nothing Then
+            Return Me.components.Components
+        else
+            Return Nothing
+        End If
+    End Get
+End Property
+
 End Class

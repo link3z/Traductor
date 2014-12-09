@@ -156,4 +156,15 @@ Partial Class ctrWizard_06
     Friend WithEvents lnkAbrirCarpetaPO As ComponentFactory.Krypton.Toolkit.KryptonLinkLabel
     Friend WithEvents lnkInformacionUso As ComponentFactory.Krypton.Toolkit.KryptonLinkLabel
 
+
+Public ReadOnly Property losComponentes As System.ComponentModel.ComponentCollection
+    Get
+        If Me.components IsNot Nothing Then
+            Return Me.components.Components
+        else
+            Return Nothing
+        End If
+    End Get
+End Property
+
 End Class

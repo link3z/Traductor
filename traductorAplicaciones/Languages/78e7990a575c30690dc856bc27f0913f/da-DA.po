@@ -1,0 +1,75 @@
+﻿msgid ""
+msgstr ""
+"Project-Id-Version: traductorAplicaciones\n"
+"Report-Msgid-Bugs-To: traductor@recompila.com\n"
+"POT-Creation-Date: 09/12/2014 20:59:15\n"
+"PO-Revision-Date: 09/12/2014 20:59:15\n"
+"Last-Translator: recompila.com\n"
+"Language-Team: recompila.com\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-KeywordsList: esc_html__;esc_html_e;esc_attr__;esc_attr_e;__;_e\n"
+"X-Poedit-Basepath: .\n"
+"Language: da-DA\n"
+"X-Generator: Poedit 1.5.5\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPath-1: ..\n"
+
+#: ctrWizard_03.chkTraducirMensajes~ValuesText
+msgid "Realiza los ajustes necesarios para traducir los mensajes."
+msgstr "Realiza los ajustes necesarios para traducir los mensajes."
+
+#: EOF
+msgid "EOF"
+msgstr "EOF"
+
+#: ctrWizard_06.KryptonWrapLabel1~Text
+msgid "¿Que desea hacer ahora?"
+msgstr "¿Que desea hacer ahora?"
+
+#: EOF
+msgid "EOF"
+msgstr "EOF"
+
+#: EOF
+msgid "EOF"
+msgstr "EOF"
+
+#: EOF
+msgid "EOF"
+msgstr "EOF"
+
+#: ctrWizard_02.chkGuardar~ValuesText
+msgid "Guardar la configuración de la traducción en la carpeta del proyecto."
+msgstr "Guardar la configuración de la traducción en la carpeta del proyecto."
+
+#: EOF
+msgid "EOF"
+msgstr "EOF"
+
+#: ctrWizard_01.radOperacionNuevo~ValuesText
+msgid "Iniciar una nueva traducción"
+msgstr "Iniciar una nueva traducción"
+
+#: ctrWizard_01.radOperacionAbrir~ValuesText
+msgid "Abrir una traducción existente"
+msgstr "Abrir una traducción existente"
+
+#: ctrWizard_01.hdrTraduccion~ValuesHeading
+msgid "Datos de la traducción"
+msgstr "Datos de la traducción"
+
+#: ctrWizard_01.hdrConexion~ValuesHeading
+msgid "Configuración FTP/HTTP"
+msgstr "Configuración FTP/HTTP"
+
+#: ctrWizard_01.hdrOperacion~ValuesHeading
+msgid "Abrir/Crear una nueva traducción"
+msgstr "Abrir/Crear una nueva traducción"
+
+#: EOF
+msgid "EOF"
+msgstr "EOF"
+

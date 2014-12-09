@@ -102,4 +102,15 @@ Partial Class ctrWizard_05
     Friend WithEvents txtMensajes As System.Windows.Forms.TextBox
     Friend WithEvents tInicio As System.Windows.Forms.Timer
 
+
+Public ReadOnly Property losComponentes As System.ComponentModel.ComponentCollection
+    Get
+        If Me.components IsNot Nothing Then
+            Return Me.components.Components
+        else
+            Return Nothing
+        End If
+    End Get
+End Property
+
 End Class

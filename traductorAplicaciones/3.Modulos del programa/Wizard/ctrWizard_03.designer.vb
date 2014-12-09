@@ -152,4 +152,15 @@ Partial Class ctrWizard_03
     Friend WithEvents chklObjetos As ComponentFactory.Krypton.Toolkit.KryptonCheckedListBox
     Friend WithEvents cmbOpcionesSeleccion As Recompila.Controles.rComboBox
 
+
+Public ReadOnly Property losComponentes As System.ComponentModel.ComponentCollection
+    Get
+        If Me.components IsNot Nothing Then
+            Return Me.components.Components
+        else
+            Return Nothing
+        End If
+    End Get
+End Property
+
 End Class

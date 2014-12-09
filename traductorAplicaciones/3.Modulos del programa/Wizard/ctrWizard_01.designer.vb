@@ -48,8 +48,8 @@ Partial Class ctrWizard_01
         Me.tblControles = New System.Windows.Forms.TableLayoutPanel()
         Me.hdrOperacion = New ComponentFactory.Krypton.Toolkit.KryptonHeaderGroup()
         Me.tblOperacion = New System.Windows.Forms.TableLayoutPanel()
-        Me.gestorErrores = New Recompila.Controles.rGestorErrores()
         Me.txtOperacionRuta = New Recompila.Controles.rTextOpenFile()
+        Me.gestorErrores = New Recompila.Controles.rGestorErrores()
         CType(Me.hdrTraduccion, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.hdrTraduccion.Panel, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.hdrTraduccion.Panel.SuspendLayout()
@@ -496,11 +496,6 @@ Partial Class ctrWizard_01
         Me.tblOperacion.Size = New System.Drawing.Size(565, 72)
         Me.tblOperacion.TabIndex = 45
         '
-        'gestorErrores
-        '
-        Me.gestorErrores.Alineacion = System.Windows.Forms.ErrorIconAlignment.MiddleLeft
-        Me.gestorErrores.ContainerControl = Me
-        '
         'txtOperacionRuta
         '
         Me.txtOperacionRuta.Apertura = Recompila.Controles.rTextOpenFile.AperturaTipo.OpenFile
@@ -514,6 +509,11 @@ Partial Class ctrWizard_01
         Me.txtOperacionRuta.RutaInicial = "C:\Users\link3z\Documents"
         Me.txtOperacionRuta.Size = New System.Drawing.Size(536, 24)
         Me.txtOperacionRuta.TabIndex = 7
+        '
+        'gestorErrores
+        '
+        Me.gestorErrores.Alineacion = System.Windows.Forms.ErrorIconAlignment.MiddleLeft
+        Me.gestorErrores.ContainerControl = Me
         '
         'ctrWizard_01
         '
@@ -577,5 +577,16 @@ Partial Class ctrWizard_01
     Friend WithEvents tblControles As System.Windows.Forms.TableLayoutPanel
     Friend WithEvents tblOperacion As System.Windows.Forms.TableLayoutPanel
     Friend WithEvents hdrOperacion As ComponentFactory.Krypton.Toolkit.KryptonHeaderGroup
+
+
+Public ReadOnly Property losComponentes As System.ComponentModel.ComponentCollection
+    Get
+        If Me.components IsNot Nothing Then
+            Return Me.components.Components
+        else
+            Return Nothing
+        End If
+    End Get
+End Property
 
 End Class

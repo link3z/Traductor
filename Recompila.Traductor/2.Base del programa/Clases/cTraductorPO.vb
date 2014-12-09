@@ -7,9 +7,6 @@
 ' ''' Clase para trabajo con ficheros PO de traducciones
 ' ''' </summary>
 'Public Class cTraductorPO
-'#Region " CLASES INTERNAS "
-
-'#End Region
 
 '#Region " DECLARACIONES "
 '    ''' <summary>
@@ -86,38 +83,6 @@
 '            End If
 '        End Set
 '    End Property
-'#End Region
-
-'#Region " METODOS IDIOMAS "
-'    ''' <summary>
-'    ''' Añade un nuevo lenguaje al objeto
-'    ''' </summary>
-'    Public Sub anhadirIdioma(ByVal eIdioma As cIdioma)
-'        If Not iIdiomas.Contains(eIdioma) Then iIdiomas.Add(eIdioma)
-'    End Sub
-
-'    ''' <summary>
-'    ''' Añade un nuevo lenguaje al objeto
-'    ''' </summary>
-'    Public Sub anhadirIdioma(ByVal eLenguaje As idiomaNombre)
-'        Dim nuevoIdioma As cIdioma = cIdioma.ObtenerObjetoIdioma(eLenguaje)
-'        anhadirIdioma(nuevoIdioma)
-'    End Sub
-
-'    ''' <summary>
-'    ''' Elimina un idioma del objeto
-'    ''' </summary>
-'    Public Sub quitarIdioma(ByVal eIdioma As cIdioma)
-'        If iIdiomas.Contains(eIdioma) Then iIdiomas.Remove(eIdioma)
-'    End Sub
-
-'    ''' <summary>
-'    ''' Elimina un idioma del objeto
-'    ''' </summary>
-'    Public Sub quitarIdioma(ByVal eIdioma As idiomaNombre)
-'        Dim nuevoIdioma As cIdioma = cIdioma.ObtenerObjetoIdioma(eIdioma)
-'        quitarIdioma(nuevoIdioma)
-'    End Sub
 '#End Region
 
 '#Region " CARGA DE IDIOMAS "

@@ -52,6 +52,20 @@ Namespace Motor
             End Get
         End Property
         Private iTiposTraduccion As Dictionary(Of idiomaLocalizacion, List(Of idiomaLocalizacion)) = Nothing
+
+        Private Property elNavegador As System.Windows.Forms.WebBrowser
+            Get
+                If iNavegador Is Nothing Then
+                    iNavegador = New WebBrowser
+                    iNavegador.ScriptErrorsSuppressed = True
+                End If
+                Return iNavegador
+            End Get
+            Set(value As System.Windows.Forms.WebBrowser)
+                iNavegador = value
+            End Set
+        End Property
+        Private iNavegador As System.Windows.Forms.WebBrowser
 #End Region
 
 #Region " EVENTOS "
@@ -118,98 +132,101 @@ Namespace Motor
                         ' lo que se carga en un navegador y se espera a que el body del navegador
                         ' contenga el tag de fin
                         RaiseEvent notificarMensaje("@ Leyendo '" & laUri & "'...")
-                        Dim elNavegador As New System.Windows.Forms.WebBrowser()
-                        elNavegador.ScriptErrorsSuppressed = True
-                        elNavegador.Navigate(laUri)
+                        Try
+                            GC.Collect()
+                            elNavegador.Navigate(laUri)
 
-                        Dim stampInicio As DateTime = Now
-                        Dim Salir As Boolean = False
-                        Do
-                            Application.DoEvents()
+                            Dim stampInicio As DateTime = Now
+                            Dim Salir As Boolean = False
+                            Do
+                                Application.DoEvents()
 
-                            ' Se verifica si se completó la traducción
-                            If (Not String.IsNullOrEmpty(elNavegador.DocumentText) AndAlso elNavegador.DocumentText.ToLower.Contains(eTagEOF)) Then Salir = True
+                                ' Se verifica si se completó la traducción
+                                If (Not String.IsNullOrEmpty(elNavegador.DocumentText) AndAlso elNavegador.DocumentText.ToLower.Contains(eTagEOF)) Then Salir = True
 
-                            ' Se verifica que no se entrara en un bucle infinito, si el proceso
-                            ' de traducción tarda más de 10 segundos se sale del bucle
-                            If Math.Abs(DateDiff(DateInterval.Second, Now, stampInicio)) > 30 Then Salir = True
-                        Loop While Not Salir
+                                ' Se verifica que no se entrara en un bucle infinito, si el proceso
+                                ' de traducción tarda más de 10 segundos se sale del bucle
+                                If Math.Abs(DateDiff(DateInterval.Second, Now, stampInicio)) > 30 Then Salir = True
+                            Loop While Not Salir
 
-                        ' Se copmrueba que el navegador tenga contenido y este sea válido, de ser
-                        ' así, se obitnene el body
-                        If elNavegador.DocumentText.ToLower.Contains(eTagEOF) Then
-                            RaiseEvent notificarMensaje("@ Analizando contenido de '" & laUri & "'...")
-                            Dim elBodyOriginal As String = elNavegador.DocumentText.Replace(eTagEOF, eTagEOF.ToLower)
+                            ' Se copmrueba que el navegador tenga contenido y este sea válido, de ser
+                            ' así, se obitnene el body
+                            If elNavegador.DocumentText.ToLower.Contains(eTagEOF) Then
+                                RaiseEvent notificarMensaje("@ Analizando contenido de '" & laUri & "'...")
+                                Dim elBodyOriginal As String = elNavegador.DocumentText.Replace(eTagEOF, eTagEOF.ToLower)
 
-                            ' Se cambian a mayusculas todos los TAGS que van a intervenir en
-                            ' el proceso de separación de los resultados obtenidos tras la traducción
-                            Dim cambiosAMayusculas As New List(Of String) From {"<span", "</span>", "<body>", "</body>", "<tbody>", "</tbody>", "<table border=", "</table>", "<td>", "</td>", "<tr>", "</tr>"}
-                            For Each unCambioMayusculas As String In cambiosAMayusculas
-                                elBodyOriginal = elBodyOriginal.Replace(unCambioMayusculas, unCambioMayusculas.ToUpper)
-                            Next
+                                ' Se cambian a mayusculas todos los TAGS que van a intervenir en
+                                ' el proceso de separación de los resultados obtenidos tras la traducción
+                                Dim cambiosAMayusculas As New List(Of String) From {"<span", "</span>", "<body>", "</body>", "<tbody>", "</tbody>", "<table border=", "</table>", "<td>", "</td>", "<tr>", "</tr>"}
+                                For Each unCambioMayusculas As String In cambiosAMayusculas
+                                    elBodyOriginal = elBodyOriginal.Replace(unCambioMayusculas, unCambioMayusculas.ToUpper)
+                                Next
 
-                            Dim indiceBody As Long = elBodyOriginal.IndexOf("<BODY>")
-                            If indiceBody > 0 Then elBodyOriginal = elBodyOriginal.Substring(indiceBody)
-                            indiceBody = elBodyOriginal.LastIndexOf(eTagEOF)
-                            If indiceBody > 0 Then elBodyOriginal = elBodyOriginal.Substring(0, indiceBody)
+                                Dim indiceBody As Long = elBodyOriginal.IndexOf("<BODY>")
+                                If indiceBody > 0 Then elBodyOriginal = elBodyOriginal.Substring(indiceBody)
+                                indiceBody = elBodyOriginal.LastIndexOf(eTagEOF)
+                                If indiceBody > 0 Then elBodyOriginal = elBodyOriginal.Substring(0, indiceBody)
 
-                            ' Google a veces mete el globo de sugerir mejor traducción, de ser así
-                            ' es necesario recopmoner todoe el body ya que no se trata del HTML original                        
-                            If elBodyOriginal.Contains("</SPAN>") Then
-                                Dim elBodyAux As String = elBodyOriginal
-                                elBodyAux = Regex.Replace(elBodyAux, "<SPAN.*?>", "")
-                                elBodyAux = elBodyAux.Replace("</SPAN> <", "<")
-                                elBodyAux = elBodyAux.Replace("</SPAN> ", "[|]")
-                                elBodyOriginal = elBodyAux
-                            End If
-
-                            elBodyOriginal = elBodyOriginal.Replace(Chr(10), "")
-                            elBodyOriginal = elBodyOriginal.Replace(Chr(13), "")
-                            elBodyOriginal = elBodyOriginal.Replace(vbCrLf, "")
-
-                            elBodyOriginal = elBodyOriginal.Replace("<TABLE BORDER=1>", vbCrLf & vbCrLf)
-                            elBodyOriginal = elBodyOriginal.Replace("<TABLE BORDER=""1"">", vbCrLf & vbCrLf)
-                            elBodyOriginal = elBodyOriginal.Replace("<TBODY>", vbCrLf & vbCrLf)
-                            elBodyOriginal = elBodyOriginal.Replace("</TD></TR>", vbCrLf)
-                            elBodyOriginal = elBodyOriginal.Replace("</TBODY>", vbCrLf & vbCrLf)
-                            elBodyOriginal = elBodyOriginal.Replace("</TABLE>", vbCrLf & vbCrLf)
-
-                            Dim lasLineas() As String = elBodyOriginal.Split(vbCrLf)
-                            For Each unaLinea As String In lasLineas
-                                unaLinea = unaLinea.Trim
-                                If Not String.IsNullOrEmpty(unaLinea) AndAlso unaLinea.ToLower.StartsWith("<tr><td>") Then
-                                    Try
-                                        Dim Columnas() As String = unaLinea.Replace("</td><td>", "~").Replace("</TD><TD>", "~").Split("~")
-                                        Dim laColumna1 As String = Columnas(0).Trim.Replace("<tr>", "").Replace("</tr>", "").Replace("<td>", "").Replace("</td>", "").Replace("<TR>", "").Replace("</TR>", "").Replace("<TD>", "").Replace("</TD>", "").Replace("_", "").Replace("[|]", "~")
-                                        Dim laColumna2 As String = Columnas(1).Trim.Replace("<tr>", "").Replace("</tr>", "").Replace("<td>", "").Replace("</td>", "").Replace("<TR>", "").Replace("</TR>", "").Replace("<TD>", "").Replace("</TD>", "").Replace("�", "").Replace("[|]", "~")
-
-                                        Dim IndiceDiccionario As Long = -1
-                                        Dim Traduccion As String = ""
-
-                                        If laColumna1.Contains("~") Then
-                                            IndiceDiccionario = Funciones.NZL(laColumna1.Split("~")(0))
-                                        Else
-                                            IndiceDiccionario = Funciones.NZL(laColumna1)
-                                        End If
-                                        If laColumna2.Contains("~") Then
-                                            Traduccion = Web.HTML.HTML2UTF(laColumna2.Split("~")(1))
-                                        Else
-                                            Traduccion = Web.HTML.HTML2UTF(laColumna2)
-                                        End If
-
-                                        If IndiceDiccionario >= 0 AndAlso Not paraDevolver.Keys.Contains(IndiceDiccionario) Then
-                                            paraDevolver.Add(IndiceDiccionario, Traduccion)
-                                        End If
-                                    Catch ex As Exception
-#If DEBUG Then
-                                        Debugger.Break()
-#End If
-                                    End Try
+                                ' Google a veces mete el globo de sugerir mejor traducción, de ser así
+                                ' es necesario recopmoner todoe el body ya que no se trata del HTML original                        
+                                If elBodyOriginal.Contains("</SPAN>") Then
+                                    Dim elBodyAux As String = elBodyOriginal
+                                    elBodyAux = Regex.Replace(elBodyAux, "<SPAN.*?>", "")
+                                    elBodyAux = elBodyAux.Replace("</SPAN> <", "<")
+                                    elBodyAux = elBodyAux.Replace("</SPAN> ", "[|]")
+                                    elBodyOriginal = elBodyAux
                                 End If
-                            Next
-                        Else
-                            RaiseEvent notificarMensaje("! ERROR en el contenido de '" & laUri & "'...")
-                        End If
+
+                                elBodyOriginal = elBodyOriginal.Replace(Chr(10), "")
+                                elBodyOriginal = elBodyOriginal.Replace(Chr(13), "")
+                                elBodyOriginal = elBodyOriginal.Replace(vbCrLf, "")
+
+                                elBodyOriginal = elBodyOriginal.Replace("<TABLE BORDER=1>", vbCrLf & vbCrLf)
+                                elBodyOriginal = elBodyOriginal.Replace("<TABLE BORDER=""1"">", vbCrLf & vbCrLf)
+                                elBodyOriginal = elBodyOriginal.Replace("<TBODY>", vbCrLf & vbCrLf)
+                                elBodyOriginal = elBodyOriginal.Replace("</TD></TR>", vbCrLf)
+                                elBodyOriginal = elBodyOriginal.Replace("</TBODY>", vbCrLf & vbCrLf)
+                                elBodyOriginal = elBodyOriginal.Replace("</TABLE>", vbCrLf & vbCrLf)
+
+                                Dim lasLineas() As String = elBodyOriginal.Split(vbCrLf)
+                                For Each unaLinea As String In lasLineas
+                                    unaLinea = unaLinea.Trim
+                                    If Not String.IsNullOrEmpty(unaLinea) AndAlso unaLinea.ToLower.StartsWith("<tr><td>") Then
+                                        Try
+                                            Dim Columnas() As String = unaLinea.Replace("</td><td>", "~").Replace("</TD><TD>", "~").Split("~")
+                                            Dim laColumna1 As String = Columnas(0).Trim.Replace("<tr>", "").Replace("</tr>", "").Replace("<td>", "").Replace("</td>", "").Replace("<TR>", "").Replace("</TR>", "").Replace("<TD>", "").Replace("</TD>", "").Replace("_", "").Replace("[|]", "~")
+                                            Dim laColumna2 As String = Columnas(1).Trim.Replace("<tr>", "").Replace("</tr>", "").Replace("<td>", "").Replace("</td>", "").Replace("<TR>", "").Replace("</TR>", "").Replace("<TD>", "").Replace("</TD>", "").Replace("�", "").Replace("[|]", "~")
+
+                                            Dim IndiceDiccionario As Long = -1
+                                            Dim Traduccion As String = ""
+
+                                            If laColumna1.Contains("~") Then
+                                                IndiceDiccionario = Funciones.NZL(laColumna1.Split("~")(0))
+                                            Else
+                                                IndiceDiccionario = Funciones.NZL(laColumna1)
+                                            End If
+                                            If laColumna2.Contains("~") Then
+                                                Traduccion = Web.HTML.HTML2UTF(laColumna2.Split("~")(1))
+                                            Else
+                                                Traduccion = Web.HTML.HTML2UTF(laColumna2)
+                                            End If
+
+                                            If IndiceDiccionario >= 0 AndAlso Not paraDevolver.Keys.Contains(IndiceDiccionario) Then
+                                                paraDevolver.Add(IndiceDiccionario, Traduccion)
+                                            End If
+                                        Catch ex As Exception
+#If DEBUG Then
+                                            Debugger.Break()
+#End If
+                                        End Try
+                                    End If
+                                Next
+                            Else
+                                RaiseEvent notificarMensaje("! ERROR en el contenido de '" & laUri & "'...")
+                            End If
+                        Catch ex As Exception
+                            elNavegador = Nothing
+                        End Try
                     Else
                         RaiseEvent notificarMensaje("! ERROR en el contenido de '" & laUri & "'...")
                     End If
